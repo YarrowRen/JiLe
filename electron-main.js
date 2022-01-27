@@ -5,11 +5,15 @@ const createWindow = () => {
     width: 1280,
     height: 800,
     webPreferences: {
+      webSecurity: false, //========关闭安全策略===========
       nodeIntegration: true, //渲染进程中使用nodejs
       contextIsolation: false,
       enableRemoteModule: true //渲染线程中使用remote模块
     }
   })
+
+
+
   //dev development
   const waitOn = require('wait-on')
   if (isDev) {

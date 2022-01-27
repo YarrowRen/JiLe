@@ -42,6 +42,42 @@ export const constantRoutes = [
       }
     ]
   },
+
+
+
+  {
+    path: '/jile',
+    component: Layout,
+    meta: { title: 'jile', icon: 'user' },
+    alwaysShow: true,
+    children: [
+      {
+        path: 'test-indexeddb',
+        component: () => import('@/views/jile/testIndexedDB.vue'),
+        name: 'IndexedDB测试',
+        meta: { title: 'IndexedDB测试' }
+      },
+      {
+        path: 'dic-upload',
+        component: () => import('@/views/jile/dicUpload.vue'),
+        name: '文件夹获取测试',
+        meta: { title: '文件夹获取测试' }
+      },
+      {
+        path: 'photo-gallery',
+        component: () => import('@/views/jile/photoGallery.vue'),
+        name: '图片缩略图展示',
+        meta: { title: '图片缩略图展示' }
+      },
+      {
+        path: 'open-file',
+        component: () => import('@/views/jile/openFile.vue'),
+        name: '默认打开文件测试',
+        meta: { title: '默认打开文件测试' }
+      },
+    ]
+  },
+
   {
     path: '/electron',
     component: Layout,
@@ -138,27 +174,6 @@ export const constantRoutes = [
     ]
   },
 
-
-  {
-    path: '/jile',
-    component: Layout,
-    meta: { title: 'jile', icon: 'user' },
-    alwaysShow: true,
-    children: [
-      {
-        path: 'test-indexeddb',
-        component: () => import('@/views/jile/testIndexedDB.vue'),
-        name: 'IndexedDB测试',
-        meta: { title: 'IndexedDB测试' }
-      },
-      {
-        path: 'dic-upload',
-        component: () => import('@/views/jile/dicUpload.vue'),
-        name: '文件夹获取测试',
-        meta: { title: '文件夹获取测试' }
-      },
-    ]
-  },
 
   {
     path: '/nested',
