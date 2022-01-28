@@ -1,44 +1,83 @@
 <template>
-
-<el-scrollbar style="height: 100%">
-    
-
-  <div style="text-align:center">
-    <el-row :gutter="20">
-      <el-col v-for="(item, id) in this.pathList" :key="id" :span="4">
-        <el-card :body-style="{ padding: '0px' }" shadow="hover">
-          <!-- 两个块级元素的style目的在于确定方形图片格式 -->
-          <div style="position: relative; width: 100%; height: 0; padding-top: 100%">
-            <el-image
-              style="position: absolute; top: 0; left: 0; width: 100%; height: 100%"
-              :src="item"
-              class="image"
-              :fit="this.fit"
-            ></el-image>
-          </div>
-        </el-card>
-        
-        <div style="font-size: 13px;
-    margin-top: 8px;
-    margin-bottom: 8px">
-            <div id="title" >
-                <el-tooltip class="item" effect="dark" :content="this.fileList[id]" placement="top">
-                <div >{{this.fileList[id]}}</div>
-                </el-tooltip>
+  <el-scrollbar style="height: 100%">
+    <div>
+      <el-button @click="showCheckedList">查看checkedList</el-button>
+      <el-row :gutter="5">
+        <el-col v-for="(item, id) in this.pathList" :key="id" :span="4">
+          <el-card :body-style="{ padding: '0px' }" shadow="always" style="margin-top: 10px">
+            <div
+              style="
+                text-align: center;
+                font-size: 13px;
+                margin-top: 8px;
+                margin-bottom: 1px;
+                margin-left: 8px;
+                margin-right: 8px;
+              "
+            >
+              <el-tooltip class="item" effect="dark" :content="this.fileList[id]" placement="top">
+                <div id="title">
+                  <div>{{ this.fileList[id] }}</div>
+                </div>
+              </el-tooltip>
+              <el-rate v-model="value1"></el-rate>
             </div>
-        </div>
-      </el-col>
-    </el-row>
-  </div>
-</el-scrollbar>
+
+            <!-- 两个块级元素的style目的在于确定方形图片格式 #F5F5F5-->
+            <div style="position: relative; width: 100%; height: 0; padding-top: 100%" @click="openFile(item)">
+              <el-image
+                style="cursor: pointer; position: absolute; top: 0; left: 0; width: 100%; height: 100%"
+                :src="item"
+                class="image"
+                :fit="this.fit"
+              ></el-image>
+            </div>
+
+            <div style="margin-top: 5px; margin-bottom: 5px; margin-left: 5px; margin-right: 5px">
+              <el-link @click="openDialogForm(id)"><i class="yw-icon-edit"></i></el-link>
+              <el-link @click="openFolder(item)"><i class="yw-icon-folder-close"></i></el-link>
+              <el-link @click="deleteFile(item)"><i class="yw-icon-ashbin"></i></el-link>
+              <el-link><i class="yw-icon-attachment"></i></el-link>
+
+              <div style="float: right">
+                <el-checkbox v-model="this.checkedList[id]"></el-checkbox>
+              </div>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+    </div>
+
+    <div id="dialog">
+      <el-dialog title="修改资源名称" v-model="dialogFormVisible">
+        <el-form :model="reNameForm">
+          <el-form-item label="原名称" :label-width="formLabelWidth">
+            <div>{{ reNameForm.oldName }}</div>
+          </el-form-item>
+          <el-form-item label="新名称" :label-width="formLabelWidth">
+            <el-input v-model="reNameForm.newName" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <template v-slot:footer>
+          <div class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="editFileName">确 定</el-button>
+          </div>
+        </template>
+      </el-dialog>
+    </div>
+  </el-scrollbar>
 </template>
 
 <script>
+import Item from '@/layout/components/Sidebar/Item'
+const { shell } = require('electron')
 const fs = require('fs-extra')
 
 export default {
   data() {
     return {
+      dialogFormVisible: false,
       fit: 'cover',
       rootPath: 'F:\\photo\\onedrive\\大塚みなみ\\r2_ootsuka_m02',
       fileList: [
@@ -77,7 +116,15 @@ export default {
         'r2_ootsuka_m02_033.jpg',
         'r2_ootsuka_m02_034.jpg'
       ],
-      pathList:[]
+      pathList: [],
+      checkedList: [],
+      reNameForm: {
+        fileId: 0,
+        filePath: '',
+        oldName: '',
+        newName: ''
+      },
+      formLabelWidth: '80px'
     }
   },
   created() {
@@ -115,7 +162,63 @@ export default {
       //注意这里使用Sync同步方法才能获取到返回的文件值
       //使用异步方法（readdir）由于不能确定结果返回时间，所以无法在外部得到文件列表，只能进行内部处理
       this.fileList = fs.readdirSync(this.dicPath)
-    }
+    },
+    openFile(path) {
+      shell.openPath(path)
+    },
+    openFolder(path) {
+      shell.showItemInFolder(path)
+    },
+    showCheckedList() {
+      console.log(this.checkedList)
+    },
+    deleteFile(path) {
+      //shell.trashItem(path)
+      this.$confirm('此操作将永久删除该文件（包括本地文件）, 是否确定?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          shell.trashItem(path)
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          location.reload()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    openDialogForm(fileId) {
+      this.reNameForm.fileId = fileId
+      this.reNameForm.oldName = this.fileList[fileId]
+      this.reNameForm.filePath = this.rootPath
+      this.dialogFormVisible = true
+    },
+    editFileName() {
+      this.dialogFormVisible = false //关闭dialog页面
+      //移动文件、目录, 会删除以前的, 等于改名
+      var form = this.reNameForm
+      var result = false
+      try {
+        fs.moveSync(form.filePath + '\\' + form.oldName, form.filePath + '\\' + form.newName)
+        result = true
+        console.log('success!')
+      } catch (err) {
+        console.log(err)
+      }
+      //接下来应该还要处理前端逻辑，修改所存储的文件名称与路径
+      console.log(result)
+      if (result) {
+        this.fileList[form.fileId] = form.newName
+        //console.log(this.fileList[form.fileId])
+      }
+    },
   }
 }
 </script>
@@ -129,13 +232,13 @@ export default {
 }
 
 #title {
-    width:100%;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    display: -webkit-box;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    word-break: break-all;
-    
+  width: 100%;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  //background-color: red($color: #cfcbcb);
 }
 </style>

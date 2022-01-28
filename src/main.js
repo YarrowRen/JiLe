@@ -7,6 +7,10 @@ import '@/styles/index.scss' // global css
 import store from './store'
 app.use(store)
 
+
+//引入自选图标库
+import './assets/icon/iconfont.css'
+
 //import element-plus
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'

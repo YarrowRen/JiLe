@@ -3,6 +3,7 @@ const isDev = require('electron-is-dev')
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 1280,
+    minWidth: 1100, //设置最小宽度
     height: 800,
     webPreferences: {
       webSecurity: false, //========关闭安全策略===========
