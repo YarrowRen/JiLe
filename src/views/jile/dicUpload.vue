@@ -19,6 +19,9 @@
 <script>
 
 const fs = require('fs-extra')
+const { dialog } = require('@electron/remote')
+// Electron 10之后下面这种引入方法已经不可用了，使用上面的方法，这个是需要注意的
+// const { BrowserWindow } = require('electron').remote;
 
 
 export default {
@@ -30,11 +33,6 @@ export default {
   },
   methods: {
     chooseFiles() {
-        const { dialog } = require('@electron/remote')
-        // Electron 10之后下面这种引入方法已经不可用了，使用上面的方法，这个是需要注意的
-        // const { BrowserWindow } = require('electron').remote;
-
-
         //利用Electron的Dialog打开文件选择器或文件夹选择器并进行特殊设置
         dialog.showOpenDialog({ 
             title: '请选择文件夹',

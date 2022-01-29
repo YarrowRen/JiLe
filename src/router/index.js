@@ -75,6 +75,18 @@ export const constantRoutes = [
         name: '默认打开文件测试',
         meta: { title: '默认打开文件测试' }
       },
+      {
+        path: 'compress-photo',
+        component: () => import('@/views/jile/compressPhoto.vue'),
+        name: '压缩图片测试',
+        meta: { title: '压缩图片测试' }
+      },
+      {
+        path: 'video-cover',
+        component: () => import('@/views/jile/videoCover.vue'),
+        name: '视频封面测试',
+        meta: { title: '视频封面测试' }
+      },
     ]
   },
 

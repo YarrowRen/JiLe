@@ -10,6 +10,14 @@ app.use(store)
 
 //引入自选图标库
 import './assets/icon/iconfont.css'
+//引入图片压缩库
+import lrz from 'lrz'
+//引入视频播放库
+// import VueVideoPlayer from 'vue-video-player/src'
+// import 'vue-video-player/src/custom-theme.css'
+// import 'video.js/dist/video-js.css'
+// app.use(VueVideoPlayer)
+
 
 //import element-plus
 import ElementPlus from 'element-plus'
