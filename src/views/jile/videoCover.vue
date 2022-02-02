@@ -3,7 +3,7 @@
     <div>
       <el-button @click="showCheckedList">查看checkedList</el-button>
       <el-row :gutter="5">
-        <el-col v-for="(item, id) in this.pathList" :key="id" :span="4">
+        <el-col v-for="(item, id) in pathList" :key="id" :span="4">
           <el-card :body-style="{ padding: '0px' }" shadow="always" style="margin-top: 10px">
             <div
               style="
@@ -15,9 +15,9 @@
                 margin-right: 8px;
               "
             >
-              <el-tooltip class="item" effect="dark" :content="this.fileList[id]" placement="top">
+              <el-tooltip class="item" effect="dark" :content="fileList[id]" placement="top">
                 <div id="title">
-                  <div>{{ this.fileList[id] }}</div>
+                  <div>{{ fileList[id] }}</div>
                 </div>
               </el-tooltip>
               <el-rate v-model="value1"></el-rate>
@@ -26,15 +26,15 @@
             <!-- 两个块级元素的style目的在于确定方形图片格式 #F5F5F5-->
             <div
               class="pointer"
-              @contextmenu="rtClickOpenMenu"
               style="position: relative; width: 100%; height: 0; padding-top: 100%"
+              @contextmenu="rtClickOpenMenu(id)"
               @click="openFile(item)"
             >
               <el-image
                 style="cursor: pointer; position: absolute; top: 0; left: 0; width: 100%; height: 100%"
-                :src="this.coverList[id]"
+                :src="coverList[id]"
                 class="image"
-                :fit="this.fit"
+                :fit="fit"
               ></el-image>
             </div>
 
@@ -43,10 +43,9 @@
               <el-link @click="openFolder(item)"><i class="yw-icon-folder-close"></i></el-link>
               <el-link @click="deleteFile(item)"><i class="yw-icon-ashbin"></i></el-link>
               <el-link><i class="yw-icon-attachment"></i></el-link>
-              <el-link @click="selectCover(id)"><i class="yw-icon-file-add"></i></el-link>
 
               <div style="float: right">
-                <el-checkbox v-model="this.checkedList[id]"></el-checkbox>
+                <el-checkbox v-model="checkedList[id]"></el-checkbox>
               </div>
             </div>
           </el-card>
@@ -55,7 +54,7 @@
     </div>
 
     <div id="dialog">
-      <el-dialog title="修改资源名称" v-model="dialogFormVisible">
+      <el-dialog v-model="dialogFormVisible" title="修改资源名称">
         <el-form :model="reNameForm">
           <el-form-item label="原名称" :label-width="formLabelWidth">
             <div>{{ reNameForm.oldName }}</div>
@@ -64,7 +63,7 @@
             <el-input v-model="reNameForm.newName" autocomplete="off"></el-input>
           </el-form-item>
         </el-form>
-        <template v-slot:footer>
+        <template #footer>
           <div class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
             <el-button type="primary" @click="editFileName">确 定</el-button>
@@ -109,30 +108,49 @@ export default {
         newName: ''
       },
       formLabelWidth: '80px',
-      contextMenuTemplate: [
-        { label: '复制', role: 'copy' },
-        { label: '黏贴', role: 'paste' },
-        { label: '选择封面图', click: this.selectCover },
-        { type: 'separator' }
-      ],
+      contextMenuTemplate: [],
       filtersList: {
-        imageFilters: [
-          { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
-        ]
+        imageFilters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }]
       }
     }
   },
   created() {
-    console.log(this.fileList)
     for (var i = 0; i < this.fileList.length; i++) {
       this.pathList[i] = this.rootPath + '\\' + this.fileList[i]
     }
-    console.log(this.pathList)
-
-    //创建菜单项
-    this.menu = Menu.buildFromTemplate(this.contextMenuTemplate)
   },
   methods: {
+    selectCover(item) {
+      var id = item.id
+      console.log(id)
+      //利用Electron的Dialog打开文件选择器或文件夹选择器并进行特殊设置
+      dialog
+        .showOpenDialog({
+          title: '请选择视频封面',
+          properties: ['openFile'],
+          filters: this.filtersList.imageFilters
+        })
+        .then((result) => {
+          if (!result) return //为空情况下表示未选择文件，直接return结束函数
+          console.log(result.filePaths[0])
+          this.coverList[id] = result.filePaths[0]
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+    deleteCover(item){
+      var id = item.id
+      console.log(id)
+      this.coverList[id]=null
+    },
+    initMenuTemplate(id) {
+      this.contextMenuTemplate = [
+        { label: '选择封面图', click: this.selectCover, id: id },
+        { label: '删除封面图', click: this.deleteCover, id: id },
+        { type: 'separator' }
+      ]
+    },
     chooseFiles() {
       const { dialog } = require('@electron/remote')
       // Electron 10之后下面这种引入方法已经不可用了，使用上面的方法，这个是需要注意的
@@ -218,25 +236,11 @@ export default {
       }
     },
     pasteCover() {},
-    rtClickOpenMenu() {
+    rtClickOpenMenu(id) {
+      this.initMenuTemplate(id)
+      //创建菜单项
+      this.menu = Menu.buildFromTemplate(this.contextMenuTemplate)
       this.menu.popup({ window: remote.getCurrentWindow() })
-    },
-    selectCover(id) {
-      //利用Electron的Dialog打开文件选择器或文件夹选择器并进行特殊设置
-      dialog
-        .showOpenDialog({
-          title: '请选择视频封面',
-          properties: ['openFile'],
-          filters: this.filtersList.imageFilters
-        })
-        .then((result) => {
-          if (!result) return //为空情况下表示未选择文件，直接return结束函数
-          console.log(result.filePaths[0])
-          this.coverList[id]=result.filePaths[0]
-        })
-        .catch((err) => {
-          console.log(err)
-        })
     }
   }
 }

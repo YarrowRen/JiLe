@@ -2,14 +2,14 @@
   <el-scrollbar>
     <el-container>
       <el-header>
-        <el-button type="primary" @click="compressImage(this.filePath)">压缩图片</el-button>
+        <el-button type="primary" @click="compressImage(filePath)">压缩图片</el-button>
       </el-header>
       <el-main>
         <el-col :span="8">
-          <el-image :src="this.filePath"></el-image>
+          <el-image :src="filePath"></el-image>
         </el-col>
         <el-col :span="8">
-          <el-image ref="testImage" :src="this.testPath"></el-image>
+          <el-image ref="testImage" :src="testPath"></el-image>
         </el-col>
       </el-main>
     </el-container>

@@ -21,7 +21,7 @@ import { reactive, toRefs } from 'vue'
 let db
 
 export default {
-  name: 'test2',
+  name: 'Test2',
   data() {
     return {
       name: 'Ywrby',

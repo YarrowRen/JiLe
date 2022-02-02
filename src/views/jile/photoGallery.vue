@@ -3,7 +3,7 @@
     <div>
       <el-button @click="showCheckedList">查看checkedList</el-button>
       <el-row :gutter="5">
-        <el-col v-for="(item, id) in this.pathList" :key="id" :span="4">
+        <el-col v-for="(item, id) in pathList" :key="id" :span="4">
           <el-card :body-style="{ padding: '0px' }" shadow="always" style="margin-top: 10px">
             <div
               style="
@@ -15,9 +15,9 @@
                 margin-right: 8px;
               "
             >
-              <el-tooltip class="item" effect="dark" :content="this.fileList[id]" placement="top">
+              <el-tooltip class="item" effect="dark" :content="fileList[id]" placement="top">
                 <div id="title">
-                  <div>{{ this.fileList[id] }}</div>
+                  <div>{{ fileList[id] }}</div>
                 </div>
               </el-tooltip>
               <el-rate v-model="value1"></el-rate>
@@ -29,7 +29,7 @@
                 style="cursor: pointer; position: absolute; top: 0; left: 0; width: 100%; height: 100%"
                 :src="item"
                 class="image"
-                :fit="this.fit"
+                :fit="fit"
               ></el-image>
             </div>
 
@@ -40,7 +40,7 @@
               <el-link><i class="yw-icon-attachment"></i></el-link>
 
               <div style="float: right">
-                <el-checkbox v-model="this.checkedList[id]"></el-checkbox>
+                <el-checkbox v-model="checkedList[id]"></el-checkbox>
               </div>
             </div>
           </el-card>
@@ -49,7 +49,7 @@
     </div>
 
     <div id="dialog">
-      <el-dialog title="修改资源名称" v-model="dialogFormVisible">
+      <el-dialog v-model="dialogFormVisible" title="修改资源名称">
         <el-form :model="reNameForm">
           <el-form-item label="原名称" :label-width="formLabelWidth">
             <div>{{ reNameForm.oldName }}</div>
@@ -58,7 +58,7 @@
             <el-input v-model="reNameForm.newName" autocomplete="off"></el-input>
           </el-form-item>
         </el-form>
-        <template v-slot:footer>
+        <template #footer>
           <div class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
             <el-button type="primary" @click="editFileName">确 定</el-button>
