@@ -139,10 +139,10 @@ export default {
           console.log(err)
         })
     },
-    deleteCover(item){
+    deleteCover(item) {
       var id = item.id
       console.log(id)
-      this.coverList[id]=null
+      this.coverList[id] = null
     },
     initMenuTemplate(id) {
       this.contextMenuTemplate = [

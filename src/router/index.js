@@ -87,6 +87,12 @@ export const constantRoutes = [
         name: '视频封面测试',
         meta: { title: '视频封面测试' }
       },
+      {
+        path: 'unzip-test',
+        component: () => import('@/views/jile/unzipTest.vue'),
+        name: '文件解压测试',
+        meta: { title: '文件解压测试' }
+      },
     ]
   },
 
