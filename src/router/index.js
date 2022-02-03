@@ -93,6 +93,12 @@ export const constantRoutes = [
         name: '文件解压测试',
         meta: { title: '文件解压测试' }
       },
+      {
+        path: 'pagination-test',
+        component: () => import('@/views/jile/paginationTest.vue'),
+        name: '分页测试',
+        meta: { title: '分页测试' }
+      },
     ]
   },
 

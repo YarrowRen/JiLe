@@ -1,8 +1,8 @@
 <template>
 <el-scrollbar>
-  <el-button type="primary" @click="readingArchives(this.source,this.target)">获取压缩文件信息</el-button>
+  <el-button type="primary" @click="readingArchives(source,target)">获取压缩文件信息</el-button>
   <el-button type="primary" @click="setCover">设置封面</el-button>
-  <div>{{this.fileList}}</div>
+  <div>{{fileList}}</div>
   <el-image :src="imageSrc" style="width: 30%"></el-image>
 </el-scrollbar>
 </template>
