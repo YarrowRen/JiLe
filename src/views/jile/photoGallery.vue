@@ -79,7 +79,7 @@ export default {
     return {
       dialogFormVisible: false,
       fit: 'cover',
-      rootPath: 'F:\\photo\\onedrive\\大塚みなみ\\r2_ootsuka_m02',
+      rootPath: 'D:\\data\\OneDrive\\大塚みなみ\\r2_ootsuka_m02',
       fileList: [
         'r2_ootsuka_m02_001.jpg',
         'r2_ootsuka_m02_002.jpg',

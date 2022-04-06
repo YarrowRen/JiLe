@@ -59,7 +59,7 @@ export default {
     return {
       dialogFormVisible: false,
       fit: 'cover',
-      rootPath: 'F:\\photo\\onedrive\\大塚みなみ\\r2_ootsuka_m02',
+      rootPath: 'D:\\data\\OneDrive\\miho_kaneko\\r4_kaneko_m04',
       fileList: [],
       pathList: [],
       checkedList: [],

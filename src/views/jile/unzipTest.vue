@@ -15,7 +15,7 @@ const AdmZip = require('adm-zip')
 export default {
   data() {
     return {
-      source: 'F:\\暂存资源-寒假篇\\boostore\\[VYCMa] 蒙德温泉节.zip',
+      source: 'D:\\data\\boostore\\齋齋いつき itsukichan - Gawr Gura.zip',
       target: 'C:\\Users\\Ywrby\\Desktop\\temp',
       fileList: [],
       imageSrc: ''

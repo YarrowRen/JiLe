@@ -86,7 +86,7 @@ export default {
     return {
       dialogFormVisible: false,
       fit: 'cover',
-      rootPath: 'F:\\photo\\JAVHD\\Chie Aoi',
+      rootPath: 'D:\\data\\JAVHD\\Chie Aoi',
       fileList: [
         '1-cwpbd-153-chie-aoi-catwalk-poison-153_sh.mp4',
         '1-laf-77-chie-aoi-laforet-girl-77_sh.mp4',

@@ -20,7 +20,7 @@
 export default {
   data() {
     return {
-        filePath:'F:\\photo\\onedrive\\miho_kaneko\\bs1_kaneko_m01\\bs1_kaneko_m01_001.jpg',
+        filePath:'D:\\data\\OneDrive\\miho_kaneko\\st1_junshin_kaneko_m01\\st1_junshin_kaneko_m01_020.jpg',
         compressBase64:'',
         testPath:''
     }

@@ -1,17 +1,19 @@
 <template>
-  <div>
-    <el-form ref="form" :model="form" label-width="120px" style="width: 50%">
-      <el-form-item label="选择文件夹">
-        <el-button size="small" type="primary" @click="chooseFiles">选择文件夹</el-button>
-      </el-form-item>
-      <el-form-item label="目标文件夹">
-        <div>{{ dicPath }}</div>
-      </el-form-item>
-      <el-form-item label="文件夹列表">
-        <div>{{ fileList }}</div>
-      </el-form-item>
-    </el-form>
-  </div>
+  <el-scrollbar style="height: 100%">
+    <div>
+      <el-form ref="form" :model="form" label-width="120px" style="width: 50%">
+        <el-form-item label="选择文件夹">
+          <el-button size="small" type="primary" @click="chooseFiles">选择文件夹</el-button>
+        </el-form-item>
+        <el-form-item label="目标文件夹">
+          <div>{{ dicPath }}</div>
+        </el-form-item>
+        <el-form-item label="文件夹列表">
+          <div>{{ fileList }}</div>
+        </el-form-item>
+      </el-form>
+    </div>
+  </el-scrollbar>
 </template>
 
 <script>
