@@ -86,6 +86,7 @@ export default {
     return {
       dialogFormVisible: false,
       fit: 'cover',
+      defaultCover: "src/icons/my-icon/video-o.svg",
       rootPath: 'D:\\data\\JAVHD\\Chie Aoi',
       fileList: [
         '1-cwpbd-153-chie-aoi-catwalk-poison-153_sh.mp4',
@@ -118,6 +119,9 @@ export default {
     for (var i = 0; i < this.fileList.length; i++) {
       this.pathList[i] = this.rootPath + '\\' + this.fileList[i]
     }
+    for(var j=0; j<this.fileList.length; j++){
+      this.coverList[j]=this.defaultCover
+    }
   },
   methods: {
     selectCover(item) {
@@ -142,7 +146,7 @@ export default {
     deleteCover(item) {
       var id = item.id
       console.log(id)
-      this.coverList[id] = null
+      this.coverList[id] =this.defaultCover
     },
     initMenuTemplate(id) {
       this.contextMenuTemplate = [

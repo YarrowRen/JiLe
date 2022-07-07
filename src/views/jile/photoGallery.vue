@@ -2,6 +2,8 @@
   <el-scrollbar style="height: 100%">
     <div>
       <el-button @click="showCheckedList">查看checkedList</el-button>
+      <el-button @click="chooseFiles">选择文件夹</el-button>
+      <el-button @click="initPage">初始化页面</el-button>
       <el-row :gutter="5">
         <el-col v-for="(item, id) in pathList" :key="id" :span="4">
           <el-card :body-style="{ padding: '0px' }" shadow="always" style="margin-top: 10px">
@@ -71,6 +73,7 @@
 
 <script>
 import Item from '@/layout/components/Sidebar/Item'
+import global from '../Global.vue'
 const { shell } = require('electron')
 const fs = require('fs-extra')
 
@@ -79,43 +82,8 @@ export default {
     return {
       dialogFormVisible: false,
       fit: 'cover',
-      rootPath: 'D:\\data\\OneDrive\\大塚みなみ\\r2_ootsuka_m02',
-      fileList: [
-        'r2_ootsuka_m02_001.jpg',
-        'r2_ootsuka_m02_002.jpg',
-        'r2_ootsuka_m02_003.jpg',
-        'r2_ootsuka_m02_004.jpg',
-        'r2_ootsuka_m02_005.jpg',
-        'r2_ootsuka_m02_006.jpg',
-        'r2_ootsuka_m02_007.jpg',
-        'r2_ootsuka_m02_008.jpg',
-        'r2_ootsuka_m02_009.jpg',
-        'r2_ootsuka_m02_010.jpg',
-        'r2_ootsuka_m02_011.jpg',
-        'r2_ootsuka_m02_012.jpg',
-        'r2_ootsuka_m02_013.jpg',
-        'r2_ootsuka_m02_014.jpg',
-        'r2_ootsuka_m02_015.jpg',
-        'r2_ootsuka_m02_016.jpg',
-        'r2_ootsuka_m02_017.jpg',
-        'r2_ootsuka_m02_018.jpg',
-        'r2_ootsuka_m02_019.jpg',
-        'r2_ootsuka_m02_020.jpg',
-        'r2_ootsuka_m02_021.jpg',
-        'r2_ootsuka_m02_022.jpg',
-        'r2_ootsuka_m02_023.jpg',
-        'r2_ootsuka_m02_024.jpg',
-        'r2_ootsuka_m02_025.jpg',
-        'r2_ootsuka_m02_026.jpg',
-        'r2_ootsuka_m02_027.jpg',
-        'r2_ootsuka_m02_028.jpg',
-        'r2_ootsuka_m02_029.jpg',
-        'r2_ootsuka_m02_030.jpg',
-        'r2_ootsuka_m02_031.jpg',
-        'r2_ootsuka_m02_032.jpg',
-        'r2_ootsuka_m02_033.jpg',
-        'r2_ootsuka_m02_034.jpg'
-      ],
+      rootPath: global.test1File,
+      fileList: [],
       pathList: [],
       checkedList: [],
       reNameForm: {
@@ -128,11 +96,7 @@ export default {
     }
   },
   created() {
-    console.log(this.fileList)
-    for (var i = 0; i < this.fileList.length; i++) {
-      this.pathList[i] = this.rootPath + '\\' + this.fileList[i]
-    }
-    console.log(this.pathList)
+    this.initPhotoGallery()
   },
   methods: {
     chooseFiles() {
@@ -149,10 +113,10 @@ export default {
         .then((result) => {
           if (!result) return //为空情况下表示未选择文件夹，直接return结束函数
           console.log(result.filePaths[0])
-          this.dicPath = result.filePaths[0]
+          this.rootPath = result.filePaths[0]
 
-          //选择文件夹后读取文件夹下所有文件（只读取到第一级）
-          this.getFileList()
+          //选择文件夹后重新初始化文件列表以重新渲染页面
+          this.initPhotoGallery()
         })
         .catch((err) => {
           console.log(err)
@@ -161,7 +125,23 @@ export default {
     getFileList() {
       //注意这里使用Sync同步方法才能获取到返回的文件值
       //使用异步方法（readdir）由于不能确定结果返回时间，所以无法在外部得到文件列表，只能进行内部处理
-      this.fileList = fs.readdirSync(this.dicPath)
+      this.fileList = fs.readdirSync(this.rootPath)
+    },
+    initPhotoGallery() {
+      console.log(this.fileList)
+      //读取目标根目录下所有文件
+      this.getFileList()
+      //置空文件路径列表，清除前次渲染图片卡片
+      this.pathList=[]
+      //初始化文件列表
+      for (var i = 0; i < this.fileList.length; i++) {
+        this.pathList[i] = this.rootPath + '\\' + this.fileList[i]
+      }
+      console.log(this.pathList)
+    },
+    initPage(){
+      this.rootPath=global.test1File
+      this.initPhotoGallery()
     },
     openFile(path) {
       shell.openPath(path)
@@ -218,7 +198,7 @@ export default {
         this.fileList[form.fileId] = form.newName
         //console.log(this.fileList[form.fileId])
       }
-    },
+    }
   }
 }
 </script>

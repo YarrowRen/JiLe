@@ -59,7 +59,7 @@ export default {
     return {
       dialogFormVisible: false,
       fit: 'cover',
-      rootPath: 'D:\\data\\OneDrive\\miho_kaneko\\r4_kaneko_m04',
+      rootPath: "I:\\2260938_1976f6d65d",
       fileList: [],
       pathList: [],
       checkedList: [],
