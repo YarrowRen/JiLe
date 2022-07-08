@@ -58,6 +58,12 @@ export const constantRoutes = [
         meta: { title: 'IndexedDB测试' }
       },
       {
+        path: 'test-naiveui',
+        component: () => import('@/views/jile/naiveui.vue'),
+        name: 'NaiveUI测试',
+        meta: { title: 'NaiveUI测试' }
+      },
+      {
         path: 'dic-upload',
         component: () => import('@/views/jile/dicUpload.vue'),
         name: '文件夹获取测试',
