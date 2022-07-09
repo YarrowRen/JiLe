@@ -7,13 +7,13 @@
 </template>
 
 <script>
+import global from '../Global.vue'
 const { shell } = require('electron')
-
 
 export default {
   data() {
     return {
-        filePath: "I:\\2260938_1976f6d65d\\BA_1.png",
+        filePath: global.test2File,
     }
   },
   methods: {

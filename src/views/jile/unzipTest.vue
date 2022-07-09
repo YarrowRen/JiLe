@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import global from '../Global.vue'
 const fs = require('fs-extra')
 const extract = require('extract-zip')
 const AdmZip = require('adm-zip')
@@ -16,8 +17,8 @@ const AdmZip = require('adm-zip')
 export default {
   data() {
     return {
-      source: 'F:\\temp\\test.zip',
-      target: 'C:\\Users\\Ywrby\\Desktop\\temp',
+      source: global.test3File,
+      target: global.test4File,
       fileList: [],
       imageSrc: ''
     }

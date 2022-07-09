@@ -75,6 +75,7 @@
 </template>
 
 <script>
+import global from '../Global.vue'
 import Item from '@/layout/components/Sidebar/Item'
 const { shell, clipboard, Tray, nativeImage, NativeImage } = require('electron')
 const fs = require('fs-extra')
@@ -87,18 +88,8 @@ export default {
       dialogFormVisible: false,
       fit: 'cover',
       defaultCover: "src/icons/my-icon/video-o.svg",
-      rootPath: 'D:\\data\\JAVHD\\Chie Aoi',
-      fileList: [
-        '1-cwpbd-153-chie-aoi-catwalk-poison-153_sh.mp4',
-        '1-laf-77-chie-aoi-laforet-girl-77_sh.mp4',
-        '1-mkbd-s130-chie-aoi-kirari-130_sh.mp4',
-        '2-cwpbd-153-chie-aoi-catwalk-poison-153_sh.mp4',
-        '2-laf-77-chie-aoi-laforet-girl-77_sh.mp4',
-        '2-mkbd-s130-chie-aoi-kirari-130_sh.mp4',
-        '3-cwpbd-153-chie-aoi-catwalk-poison-153_sh.mp4',
-        '3-mkbd-s130-chie-aoi-kirari-130_sh.mp4',
-        '4-mkbd-s130-chie-aoi-kirari-130_sh.mp4'
-      ],
+      rootPath: global.test5File,
+      fileList: [],
       coverList: [],
       pathList: [],
       checkedList: [],
@@ -116,6 +107,7 @@ export default {
     }
   },
   created() {
+    this.getFileList()
     for (var i = 0; i < this.fileList.length; i++) {
       this.pathList[i] = this.rootPath + '\\' + this.fileList[i]
     }
@@ -124,6 +116,11 @@ export default {
     }
   },
   methods: {
+    getFileList() {
+      //注意这里使用Sync同步方法才能获取到返回的文件值
+      //使用异步方法（readdir）由于不能确定结果返回时间，所以无法在外部得到文件列表，只能进行内部处理
+      this.fileList = fs.readdirSync(this.rootPath)
+    },
     selectCover(item) {
       var id = item.id
       console.log(id)
@@ -177,11 +174,6 @@ export default {
         .catch((err) => {
           console.log(err)
         })
-    },
-    getFileList() {
-      //注意这里使用Sync同步方法才能获取到返回的文件值
-      //使用异步方法（readdir）由于不能确定结果返回时间，所以无法在外部得到文件列表，只能进行内部处理
-      this.fileList = fs.readdirSync(this.dicPath)
     },
     openFile(path) {
       shell.openPath(path)

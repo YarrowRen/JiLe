@@ -51,6 +51,7 @@
 
 <script>
 import Item from '@/layout/components/Sidebar/Item'
+import global from '../Global.vue'
 const { shell } = require('electron')
 const fs = require('fs-extra')
 
@@ -59,7 +60,7 @@ export default {
     return {
       dialogFormVisible: false,
       fit: 'cover',
-      rootPath: "I:\\2260938_1976f6d65d",
+      rootPath: global.test1File,
       fileList: [],
       pathList: [],
       checkedList: [],
