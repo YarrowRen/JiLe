@@ -1,6 +1,7 @@
 <template>
   <el-scrollbar style="height: 100%">
     <div>
+
       <el-button @click="showCheckedList">查看checkedList</el-button>
       <el-button @click="chooseFiles">选择文件夹</el-button>
       <el-button @click="initPage">初始化页面</el-button>
@@ -36,10 +37,26 @@
             </div>
 
             <div style="margin-top: 5px; margin-bottom: 5px; margin-left: 5px; margin-right: 5px">
-              <el-link @click="openDialogForm(id)"><i class="yw-icon-edit"></i></el-link>
-              <el-link @click="openFolder(item)"><i class="yw-icon-folder-close"></i></el-link>
-              <el-link @click="deleteFile(item)"><i class="yw-icon-ashbin"></i></el-link>
-              <el-link><i class="yw-icon-attachment"></i></el-link>
+              <el-link @click="openDialogForm(id)">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#yw-icon-edit"></use>
+                </svg>
+              </el-link>
+              <el-link @click="openFolder(item)">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#yw-icon-folder-close"></use>
+                </svg>
+              </el-link>
+              <el-link @click="deleteFile(item)">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#yw-icon-ashbin"></use>
+                </svg>
+              </el-link>
+              <el-link>
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#yw-icon-attachment"></use>
+                </svg>
+              </el-link>
 
               <div style="float: right">
                 <el-checkbox v-model="checkedList[id]"></el-checkbox>
@@ -132,15 +149,15 @@ export default {
       //读取目标根目录下所有文件
       this.getFileList()
       //置空文件路径列表，清除前次渲染图片卡片
-      this.pathList=[]
+      this.pathList = []
       //初始化文件列表
       for (var i = 0; i < this.fileList.length; i++) {
         this.pathList[i] = this.rootPath + '\\' + this.fileList[i]
       }
       console.log(this.pathList)
     },
-    initPage(){
-      this.rootPath=global.test1File
+    initPage() {
+      this.rootPath = global.test1File
       this.initPhotoGallery()
     },
     openFile(path) {

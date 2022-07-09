@@ -10,6 +10,7 @@ app.use(store)
 
 //引入自选图标库
 import './assets/icon/iconfont.css'
+import './assets/icon/iconfont.js'
 //引入图片压缩库
 import lrz from 'lrz'
 //引入视频播放库
