@@ -1,7 +1,7 @@
 const setting = {
   /*page layout related*/
   //sideBar or navbar show title
-  title: 'Vue3 Admin Template',
+  title: 'JiLe',
   /**
    * @type {boolean} true | false
    * @description Whether show the logo in sidebar
@@ -53,12 +53,13 @@ const setting = {
    */
   isNeedNprogress: true,
 
+  // 是否需要登录 
   /*page login or other*/
   /**
    * @type {boolean} true | false
    * @description Whether need login
    */
-  isNeedLogin: true,
+  isNeedLogin: false,
   /**
    * @type {string} 'roles' | 'code'
    */

@@ -42,9 +42,55 @@
                 :fit="fit"
               ></el-image>
             </div>
+
+            <div style="margin-top: 5px; margin-bottom: 5px; margin-left: 5px; margin-right: 5px">
+              <el-link @click="openDialogForm(id)">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#yw-icon-edit"></use>
+                </svg>
+              </el-link>
+              <el-link @click="openFolder(item)">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#yw-icon-folder-close"></use>
+                </svg>
+              </el-link>
+              <el-link @click="deleteFile(item)">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#yw-icon-ashbin"></use>
+                </svg>
+              </el-link>
+              <el-link>
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#yw-icon-attachment"></use>
+                </svg>
+              </el-link>
+
+              <div style="float: right">
+                <el-checkbox v-model="checkedList[id]"></el-checkbox>
+              </div>
+            </div>
           </el-card>
         </el-col>
       </el-row>
+    </div>
+
+    <div id="dialog">
+      <el-dialog v-model="dialogFormVisible" title="修改资源名称">
+        <el-form :model="reNameForm">
+          <el-form-item label="原名称" :label-width="formLabelWidth">
+            <div>{{ reNameForm.oldName }}</div>
+          </el-form-item>
+          <el-form-item label="新名称" :label-width="formLabelWidth">
+            <el-input v-model="reNameForm.newName" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="editFileName">确 定</el-button>
+          </div>
+        </template>
+      </el-dialog>
     </div>
   </el-scrollbar>
 </template>
@@ -102,7 +148,7 @@ export default {
       //   }
       this.fileList = list.slice(head, tail)
       this.getPathList()
-      console.log(this.fileList.length+":"+this.pathList.length)
+      console.log(this.fileList.length + ':' + this.pathList.length)
     },
     handleCurrentChange(current) {
       this.fileList = []
@@ -115,11 +161,67 @@ export default {
       this.getFileListPagination(this.currentPage, this.pageSize)
     },
     getPathList() {
-        this.pathList=[]
+      this.pathList = []
       for (var i = 0; i < this.fileList.length; i++) {
         this.pathList[i] = this.rootPath + '\\' + this.fileList[i]
       }
     },
+    openFile(path) {
+      shell.openPath(path)
+    },
+    openFolder(path) {
+      shell.showItemInFolder(path)
+    },
+    showCheckedList() {
+      console.log(this.checkedList)
+    },
+    deleteFile(path) {
+      //shell.trashItem(path)
+      this.$confirm('此操作将永久删除该文件（包括本地文件）, 是否确定?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          shell.trashItem(path)
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          location.reload()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    openDialogForm(fileId) {
+      this.reNameForm.fileId = fileId
+      this.reNameForm.oldName = this.fileList[fileId]
+      this.reNameForm.filePath = this.rootPath
+      this.dialogFormVisible = true
+    },
+    editFileName() {
+      this.dialogFormVisible = false //关闭dialog页面
+      //移动文件、目录, 会删除以前的, 等于改名
+      var form = this.reNameForm
+      var result = false
+      try {
+        fs.moveSync(form.filePath + '\\' + form.oldName, form.filePath + '\\' + form.newName)
+        result = true
+        console.log('success!')
+      } catch (err) {
+        console.log(err)
+      }
+      //接下来应该还要处理前端逻辑，修改所存储的文件名称与路径
+      console.log(result)
+      if (result) {
+        this.fileList[form.fileId] = form.newName
+        //console.log(this.fileList[form.fileId])
+      }
+    }
   }
 }
 </script>

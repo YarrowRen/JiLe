@@ -13,21 +13,20 @@ const { shell } = require('electron')
 export default {
   data() {
     return {
-        filePath: global.test2File,
+      filePath: global.test2File
     }
   },
   methods: {
-    defaultOpenFile(){
-        shell.openPath(this.filePath)  
+    defaultOpenFile() {
+      shell.openPath(this.filePath)
     },
-    openFileInFolder(){
-        shell.showItemInFolder(this.filePath)
+    openFileInFolder() {
+      shell.showItemInFolder(this.filePath)
     },
-    beep(){
-        shell.beep()
+    beep() {
+      shell.beep()
     }
   }
 }
-
 </script>
 

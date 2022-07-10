@@ -12,6 +12,7 @@
 2022/7/7|全局变量文件Global.vue测试|
 2022/7/8|引入NaiveUI|
 2022/7/9|完成全局路径基本配置,配置electron builder进行前端打包，解决打包后iconfont显示问题，后端基本部署完成，H2数据库引入完成，测试基本使用功能正常，由后端监听启动前端部分测试成功|资源管理方式定义，资源信息存储方式，后端打包方式，H2数据库可视化部分测试
+2022/7/10|添加图集功能测试，前后端连接，H2数据库构建|
 
 
 
@@ -23,3 +24,6 @@
 1. 打包命令：yarn run electron:build
 2. 开发版本启动命令：yarn run electron:dev  
 
+
+# 功能分析
+![暂定合集类型](https://ywrbyimg.oss-cn-chengdu.aliyuncs.com/img/%E6%9C%AA%E5%91%BD%E5%90%8D%E7%99%BD%E6%9D%BFdhuahdshahdsa22.jpg)

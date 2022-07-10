@@ -39,10 +39,26 @@
             </div>
 
             <div style="margin-top: 5px; margin-bottom: 5px; margin-left: 5px; margin-right: 5px">
-              <el-link @click="openDialogForm(id)"><i class="yw-icon-edit"></i></el-link>
-              <el-link @click="openFolder(item)"><i class="yw-icon-folder-close"></i></el-link>
-              <el-link @click="deleteFile(item)"><i class="yw-icon-ashbin"></i></el-link>
-              <el-link><i class="yw-icon-attachment"></i></el-link>
+              <el-link @click="openDialogForm(id)">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#yw-icon-edit"></use>
+                </svg>
+              </el-link>
+              <el-link @click="openFolder(item)">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#yw-icon-folder-close"></use>
+                </svg>
+              </el-link>
+              <el-link @click="deleteFile(item)">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#yw-icon-ashbin"></use>
+                </svg>
+              </el-link>
+              <el-link>
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#yw-icon-attachment"></use>
+                </svg>
+              </el-link>
 
               <div style="float: right">
                 <el-checkbox v-model="checkedList[id]"></el-checkbox>
@@ -87,7 +103,7 @@ export default {
     return {
       dialogFormVisible: false,
       fit: 'cover',
-      defaultCover: "src/icons/my-icon/video-o.svg",
+      defaultCover: 'src/icons/my-icon/video-o.svg',
       rootPath: global.test5File,
       fileList: [],
       coverList: [],
@@ -111,8 +127,8 @@ export default {
     for (var i = 0; i < this.fileList.length; i++) {
       this.pathList[i] = this.rootPath + '\\' + this.fileList[i]
     }
-    for(var j=0; j<this.fileList.length; j++){
-      this.coverList[j]=this.defaultCover
+    for (var j = 0; j < this.fileList.length; j++) {
+      this.coverList[j] = this.defaultCover
     }
   },
   methods: {
@@ -143,7 +159,7 @@ export default {
     deleteCover(item) {
       var id = item.id
       console.log(id)
-      this.coverList[id] =this.defaultCover
+      this.coverList[id] = this.defaultCover
     },
     initMenuTemplate(id) {
       this.contextMenuTemplate = [

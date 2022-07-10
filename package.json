@@ -1,7 +1,7 @@
 {
-    "name": "vue3-admin-electron",
+    "name": "jile",
     "version": "1.3.4",
-    "author": "kuanghua(869653722@qq.com)",
+    "author": "Ywrby(ywrby@foxmail.com)",
     "scripts": {
         "dev": "vite --mode serve-dev --host",
         "serve": "vite preview --mode build",
@@ -17,8 +17,8 @@
     },
     "main": "electron-main.js",
     "build": {
-        "productName": "vue3-admin-electron",
-        "appId": "top.kuanghua.electron",
+        "productName": "jile",
+        "appId": "cn.ywrby.jile",
         "asar": false,
         "afterPack": "./build/afterPack.js",
         "directories": {

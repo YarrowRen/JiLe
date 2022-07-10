@@ -1,5 +1,6 @@
 <template>
   <div class="dashboard-container">
+    <el-button type="primary" @click="testFrontLink">测试后端连接</el-button>
     <div class="dashboard-text">name: {{ username }}</div>
     <div>update element-plus to 1.2.+, add svg icon, icon-font is abandoned</div>
     <i class="el-icon-add-location">abandoned</i>
@@ -13,17 +14,29 @@
   </div>
 </template>
 
-<script setup>
-import * as Svg from '@element-plus/icons-vue'
-import { computed, ref } from 'vue'
-import { useStore } from 'vuex'
-let store = useStore()
-const username = computed(() => {
-  return store.state.user.username
-})
-const showObj = ref(GLOBAL_VAR)
-// eslint-disable-next-line no-undef
-const showObjString = ref(GLOBAL_STRING)
+<script>
+import { mapState, mapActions } from "vuex";
+
+
+export default {
+  name: 'dashoboard',
+  data() {
+    return {
+      frontendState: "",
+    }
+  },
+  methods: {
+    ...mapActions("user", ["testFrontend"]),
+
+    testFrontLink(){
+      this.testFrontend().then((response) => {
+        this.frontendState = response;
+        console.log(this.frontendState)
+      });
+    }
+  }
+}
+
 </script>
 
 <style lang="scss" scoped>

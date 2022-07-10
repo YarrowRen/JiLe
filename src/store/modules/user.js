@@ -1,4 +1,4 @@
-import { loginReq, logoutReq, getInfoReq } from '@/api/user'
+import { loginReq, logoutReq, getInfoReq, testFrontend } from '@/api/user'
 import { setToken, removeToken } from '@/utils/auth'
 
 const getDefaultState = () => {
@@ -64,6 +64,23 @@ const actions = {
           const { roles, username } = data
           commit('M_username', username)
           commit('M_roles', roles)
+          // commit('SET_AVATAR', avatar)
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  },
+
+  testFrontend() {
+    return new Promise((resolve, reject) => {
+      testFrontend()
+        .then((response) => {
+          const { data } = response
+          if (!data) {
+            return reject('后端启动失败！')
+          }
           // commit('SET_AVATAR', avatar)
           resolve(data)
         })

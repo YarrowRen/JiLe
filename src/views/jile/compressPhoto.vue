@@ -17,28 +17,26 @@
 </template>
 
 <script>
-
 import global from '../Global.vue'
 export default {
   data() {
     return {
-        filePath: global.test2File,
-        compressBase64:'',
-        testPath:''
+      filePath: global.test2File,
+      compressBase64: '',
+      testPath: ''
     }
   },
-  created(){
-  },
+  created() {},
   methods: {
     compressImage(filePath) {
-        //console.log(filePath)
-        lrz(filePath, {quality:0.5})
-        .then(rst=> {
-            console.log(this.filePath)
-            this.testPath=rst.base64
+      //console.log(filePath)
+      lrz(filePath, { quality: 0.5 })
+        .then((rst) => {
+          console.log(this.filePath)
+          this.testPath = rst.base64
         })
         .catch(function (error) {
-            console.log(error)
+          console.log(error)
           //失败时执行
         })
         .always(function () {

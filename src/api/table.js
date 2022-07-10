@@ -1,4 +1,4 @@
-import request from 'axios'
+import request from '@/utils/axiosReq'
 
 export function getList(params) {
   return request({

@@ -7,9 +7,7 @@
     <n-button type="success">Success</n-button>
     <n-button type="warning">Warning</n-button>
     <n-button type="error">Error</n-button>
-    <n-button text>
-      那车头依然吐着烟
-    </n-button>
+    <n-button text>那车头依然吐着烟</n-button>
   </n-space>
 </template>
 

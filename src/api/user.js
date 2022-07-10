@@ -26,3 +26,11 @@ export function logoutReq() {
     method: 'post'
   })
 }
+
+
+export function testFrontend() {
+  return request({
+    url: '/user/frontendState',
+    method: 'get'
+  })
+}

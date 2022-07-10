@@ -70,6 +70,12 @@ export const constantRoutes = [
         meta: { title: '文件夹获取测试' }
       },
       {
+        path: 'addIc',
+        component: () => import('@/views/jile/addIc.vue'),
+        name: '创建图集测试',
+        meta: { title: '创建图集测试' }
+      },
+      {
         path: 'photo-gallery',
         component: () => import('@/views/jile/photoGallery.vue'),
         name: '图片缩略图展示',
@@ -370,7 +376,7 @@ export const asyncRoutes = [
     meta: {
       title: 'Permission',
       icon: 'lock',
-      roles: ['admin', 'editor'] // you can set roles in root nav
+      // roles: ['admin', 'editor'] // you can set roles in root nav
     },
     children: [
       {
@@ -388,7 +394,7 @@ export const asyncRoutes = [
         name: 'PagePermission',
         meta: {
           title: 'Page Permission',
-          roles: ['admin'] // or you can only set roles in sub nav
+          // roles: ['admin'] // or you can only set roles in sub nav
         }
       },
       {
