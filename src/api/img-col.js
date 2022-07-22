@@ -7,3 +7,10 @@ export function addIc(data) {
     data
   })
 }
+
+export function getIc() {
+  return request({
+    url: '/ic/getIc',
+    method: 'get'
+  })
+}

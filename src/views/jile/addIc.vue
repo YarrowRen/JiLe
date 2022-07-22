@@ -1,6 +1,22 @@
 <template>
   <div>
     <el-button type="primary" @click="addIcDialog">添加图集</el-button>
+    <el-button type="primary" @click="showRadioValue">当前选择图集输出（radio值）</el-button>
+  </div>
+  <br />
+  <div>
+    <el-card>
+      <el-radio :key="0" v-model="radio" :label="0">全部</el-radio>
+      <el-radio v-for="(item, id) in this.icList" :key="id" v-model="radio" :label="item.id">
+        {{ item.ic_name }}
+      </el-radio>
+    </el-card>
+  </div>
+  <br>
+  <div>
+    <el-card>
+
+    </el-card>
   </div>
 
   <div id="dialog">
@@ -30,7 +46,7 @@
         >
           <el-input v-model="ic_info.ic_path" placeholder="请选择文件夹" readonly class="input-with-select">
             <template #append>
-              <el-button @click="chooseFiles" type="warning">
+              <el-button type="warning" @click="chooseFiles">
                 点击选择
                 <svg class="icon" aria-hidden="true">
                   <use xlink:href="#yw-icon-folder-close"></use>
@@ -65,12 +81,25 @@ export default {
         ic_desc: '',
         id: 0
       },
+      icList: [
+        {
+          ic_name: '',
+          ic_path: '',
+          ic_desc: '',
+          id: 0
+        }
+      ],
+      radio: '',
       res_data: ''
     }
   },
 
+  created() {
+    this.getIcTest()
+  },
+
   methods: {
-    ...mapActions('img-col', ['addIc']),
+    ...mapActions('img-col', ['addIc', 'getIc']),
 
     addIcTest() {
       if (this.ic_info.ic_name == '' || this.ic_info.ic_name == null) {
@@ -96,6 +125,12 @@ export default {
       }
     },
 
+    getIcTest() {
+      this.getIc().then((response) => {
+        this.icList = response.data
+      })
+    },
+
     chooseFiles() {
       //利用Electron的Dialog打开文件选择器或文件夹选择器并进行特殊设置
       dialog
@@ -114,6 +149,9 @@ export default {
     },
     addIcDialog() {
       this.dialogFormVisible = true
+    },
+    showRadioValue() {
+      console.log(this.radio)
     }
   }
 }
