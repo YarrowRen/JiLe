@@ -7,7 +7,7 @@
   <div>
     <el-card>
       <el-radio :key="0" v-model="radio" :label="0">全部</el-radio>
-      <el-radio v-for="(item, id) in this.icList" :key="id" v-model="radio" :label="item.id">
+      <el-radio v-for="(item, id) in icList" :key="id" v-model="radio" :label="item.id">
         {{ item.ic_name }}
       </el-radio>
     </el-card>
@@ -97,7 +97,9 @@ export default {
   created() {
     this.getIcTest()
   },
-
+  mounted(){
+    this.$bus
+  },
   methods: {
     ...mapActions('img-col', ['addIc', 'getIc']),
 
