@@ -42,6 +42,21 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/waterfall',
+    component: Layout,
+    redirect: '/waterfall',
+    children: [
+      {
+        path: 'waterfall',
+        name: 'waterfall',
+        component: () => import('@/views/waterfall/index.vue'),
+        //using el svg icon, the elSvgIcon first when at the same time using elSvgIcon and icon
+        meta: { title: 'waterfall', elSvgIcon: 'Fold' }
+      }
+    ]
+  },
+
 
 
 
@@ -62,6 +77,12 @@ export const constantRoutes = [
         component: () => import('@/views/jile/waterfall.vue'),
         name: '瀑布流',
         meta: { title: '瀑布流' }
+      },
+      {
+        path: 'test-waterfall2',
+        component: () => import('@/views/jile/waterfall2.vue'),
+        name: '瀑布流-插件',
+        meta: { title: '瀑布流-插件' }
       },
       {
         path: 'test-naiveui',

@@ -89,6 +89,7 @@
         "path": "0.12.7",
         "path-to-regexp": "^6.2.0",
         "tinymce": "4.9.11",
+        "v3-waterfall": "^1.1.2",
         "vue": "3.2.26",
         "vue-router": "4.0.12",
         "vue-video-player": "^5.0.2",
