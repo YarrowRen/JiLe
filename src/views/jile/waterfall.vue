@@ -1,241 +1,123 @@
 <template>
-  <el-scrollbar>
-    <div style="position: relative">
-      <div class="container">
-        <div v-for="(column, index) in columns" :key="index" class="column">
-          <div v-for="(item, i) in column.columnArr" :key="i" class="item" :style="{ height: item.height + 'px' }">
-            <!-- {{ item.text }} -->
-            <el-image :src="item.src" fit="cover" :style="{ height: item.height + 'px', width: '220px' }" class="image"/>
-          </div>
-        </div>
-      </div>
-      <div
-        v-if="loading"
-        v-loading="loading"
-        class="loading"
-        element-loading-text="加载中"
-        element-loading-spinner="el-icon-loading"
-        element-loading-background="rgba(0, 0, 0, 0.8)"
-      ></div>
-    </div>
-  </el-scrollbar>
+    <grid-layout :layout="layout"
+
+                 :col-num="12"
+                 :row-height="30"
+                 :is-draggable="draggable"
+                 :is-resizable="resizable"
+                 :vertical-compact="true"
+                 :use-css-transforms="true"
+    >
+        <grid-item v-for="item in layout"
+        :key="item.i"
+                   :static="item.static"
+                   :x="item.x"
+                   :y="item.y"
+                   :w="item.w"
+                   :h="item.h"
+                   :i="item.i"
+        >
+            <span class="text">{{itemTitle(item)}}</span>
+        </grid-item>
+    </grid-layout>
 </template>
+
 <script>
+import { GridLayout, GridItem } from "vue-grid-layout"
 export default {
-  data() {
-    return {
-      contentArr: [
-        { value: 0, height: 0, width: 0, src: './src/static/img/1.jpg', background: '#409eff', text: '1', top: 0 },
-        { value: 1, height: 0, width: 0, src: './src/static/img/2.jpg', background: '#67c23a', text: '2', top: 0 },
-        { value: 2, height: 0, width: 0, src: './src/static/img/3.jpg', background: '#e6a23c', text: '3', top: 0 },
-        { value: 3, height: 0, width: 0, src: './src/static/img/4.jpg', background: '#f56c6c', text: '4', top: 0 },
-        { value: 4, height: 0, width: 0, src: './src/static/img/5.jpg', background: '#909399', text: '5', top: 0 },
-        { value: 5, height: 0, width: 0, src: './src/static/img/6.jpg', background: '#409eff', text: '6', top: 0 },
-        { value: 6, height: 0, width: 0, src: './src/static/img/7.jpg', background: '#67c23a', text: '7', top: 0 },
-        { value: 7, height: 0, width: 0, src: './src/static/img/8.jpg', background: '#e6a23c', text: '8', top: 0 },
-        { value: 8, height: 0, width: 0, src: './src/static/img/9.jpg', background: '#f56c6c', text: '9', top: 0 },
-        { value: 9, height: 0, width: 0, src: './src/static/img/10.jpg', background: '#909399', text: '10', top: 0 },
-        { value: 10, height: 0, width: 0, src: './src/static/img/11.jpg', background: '#409eff', text: '11', top: 0 },
-        { value: 11, height: 0, width: 0, src: './src/static/img/12.jpg', background: '#67c23a', text: '12', top: 0 },
-        { value: 12, height: 0, width: 0, src: './src/static/img/13.jpg', background: '#e6a23c', text: '13', top: 0 },
-        { value: 13, height: 0, width: 0, src: './src/static/img/14.jpg', background: '#f56c6c', text: '14', top: 0 },
-        { value: 14, height: 0, width: 0, src: './src/static/img/15.jpg', background: '#909399', text: '15', top: 0 },
-        { value: 15, height: 0, width: 0, src: './src/static/img/16.jpg', background: '#409eff', text: '16', top: 0 },
-        { value: 16, height: 0, width: 0, src: './src/static/img/17.jpg', background: '#67c23a', text: '17', top: 0 },
-        { value: 17, height: 0, width: 0, src: './src/static/img/18.jpg', background: '#e6a23c', text: '18', top: 0 },
-        { value: 18, height: 0, width: 0, src: './src/static/img/19.jpg', background: '#f56c6c', text: '19', top: 0 },
-        { value: 19, height: 0, width: 0, src: './src/static/img/20.jpg', background: '#909399', text: '20', top: 0 }
-      ],
-      columns: [],
-      arrIndex: [],
-      loading: false,
-      contentArr2: []
-    }
-  },
-  created() {
-    this.getImgHeight().then(this.initPage)
-  },
-  mounted() {
-    this.initPage()
-  },
-  methods: {
-    initPage() {
-      this.init()
-      window.onresize = () => {
-        this.init()
-      }
-      let clientH = document.documentElement.clientHeight || document.body.clientHeight
-      document.onscroll = (e) => {
-        let top = e.target.documentElement.scrollTop || e.target.body.scrollTop
-
-        let height = e.target.documentElement.scrollHeight || e.target.body.scrollHeight
-
-        if (top + clientH == height) {
-          this.loading = true
-          this.pushElement().then(() => {
-            //  从接口最新获取的元素push到目前高度最小的一列
-            for (var index = 0; index < this.contentArr2.length; index++) {
-              this.arrIndex = []
-              let arr = [] //找到高度最小的一列，可能有多个
-              let minHeight = 0 //高度最小的一列的高度
-              let pushIndex = 0 //高度最小的一列所在位置的索引
-
-              for (let i = 0; i < this.columns.length; i++) {
-                arr.push({
-                  height: this.columns[i].columnArr[this.columns[i].columnArr.length - 1].height,
-                  top: this.columns[i].columnArr[this.columns[i].columnArr.length - 1].top
-                })
-              }
-
-              minHeight = this.getMinHeight(arr)
-              this.getMinIndex(minHeight)
-              if (this.arrIndex.length > 0) {
-                pushIndex = Math.min.apply(null, this.arrIndex) //出现高度一样的，去索引最小的
-              }
-
-              this.contentArr[index].top = minHeight + 20
-              this.columns[pushIndex].columnArr.push(this.contentArr[index])
-              this.loading = false
+    components: {
+        GridLayout,
+        GridItem
+    },
+    data() {
+        return {
+            layout: [
+                {"x":0,"y":0,"w":2,"h":2,"i":"0", static: false},
+                {"x":2,"y":0,"w":2,"h":4,"i":"1", static: true},
+                {"x":4,"y":0,"w":2,"h":5,"i":"2", static: false},
+                {"x":6,"y":0,"w":2,"h":3,"i":"3", static: false},
+                {"x":8,"y":0,"w":2,"h":3,"i":"4", static: false},
+                {"x":10,"y":0,"w":2,"h":3,"i":"5", static: false},
+                {"x":0,"y":5,"w":2,"h":5,"i":"6", static: false},
+                {"x":2,"y":5,"w":2,"h":5,"i":"7", static: false},
+                {"x":4,"y":5,"w":2,"h":5,"i":"8", static: false},
+                {"x":6,"y":3,"w":2,"h":4,"i":"9", static: true},
+                {"x":8,"y":4,"w":2,"h":4,"i":"10", static: false},
+                {"x":10,"y":4,"w":2,"h":4,"i":"11", static: false},
+                {"x":0,"y":10,"w":2,"h":5,"i":"12", static: false},
+                {"x":2,"y":10,"w":2,"h":5,"i":"13", static: false},
+                {"x":4,"y":8,"w":2,"h":4,"i":"14", static: false},
+                {"x":6,"y":8,"w":2,"h":4,"i":"15", static: false},
+                {"x":8,"y":10,"w":2,"h":5,"i":"16", static: false},
+                {"x":10,"y":4,"w":2,"h":2,"i":"17", static: false},
+                {"x":0,"y":9,"w":2,"h":3,"i":"18", static: false},
+                {"x":2,"y":6,"w":2,"h":2,"i":"19", static: false}
+            ],
+            draggable: true,
+            resizable: true,
+            index: 0
+        }
+    },
+    methods: {
+        itemTitle(item) {
+            let result = item.i;
+            if (item.static) {
+                result += " - Static";
             }
-          })
+            return result;
         }
-      }
-    },
-    pushElement() {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          for (let i = 0; i < 20; i++) {
-            this.contentArr2[i] = {
-              value: i + this.contentArr.length,
-              height: 50 * Math.random() + 50,
-              background: '#409eff',
-              text: i + this.contentArr.length,
-              top: 0
-            }
-          }
-          resolve()
-        }, 500)
-      })
-    },
-    getMinHeight(arr) {
-      let a = []
-      // console.log(arr)
-      // console.log(this.contentArr)
-      for (let i = 0; i < arr.length; i++) {
-        a.push(parseInt(arr[i].height) + parseInt(arr[i].top))
-      }
-      return Math.min.apply(null, a)
-    },
-    getMinIndex(val) {
-      for (let i = 0; i < this.columns.length; i++) {
-        let height = this.columns[i].columnArr[this.columns[i].columnArr.length - 1].height
-        let top = this.columns[i].columnArr[this.columns[i].columnArr.length - 1].top
-        if (parseInt(height) + parseInt(top) == val) {
-          this.arrIndex.push(i)
-        }
-      }
-    },
-    async getImgHeight() {
-      let sel = this
-      for (let i = 0; i < this.contentArr.length; i++) {
-        console.log(i)
-        let img = new Image()
-        img.src = this.contentArr[i].src + '?' + Date.parse(new Date())
-        var promise = new Promise((reslove) => {
-          img.onload = function () {
-            let scale = 220 / img.width
-            var height = Math.floor(scale * img.height)
-            console.log('src: ' + img.src + ', height: ' + img.height + ', width: ' + img.width + ', i: ' + i)
-
-            reslove(height)
-          }
-        })
-        await promise
-        // console.log(promise)
-        promise.then(function (data) {
-          // console.log(data)
-          // this.contentArr[i].height = data
-          sel.contentArr[i].height = data
-        })
-      }
-      // console.log(this.contentArr)
-    },
-    init() {
-      console.log(this.contentArr)
-      this.columns = []
-      let contentLen = this.contentArr.length
-      // 根据可视区域的宽度判断需要几列
-      let cWidth = document.documentElement.clientWidth || document.body.clientWidth
-      // 假设图片宽度为100px
-      let cLen = Math.floor(cWidth / 240 - 1)
-      console.log(cLen)
-
-      // 初始化每一列的第一行元素
-      for (let i = 0; i < cLen; i++) {
-        this.contentArr[i].top = 0 //预设距离顶部值为0
-        this.columns.push({ columnArr: [this.contentArr[i]] })
-      }
-
-      // 对剩余元素的判断，应该放到哪一列
-      for (var index = cLen; index < contentLen; index++) {
-        this.arrIndex = []
-        let arr = [] //找到高度最小的一列，可能有多个
-        let minHeight = 0 //高度最小的一列的高度
-        let pushIndex = 0 //高度最小的一列所在位置的索引
-
-        for (let i = 0; i < this.columns.length; i++) {
-          arr.push({
-            height: this.columns[i].columnArr[this.columns[i].columnArr.length - 1].height,
-            top: this.columns[i].columnArr[this.columns[i].columnArr.length - 1].top
-          })
-        }
-
-        minHeight = this.getMinHeight(arr)
-        this.getMinIndex(minHeight)
-        if (this.arrIndex.length > 0) {
-          pushIndex = Math.min.apply(null, this.arrIndex) //出现高度一样的，去索引最小的
-        }
-
-        this.contentArr[index].top = minHeight + 20
-        this.columns[pushIndex].columnArr.push(this.contentArr[index])
-      }
     }
-  }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-div,
-p {
-  margin: 0;
-  padding: 0;
+.vue-grid-layout {
+    background: #eee;
 }
-.container {
-  margin: 0 auto;
-  padding-bottom: 20px;
-  display: flex;
-  justify-content: space-around;
-  transition: all 0.5s ease-in-out;
+.vue-grid-item:not(.vue-grid-placeholder) {
+    background: #ccc;
+    border: 1px solid black;
 }
-.item {
-  border-radius: 4px;
-  width: 220px;
-  color: #000;
-  margin-top: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: all 0.5s ease-in-out;
+.vue-grid-item .resizing {
+    opacity: 0.9;
 }
-.image{
-  border-radius: 4px;
+.vue-grid-item .static {
+    background: #cce;
 }
-.loading {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.vue-grid-item .text {
+    font-size: 24px;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    height: 100%;
+    width: 100%;
+}
+.vue-grid-item .no-drag {
+    height: 100%;
+    width: 100%;
+}
+.vue-grid-item .minMax {
+    font-size: 12px;
+}
+.vue-grid-item .add {
+    cursor: pointer;
+}
+.vue-draggable-handle {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 0;
+    left: 0;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><circle cx='5' cy='5' r='5' fill='#999999'/></svg>") no-repeat;
+    background-position: bottom right;
+    padding: 0 8px 8px 0;
+    background-repeat: no-repeat;
+    background-origin: content-box;
+    box-sizing: border-box;
+    cursor: pointer;
 }
 </style>

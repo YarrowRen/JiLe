@@ -4,22 +4,19 @@
       <div class="container">
         <div v-for="(column, index) in columns" :key="index" class="column">
           <div v-for="(item, i) in column.columnArr" :key="i" class="item" :style="{ height: item.height + 'px' }">
-            <!-- {{ item.text }} -->
-            <el-image :src="item.src" fit="cover" :style="{ height: item.height + 'px', width: '220px' }" class="image"/>
+            <el-image
+              :src="item.src"
+              fit="cover"
+              :style="{ height: item.height + 'px', width: '220px' }"
+              class="image"
+            />
           </div>
         </div>
       </div>
-      <div
-        v-if="loading"
-        v-loading="loading"
-        class="loading"
-        element-loading-text="加载中"
-        element-loading-spinner="el-icon-loading"
-        element-loading-background="rgba(0, 0, 0, 0.8)"
-      ></div>
     </div>
   </el-scrollbar>
 </template>
+
 <script>
 export default {
   props: {
@@ -30,40 +27,12 @@ export default {
   },
   data() {
     return {
-      // contentArr: [
-      //   { value: 0, height: 0, width: 0, src: './src/static/img/1.jpg', background: '#409eff', text: '1', top: 0 },
-      //   { value: 1, height: 0, width: 0, src: './src/static/img/2.jpg', background: '#67c23a', text: '2', top: 0 },
-      //   { value: 2, height: 0, width: 0, src: './src/static/img/3.jpg', background: '#e6a23c', text: '3', top: 0 },
-      //   { value: 3, height: 0, width: 0, src: './src/static/img/4.jpg', background: '#f56c6c', text: '4', top: 0 },
-      //   { value: 4, height: 0, width: 0, src: './src/static/img/5.jpg', background: '#909399', text: '5', top: 0 },
-      //   { value: 5, height: 0, width: 0, src: './src/static/img/6.jpg', background: '#409eff', text: '6', top: 0 },
-      //   { value: 6, height: 0, width: 0, src: './src/static/img/7.jpg', background: '#67c23a', text: '7', top: 0 },
-      //   { value: 7, height: 0, width: 0, src: './src/static/img/8.jpg', background: '#e6a23c', text: '8', top: 0 },
-      //   { value: 8, height: 0, width: 0, src: './src/static/img/9.jpg', background: '#f56c6c', text: '9', top: 0 },
-      //   { value: 9, height: 0, width: 0, src: './src/static/img/10.jpg', background: '#909399', text: '10', top: 0 },
-      //   { value: 10, height: 0, width: 0, src: './src/static/img/11.jpg', background: '#409eff', text: '11', top: 0 },
-      //   { value: 11, height: 0, width: 0, src: './src/static/img/12.jpg', background: '#67c23a', text: '12', top: 0 },
-      //   { value: 12, height: 0, width: 0, src: './src/static/img/13.jpg', background: '#e6a23c', text: '13', top: 0 },
-      //   { value: 13, height: 0, width: 0, src: './src/static/img/14.jpg', background: '#f56c6c', text: '14', top: 0 },
-      //   { value: 14, height: 0, width: 0, src: './src/static/img/15.jpg', background: '#909399', text: '15', top: 0 },
-      //   { value: 15, height: 0, width: 0, src: './src/static/img/16.jpg', background: '#409eff', text: '16', top: 0 },
-      //   { value: 16, height: 0, width: 0, src: './src/static/img/17.jpg', background: '#67c23a', text: '17', top: 0 },
-      //   { value: 17, height: 0, width: 0, src: './src/static/img/18.jpg', background: '#e6a23c', text: '18', top: 0 },
-      //   { value: 18, height: 0, width: 0, src: './src/static/img/19.jpg', background: '#f56c6c', text: '19', top: 0 },
-      //   { value: 19, height: 0, width: 0, src: './src/static/img/20.jpg', background: '#909399', text: '20', top: 0 }
-      // ],
       columns: [],
-      arrIndex: [],
-      loading: false,
-      contentArr2: []
+      arrIndex: []
     }
   },
-  created() {
-    this.getImgHeight().then(this.initPage)
-    // console.log(this.contentArr)
-  },
   mounted() {
-    // this.initPage()
+    this.initPage()
   },
   methods: {
     initPage() {
@@ -71,58 +40,6 @@ export default {
       window.onresize = () => {
         this.init()
       }
-      let clientH = document.documentElement.clientHeight || document.body.clientHeight
-      document.onscroll = (e) => {
-        let top = e.target.documentElement.scrollTop || e.target.body.scrollTop
-
-        let height = e.target.documentElement.scrollHeight || e.target.body.scrollHeight
-
-        if (top + clientH == height) {
-          this.loading = true
-          this.pushElement().then(() => {
-            //  从接口最新获取的元素push到目前高度最小的一列
-            for (var index = 0; index < this.contentArr2.length; index++) {
-              this.arrIndex = []
-              let arr = [] //找到高度最小的一列，可能有多个
-              let minHeight = 0 //高度最小的一列的高度
-              let pushIndex = 0 //高度最小的一列所在位置的索引
-
-              for (let i = 0; i < this.columns.length; i++) {
-                arr.push({
-                  height: this.columns[i].columnArr[this.columns[i].columnArr.length - 1].height,
-                  top: this.columns[i].columnArr[this.columns[i].columnArr.length - 1].top
-                })
-              }
-
-              minHeight = this.getMinHeight(arr)
-              this.getMinIndex(minHeight)
-              if (this.arrIndex.length > 0) {
-                pushIndex = Math.min.apply(null, this.arrIndex) //出现高度一样的，去索引最小的
-              }
-
-              this.contentArr[index].top = minHeight + 20
-              this.columns[pushIndex].columnArr.push(this.contentArr[index])
-              this.loading = false
-            }
-          })
-        }
-      }
-    },
-    pushElement() {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          for (let i = 0; i < 20; i++) {
-            this.contentArr2[i] = {
-              value: i + this.contentArr.length,
-              height: 50 * Math.random() + 50,
-              background: '#409eff',
-              text: i + this.contentArr.length,
-              top: 0
-            }
-          }
-          resolve()
-        }, 500)
-      })
     },
     getMinHeight(arr) {
       let a = []
@@ -162,7 +79,6 @@ export default {
       }
     },
     init() {
-      // console.log(this.contentArr)
       this.columns = []
       let contentLen = this.contentArr.length
       // 根据可视区域的宽度判断需要几列
@@ -229,14 +145,7 @@ p {
   align-items: center;
   transition: all 0.5s ease-in-out;
 }
-.image{
+.image {
   border-radius: 4px;
-}
-.loading {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
 }
 </style>

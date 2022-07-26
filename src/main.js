@@ -1,12 +1,12 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+
+
 const app = createApp(App)
 import router from './router'
 import '@/styles/index.scss' // global css
 //import vuex
 import store from './store'
-app.use(store)
-
 
 //引入自选图标库
 import './assets/icon/iconfont.css'
@@ -18,7 +18,6 @@ import lrz from 'lrz'
 // import 'vue-video-player/src/custom-theme.css'
 // import 'video.js/dist/video-js.css'
 // app.use(VueVideoPlayer)
-
 
 //import element-plus
 import ElementPlus from 'element-plus'
@@ -59,4 +58,5 @@ import './permission'
 import errorLog from '@/hooks/useErrorLog'
 errorLog()
 
-app.use(router).mount('#app')
+import VueGridLayout from 'vue-grid-layout'
+app.use(store).use(router).use(VueGridLayout).mount('#app')

@@ -79,12 +79,6 @@ export const constantRoutes = [
         meta: { title: '瀑布流' }
       },
       {
-        path: 'test-waterfall2',
-        component: () => import('@/views/jile/waterfall2.vue'),
-        name: '瀑布流-插件',
-        meta: { title: '瀑布流-插件' }
-      },
-      {
         path: 'test-naiveui',
         component: () => import('@/views/jile/naiveui.vue'),
         name: 'NaiveUI测试',
