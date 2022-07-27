@@ -14,6 +14,14 @@
         </div>
       </div>
     </div>
+    <div
+      class="loading"
+      v-if="loading"
+      v-loading="loading"
+      element-loading-text="加载中"
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.8)"
+    ></div>
   </el-scrollbar>
 </template>
 
@@ -28,18 +36,70 @@ export default {
   data() {
     return {
       columns: [],
-      arrIndex: []
+      arrIndex: [],
+      loading: false,
+      contentArr2: []
     }
   },
   mounted() {
     this.initPage()
   },
   methods: {
+    pushElement() {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          this.contentArr2 = this.contentArr
+          resolve()
+        }, 500)
+      })
+    },
     initPage() {
       this.init()
       window.onresize = () => {
         this.init()
       }
+      window.addEventListener(
+        'scroll',
+        (e) => {
+          // console.log(e)
+          // console.log(window)
+          let top = e.target.scrollTop
+          let clientH = e.target.clientHeight
+
+          let height = e.target.scrollHeight
+          // console.log('top:' + top + '+clientH:' + clientH + '=height:' + height)
+          if (top + clientH == height) {
+            this.loading = true
+            this.pushElement().then(() => {
+              //  从接口最新获取的元素push到目前高度最小的一列
+              for (var index = 0; index < this.contentArr2.length; index++) {
+                this.arrIndex = []
+                let arr = [] //找到高度最小的一列，可能有多个
+                let minHeight = 0 //高度最小的一列的高度
+                let pushIndex = 0 //高度最小的一列所在位置的索引
+
+                for (let i = 0; i < this.columns.length; i++) {
+                  arr.push({
+                    height: this.columns[i].columnArr[this.columns[i].columnArr.length - 1].height,
+                    top: this.columns[i].columnArr[this.columns[i].columnArr.length - 1].top
+                  })
+                }
+
+                minHeight = this.getMinHeight(arr)
+                this.getMinIndex(minHeight)
+                if (this.arrIndex.length > 0) {
+                  pushIndex = Math.min.apply(null, this.arrIndex) //出现高度一样的，去索引最小的
+                }
+
+                this.contentArr[index].top = minHeight + 20
+                this.columns[pushIndex].columnArr.push(this.contentArr[index])
+                this.loading = false
+              }
+            })
+          }
+        },
+        true
+      )
     },
     getMinHeight(arr) {
       let a = []

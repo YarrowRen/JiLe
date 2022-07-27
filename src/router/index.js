@@ -45,10 +45,9 @@ export const constantRoutes = [
   {
     path: '/waterfall',
     component: Layout,
-    redirect: '/waterfall',
     children: [
       {
-        path: 'waterfall',
+        path: 'index',
         name: 'waterfall',
         component: () => import('@/views/waterfall/index.vue'),
         //using el svg icon, the elSvgIcon first when at the same time using elSvgIcon and icon

@@ -1,5 +1,6 @@
 <template>
-    <grid-layout :layout="layout"
+    <grid-layout
+:layout="layout"
 
                  :col-num="12"
                  :row-height="30"
@@ -8,7 +9,8 @@
                  :vertical-compact="true"
                  :use-css-transforms="true"
     >
-        <grid-item v-for="item in layout"
+        <grid-item
+v-for="item in layout"
         :key="item.i"
                    :static="item.static"
                    :x="item.x"
