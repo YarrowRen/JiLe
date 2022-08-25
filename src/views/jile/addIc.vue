@@ -1,68 +1,68 @@
 <template>
   <div>
-    <el-button type="primary" @click="addIcDialog">添加图集</el-button>
-    <el-button type="primary" @click="showRadioValue">当前选择图集输出（radio值）</el-button>
-  </div>
-  <br />
-  <div>
-    <el-card>
-      <el-radio :key="0" v-model="radio" :label="0">全部</el-radio>
-      <el-radio v-for="(item, id) in icList" :key="id" v-model="radio" :label="item.id">
-        {{ item.ic_name }}
-      </el-radio>
-    </el-card>
-  </div>
-  <br>
-  <div>
-    <el-card>
+    <div>
+      <el-button type="primary" @click="addIcDialog">添加图集</el-button>
+      <el-button type="primary" @click="showRadioValue">当前选择图集输出（radio值）</el-button>
+    </div>
+    <br />
+    <div>
+      <el-card>
+        <el-radio :key="0" v-model="radio" :label="0">全部</el-radio>
+        <el-radio v-for="(item, id) in icList" :key="id" v-model="radio" :label="item.id">
+          {{ item.ic_name }}
+        </el-radio>
+      </el-card>
+    </div>
+    <br />
+    <div>
+      <el-card>{{ this.getIcByRadio(this.radio) }}</el-card>
+    </div>
 
-    </el-card>
-  </div>
-
-  <div id="dialog">
-    <el-dialog v-model="dialogFormVisible" title="图集信息">
-      <el-form :model="ic_info">
-        <el-form-item
-          prop="ic_name"
-          label="图集名称"
-          :label-width="formLabelWidth"
-          :rules="[{ required: true, trigger: 'blur', message: '图集名称不能为空' }]"
-        >
-          <el-input v-model="ic_info.ic_name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="图集简介" :label-width="formLabelWidth">
-          <el-input
-            v-model="ic_info.ic_desc"
-            :autosize="{ minRows: 2, maxRows: 6 }"
-            type="textarea"
-            placeholder="Please input"
-          />
-        </el-form-item>
-        <el-form-item
-          label="选择文件夹"
-          :label-width="formLabelWidth"
-          prop="ic_path"
-          :rules="[{ required: true, trigger: 'change', message: '图集名称不能为空' }]"
-        >
-          <el-input v-model="ic_info.ic_path" placeholder="请选择文件夹" readonly class="input-with-select">
-            <template #append>
-              <el-button type="warning" @click="chooseFiles">
-                点击选择
-                <svg class="icon" aria-hidden="true">
-                  <use xlink:href="#yw-icon-folder-close"></use>
-                </svg>
-              </el-button>
-            </template>
-          </el-input>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="addIcTest">确 定</el-button>
-        </div>
-      </template>
-    </el-dialog>
+    <div id="dialog">
+      <el-dialog v-model="dialogFormVisible" title="图集信息">
+        <el-form :model="ic_info">
+          <el-form-item
+            prop="ic_name"
+            label="图集名称"
+            :label-width="formLabelWidth"
+            :rules="[{ required: true, trigger: 'blur', message: '图集名称不能为空' }]"
+          >
+            <el-input v-model="ic_info.ic_name" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="图集简介" :label-width="formLabelWidth">
+            <el-input
+              v-model="ic_info.ic_desc"
+              :autosize="{ minRows: 2, maxRows: 6 }"
+              type="textarea"
+              placeholder="Please input"
+            />
+          </el-form-item>
+          <el-form-item
+            label="选择文件夹"
+            :label-width="formLabelWidth"
+            prop="ic_path"
+            :rules="[{ required: true, trigger: 'change', message: '图集名称不能为空' }]"
+          >
+            <el-input v-model="ic_info.ic_path" placeholder="请选择文件夹" readonly class="input-with-select">
+              <template #append>
+                <el-button type="warning" @click="chooseFiles">
+                  点击选择
+                  <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#yw-icon-folder-close"></use>
+                  </svg>
+                </el-button>
+              </template>
+            </el-input>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="addIcTest">确 定</el-button>
+          </div>
+        </template>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -97,7 +97,7 @@ export default {
   created() {
     this.getIcTest()
   },
-  mounted(){
+  mounted() {
     this.$bus
   },
   methods: {
@@ -131,6 +131,22 @@ export default {
       this.getIc().then((response) => {
         this.icList = response.data
       })
+    },
+
+    getIcByRadio(radio) {
+      if (radio == 0) {
+        return '输出全部图集'
+      } else {
+        for (var i = 0; i < this.icList.length; i++) {
+          if (this.icList[i].id == radio) {
+            return this.icList[i]
+          }
+        }
+      }
+    },
+
+    showIcList(icList){
+      
     },
 
     chooseFiles() {

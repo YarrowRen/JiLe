@@ -72,12 +72,6 @@ export const constantRoutes = [
         meta: { title: 'IndexedDB测试' }
       },
       {
-        path: 'test-waterfall',
-        component: () => import('@/views/jile/waterfall.vue'),
-        name: '瀑布流',
-        meta: { title: '瀑布流' }
-      },
-      {
         path: 'test-naiveui',
         component: () => import('@/views/jile/naiveui.vue'),
         name: 'NaiveUI测试',

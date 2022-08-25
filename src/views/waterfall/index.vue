@@ -2,7 +2,7 @@
   <div>
     <el-card>
       <div style="height: 500px">
-        <waterfall v-if="targetVal == contentArr.length && targetPage == 0" :content-arr="contentArr" />
+        <waterfall v-if="targetPage == 0" :content-arr="contentArr" />
         <cardfall v-if="targetPage == 1" :content-arr="contentArr" />
       </div>
     </el-card>
@@ -39,17 +39,23 @@ export default {
     }
   },
   created() {
-    this.getFileListPagination(this.currentPage, this.pageSize)
-    this.getImgHeight()
+    this.getFileList()
+    // this.getImgHeight()
   },
   methods: {
     initImg() {},
     getPathList() {
       this.contentArr = []
       for (var i = 0; i < this.fileList.length; i++) {
-        var fileItem = { value: i, src: this.rootPath + '\\' + this.fileList[i], height: 0, width: 0, top: 0, title: i }
+        var fileItem = { value: i, src: this.rootPath + '\\' + this.fileList[i], height: 0, width: 0, top: 0, title: i ,trueHeight: 0}
         this.contentArr.push(fileItem)
       }
+    },
+    getFileList() {
+      this.fileList = fs.readdirSync(this.rootPath)
+      //对文件列表排序保证唯一性
+      this.fileList.sort()
+      this.getPathList()
     },
     getFileListPagination(page, pageSize) {
       var list = fs.readdirSync(this.rootPath)

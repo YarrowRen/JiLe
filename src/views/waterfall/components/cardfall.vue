@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p>{{this.contentArr}}</p>
+    <p>{{contentArr}}</p>
   </div>
 </template>
 

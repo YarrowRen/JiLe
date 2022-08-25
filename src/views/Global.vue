@@ -2,7 +2,7 @@
 <script>
 
 const test1File="I:\\JiLeFile\\test1";
-const test2File="I:\\JiLeFile\\test1\\BA_1.png";
+const test2File="I:\\JiLeFile\\test1\\01.jpg";
 const test3File="I:\\JiLeFile\\test1.zip"
 const test4File="I:\\JiLeFile\\unzip_temp"
 const test5File="I:\\JiLeFile\\video"
