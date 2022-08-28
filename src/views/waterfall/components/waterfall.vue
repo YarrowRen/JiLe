@@ -1,9 +1,9 @@
 <template>
-  <el-scrollbar v-if="this.targetVal == this.contentArr.length">
+  <el-scrollbar v-if="targetVal == contentArr.length">
     <div>
-      <el-button @click="enlargeImage" type="primary">enlargeImage</el-button>
-      <el-button @click="decreaseImage" type="primary">decreaseImage</el-button>
-      <el-button @click="getContentArr" type="primary">getContentArr</el-button>
+      <el-button type="primary" @click="enlargeImage">enlargeImage</el-button>
+      <el-button type="primary" @click="decreaseImage">decreaseImage</el-button>
+      <el-button type="primary" @click="getContentArr">getContentArr</el-button>
     </div>
     <div style="position: relative">
       <div class="container">
@@ -26,6 +26,7 @@
 <script>
 export default {
   props: {
+    //从父组件获取图集信息
     contentArr: {
       type: Object,
       required: true
@@ -33,22 +34,17 @@ export default {
   },
   data() {
     return {
-      itemWidth: 220,
-      targetVal: 0,
+      itemWidth: 220, //默认图片框宽度
+      targetVal: 0, //标志值，用来记录已读取图片信息数目，待全部读取完成后显示瀑布流
       columns: [],
-      arrIndex: [],
-      loading: false,
-      loadingSuccess: false,
-      contentArr2: []
+      arrIndex: []
       // pageSize: 25,
       // startPage: 1,
       // pageNum: 1
     }
   },
-  created() {
-    this.getImgHeight()
-  },
   watch: {
+    //监听标志值变化，直到所有图片长度成功获取
     targetVal: {
       handler(newValue, oldValue) {
         if (newValue == this.contentArr.length) {
@@ -58,17 +54,26 @@ export default {
       immediate: true
     }
   },
+  created() {
+    this.getImgHeight()
+  },
   mounted() {
     // this.initPage()
+    //监听键盘与鼠标（CTRL+鼠标滚轮）实现瀑布流图片缩放
     this.keyDownAndScroll()
   },
   methods: {
+    //初始化页面
     initPage() {
+      //调用初始化方法
       this.init()
+      //在页面大小出现变化时重新加载瀑布流
       window.onresize = () => {
         this.init()
       }
     },
+
+    //获取当前列下最短长度位置（用来确定下一张图片插入位置）
     getMinHeight(arr) {
       let a = []
       for (let i = 0; i < arr.length; i++) {
@@ -76,6 +81,8 @@ export default {
       }
       return Math.min.apply(null, a)
     },
+
+    //获取指定长度位置后，进一步获取该位置索引值以确定图片插入位置
     getMinIndex(val) {
       for (let i = 0; i < this.columns.length; i++) {
         let height = this.columns[i].columnArr[this.columns[i].columnArr.length - 1].height
@@ -138,9 +145,13 @@ export default {
         })
       }
     },
+
+    //测试方法，打印contentArr
     getContentArr() {
       console.log(this.contentArr)
     },
+
+    //刷新图片高度
     refreshImageHeight() {
       //刷新图片高度（用于在页面中通过CTRL+鼠标滚轮或滑动条动态调整图片宽度后进行图片高度的刷新）
       //由于在页面初始化中执行的getImgHeight方法已经获取到了图片的真实高度，
@@ -155,6 +166,8 @@ export default {
         // console.log(this.contentArr[i])
       }
     },
+
+    //初始化（重载）页面瀑布流
     init() {
       this.columns = []
       let contentLen = this.contentArr.length
@@ -194,15 +207,15 @@ export default {
         this.contentArr[index].top = minHeight + 20
         this.columns[pushIndex].columnArr.push(this.contentArr[index])
       }
-
-      // this.pageNum++
     },
 
+    //图像放大（宽度加10）
     enlargeImage() {
       this.itemWidth += 10
       this.refreshImageHeight()
       this.init()
     },
+    //图片缩小（宽度减10）
     decreaseImage() {
       this.itemWidth -= 10
       this.refreshImageHeight()
@@ -211,40 +224,26 @@ export default {
 
     // 监听键盘和鼠标滚轮组合
     keyDownAndScroll() {
-      // document.onkeydown = (e) => {
-      //   //事件对象兼容
-      //   let e1 = e || event || window.event || arguments.callee.caller.arguments[0]
-      //   //键盘按键判断:左箭头-37;上箭头-38；右箭头-39;下箭头-40
-      //   //左
-      //   if (e1 && e1.keyCode == 37) {
-      //     // 按下左箭头
-      //     console.log('按下左箭头')
-      //   } else if (e1 && e1.keyCode == 39) {
-      //     // 按下右箭头
-      //     console.log('按下右箭头')
-      //   }
-      // }
-
-      // let w = this
-      let ctrlDown = false
+      let ctrlDown = false //ctrl按键按压情况
       ;(document.onkeydown = function (e) {
-        // console.log(e)
         //事件对象兼容
         let e1 = e || event || window.event || arguments.callee.caller.arguments[0]
+        //按下CTRL键下后记录当前情况
         if (e1.keyCode === 17) ctrlDown = true
       }),
         (document.onkeyup = function (e) {
           let e1 = e || event || window.event || arguments.callee.caller.arguments[0]
+          //松开后修改CTRL键按压情况
           if (e1.keyCode === 17) ctrlDown = false
         }),
+        //监听鼠标滚轮情况
         document.addEventListener(
           'mousewheel',
           (e) => {
             // e.preventDefault()
-
             let e1 = e || event || window.event || arguments.callee.caller.arguments[0]
+            //判断CTRL键是否被按下
             if (ctrlDown) {
-              let _newTimes = []
               if (e1.wheelDeltaY > 0) {
                 // 放大
                 console.log('放大')

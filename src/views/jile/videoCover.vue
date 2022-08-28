@@ -1,9 +1,12 @@
 <template>
   <el-scrollbar style="height: 100%">
     <div>
+      <div>
       <el-button @click="showCheckedList">查看checkedList</el-button>
+      <el-button @click="getCover">获取封面</el-button>
+      </div>
       <el-row :gutter="5">
-        <el-col v-for="(item, id) in pathList" :key="id" :span="4">
+        <el-col v-for="(item, id) in videoInfo" :key="id" :span="4">
           <el-card :body-style="{ padding: '0px' }" shadow="always" style="margin-top: 10px">
             <div
               style="
@@ -15,9 +18,9 @@
                 margin-right: 8px;
               "
             >
-              <el-tooltip class="item" effect="dark" :content="fileList[id]" placement="top">
+              <el-tooltip class="item" effect="dark" :content="videoInfo[id].video_name" placement="top">
                 <div id="title">
-                  <div>{{ fileList[id] }}</div>
+                  <div>{{ videoInfo[id].video_name }}</div>
                 </div>
               </el-tooltip>
               <el-rate v-model="value1"></el-rate>
@@ -28,11 +31,11 @@
               class="pointer"
               style="position: relative; width: 100%; height: 0; padding-top: 100%"
               @contextmenu="rtClickOpenMenu(id)"
-              @click="openFile(item)"
+              @click="openFile(item.video_path)"
             >
               <el-image
                 style="cursor: pointer; position: absolute; top: 0; left: 0; width: 100%; height: 100%"
-                :src="coverList[id]"
+                :src="videoInfo[id].video_cover"
                 class="image"
                 :fit="fit"
               ></el-image>
@@ -44,12 +47,12 @@
                   <use xlink:href="#yw-icon-edit"></use>
                 </svg>
               </el-link>
-              <el-link @click="openFolder(item)">
+              <el-link @click="openFolder(item.video_path)">
                 <svg class="icon" aria-hidden="true">
                   <use xlink:href="#yw-icon-folder-close"></use>
                 </svg>
               </el-link>
-              <el-link @click="deleteFile(item)">
+              <el-link @click="deleteFile(item.video_path)">
                 <svg class="icon" aria-hidden="true">
                   <use xlink:href="#yw-icon-ashbin"></use>
                 </svg>
@@ -97,6 +100,7 @@ const { shell, clipboard, Tray, nativeImage, NativeImage } = require('electron')
 const fs = require('fs-extra')
 const remote = require('@electron/remote')
 const { Menu, dialog } = remote
+import { mapState, mapActions } from 'vuex'
 
 export default {
   data() {
@@ -104,10 +108,18 @@ export default {
       dialogFormVisible: false,
       fit: 'cover',
       defaultCover: 'src/icons/my-icon/video-o.svg',
-      rootPath: global.test5File,
       fileList: [],
-      coverList: [],
-      pathList: [],
+      videoCol: {
+        vc_name: '',
+        vc_path: '',
+        vc_desc: '',
+        id: ''
+      },
+      videoInfo:[{
+        video_name: '',
+        video_path: '',
+        video_cover: ''
+      }],
       checkedList: [],
       reNameForm: {
         fileId: 0,
@@ -115,6 +127,7 @@ export default {
         oldName: '',
         newName: ''
       },
+      coverSavePath: 'I:\\JiLeFile\\video\\cover',
       formLabelWidth: '80px',
       contextMenuTemplate: [],
       filtersList: {
@@ -124,18 +137,43 @@ export default {
   },
   created() {
     this.getFileList()
-    for (var i = 0; i < this.fileList.length; i++) {
-      this.pathList[i] = this.rootPath + '\\' + this.fileList[i]
-    }
-    for (var j = 0; j < this.fileList.length; j++) {
-      this.coverList[j] = this.defaultCover
-    }
   },
   methods: {
+    ...mapActions('video-col', ['addVc', 'getVc', 'getVideoCover', 'getFirstVC']),
     getFileList() {
-      //注意这里使用Sync同步方法才能获取到返回的文件值
-      //使用异步方法（readdir）由于不能确定结果返回时间，所以无法在外部得到文件列表，只能进行内部处理
-      this.fileList = fs.readdirSync(this.rootPath)
+      this.getFirstVC().then((response) => {
+        // console.log(response.data)
+        this.videoCol = response.data
+        // console.log(this.videoCol)
+
+        //注意这里使用Sync同步方法才能获取到返回的文件值
+        //使用异步方法（readdir）由于不能确定结果返回时间，所以无法在外部得到文件列表，只能进行内部处理
+        this.fileList = fs.readdirSync(this.videoCol.vc_path)
+
+        for (var i = 0; i < this.fileList.length; i++) {
+          // console.log(this.videoInfo[i])
+          this.videoInfo[i]={
+            video_name: this.fileList[i],
+            video_path: this.videoCol.vc_path + '\\' + this.fileList[i],
+            video_cover: this.defaultCover
+          }
+        }
+        
+      })
+    },
+    getCover(){
+          // console.log(this.videoCol)
+          // console.log(this.coverSavePath)
+        this.getVideoCover(this.videoCol).then((response)=>{
+          let resList=response.data
+          for(var i=0;i<this.videoInfo.length;i++){
+            for(var j=0;j<resList.length;j++){
+              if(resList[j].videoName==this.videoInfo[i].video_name){
+                this.videoInfo[i].video_cover=resList[j].coverPath
+              }
+            }
+          }
+        })
     },
     selectCover(item) {
       var id = item.id
@@ -150,7 +188,7 @@ export default {
         .then((result) => {
           if (!result) return //为空情况下表示未选择文件，直接return结束函数
           console.log(result.filePaths[0])
-          this.coverList[id] = result.filePaths[0]
+          this.videoInfo[id].video_cover = result.filePaths[0]
         })
         .catch((err) => {
           console.log(err)
@@ -159,7 +197,7 @@ export default {
     deleteCover(item) {
       var id = item.id
       console.log(id)
-      this.coverList[id] = this.defaultCover
+      this.videoInfo[id].video_cover = this.defaultCover
     },
     initMenuTemplate(id) {
       this.contextMenuTemplate = [
@@ -224,8 +262,8 @@ export default {
     },
     openDialogForm(fileId) {
       this.reNameForm.fileId = fileId
-      this.reNameForm.oldName = this.fileList[fileId]
-      this.reNameForm.filePath = this.rootPath
+      this.reNameForm.oldName = this.videoInfo[fileId].video_name
+      this.reNameForm.filePath = this.videoCol.vc_path
       this.dialogFormVisible = true
     },
     editFileName() {
@@ -243,7 +281,7 @@ export default {
       //接下来应该还要处理前端逻辑，修改所存储的文件名称与路径
       console.log(result)
       if (result) {
-        this.fileList[form.fileId] = form.newName
+        this.videoInfo[form.fileId].video_name = form.newName
         //console.log(this.fileList[form.fileId])
       }
     },

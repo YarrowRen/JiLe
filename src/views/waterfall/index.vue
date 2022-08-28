@@ -27,23 +27,17 @@ export default {
   },
   data() {
     return {
-      rootPath: global.test1File,
-      targetPage: 0,
-      targetVal: 0,
-      loaded: true,
-      total: 0,
-      currentPage: 1,
-      pageSize: 25,
-      contentArr: [],
-      pathList: []
+      rootPath: global.test1File,  //从全局变量获取测试数据
+      targetPage: 0,  //页面标志值，用来确定展示页面
+      contentArr: [],  //图片信息表
+      pathList: []  //路径列表
     }
   },
   created() {
     this.getFileList()
-    // this.getImgHeight()
   },
   methods: {
-    initImg() {},
+    //通过文件列表获取所有文件路径
     getPathList() {
       this.contentArr = []
       for (var i = 0; i < this.fileList.length; i++) {
@@ -51,47 +45,12 @@ export default {
         this.contentArr.push(fileItem)
       }
     },
+    //获取文件列表（读取指定文件夹下的文件）
     getFileList() {
       this.fileList = fs.readdirSync(this.rootPath)
       //对文件列表排序保证唯一性
       this.fileList.sort()
       this.getPathList()
-    },
-    getFileListPagination(page, pageSize) {
-      var list = fs.readdirSync(this.rootPath)
-      console.log(list)
-      this.total = list.length
-      var head = (page - 1) * pageSize
-      var tail = page * pageSize
-      this.fileList = list.slice(head, tail)
-      this.getPathList()
-      console.log(this.fileList.length + ':' + this.pathList.length)
-    },
-    async getImgHeight() {
-      let sel = this
-      for (let i = 0; i < this.contentArr.length; i++) {
-        console.log(i)
-        let img = new Image()
-        img.src = this.contentArr[i].src + '?' + Date.parse(new Date())
-        var promise = new Promise((reslove) => {
-          img.onload = function () {
-            let scale = 220 / img.width
-            var height = Math.floor(scale * img.height)
-            console.log('src: ' + img.src + ', height: ' + img.height + ', width: ' + img.width + ', i: ' + i)
-
-            reslove(height)
-          }
-        })
-        await promise
-        promise
-          .then(function (data) {
-            sel.contentArr[i].height = data
-          })
-          .finally(function () {
-            sel.targetVal++
-            console.log(sel.targetVal)
-          })
-      }
     },
     showWaterfall() {
       this.targetPage = 0

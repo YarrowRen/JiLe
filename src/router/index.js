@@ -55,6 +55,19 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/addCol',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'addCol',
+        component: () => import('@/views/addCol/index.vue'),
+        //using el svg icon, the elSvgIcon first when at the same time using elSvgIcon and icon
+        meta: { title: 'addCol', elSvgIcon: 'Fold' }
+      }
+    ]
+  },
 
 
 
