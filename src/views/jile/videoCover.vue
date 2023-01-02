@@ -4,6 +4,7 @@
       <div>
       <el-button @click="showCheckedList">查看checkedList</el-button>
       <el-button @click="getCover">获取封面</el-button>
+      <el-button @click="refreshVc">刷新数据库</el-button>
       </div>
       <el-row :gutter="5">
         <el-col v-for="(item, id) in videoInfo" :key="id" :span="4">
@@ -23,7 +24,7 @@
                   <div>{{ videoInfo[id].video_name }}</div>
                 </div>
               </el-tooltip>
-              <el-rate v-model="value1"></el-rate>
+              <el-rate disabled v-model="videoInfo[id].video_score"></el-rate>
             </div>
 
             <!-- 两个块级元素的style目的在于确定方形图片格式 #F5F5F5-->
@@ -108,7 +109,6 @@ export default {
       dialogFormVisible: false,
       fit: 'cover',
       defaultCover: 'src/icons/my-icon/video-o.svg',
-      fileList: [],
       videoCol: {
         vc_name: '',
         vc_path: '',
@@ -116,9 +116,12 @@ export default {
         id: ''
       },
       videoInfo:[{
+        video_id: 0,
         video_name: '',
         video_path: '',
-        video_cover: ''
+        video_cover: '',
+        video_tag: [],
+        video_score: 0
       }],
       checkedList: [],
       reNameForm: {
@@ -139,7 +142,7 @@ export default {
     this.getFileList()
   },
   methods: {
-    ...mapActions('video-col', ['addVc', 'getVc', 'getVideoCover', 'getFirstVC']),
+    ...mapActions('video-col', ['addVc', 'getVc', 'getVideoCover', 'getFirstVC','refreshVcData']),
     getFileList() {
       this.getFirstVC().then((response) => {
         // console.log(response.data)
@@ -148,14 +151,34 @@ export default {
 
         //注意这里使用Sync同步方法才能获取到返回的文件值
         //使用异步方法（readdir）由于不能确定结果返回时间，所以无法在外部得到文件列表，只能进行内部处理
-        this.fileList = fs.readdirSync(this.videoCol.vc_path)
+        // this.fileList = fs.readdirSync(this.videoCol.vc_path)
 
-        for (var i = 0; i < this.fileList.length; i++) {
-          // console.log(this.videoInfo[i])
+        // for (var i = 0; i < this.fileList.length; i++) {
+        //   // console.log(this.videoInfo[i])
+        //   this.videoInfo[i]={
+        //     video_name: this.fileList[i],
+        //     video_path: this.videoCol.vc_path + '\\' + this.fileList[i],
+        //     video_cover: this.defaultCover
+        //   }
+        // }
+
+        var fileList=response.data.video_list
+        //获取详细影视文件信息列表
+        for(var i=0;i<fileList.length;i++){
+          // console.log(fileList)
+          var videoCover=""
+          if(fileList[i].videoCover==null || fileList[i].videoCover==""){
+            videoCover=this.defaultCover
+          }else{
+            videoCover=fileList[i].videoCover
+          }
           this.videoInfo[i]={
-            video_name: this.fileList[i],
-            video_path: this.videoCol.vc_path + '\\' + this.fileList[i],
-            video_cover: this.defaultCover
+            video_id: fileList[i].videoID,
+            video_name: fileList[i].videoName,
+            video_path:fileList[i].videoPath,
+            video_cover: videoCover,
+            video_score: fileList[i].videoScore,
+            video_tag: fileList[i].videoTag 
           }
         }
         
@@ -282,7 +305,6 @@ export default {
       console.log(result)
       if (result) {
         this.videoInfo[form.fileId].video_name = form.newName
-        //console.log(this.fileList[form.fileId])
       }
     },
     pasteCover() {},
@@ -291,6 +313,12 @@ export default {
       //创建菜单项
       this.menu = Menu.buildFromTemplate(this.contextMenuTemplate)
       this.menu.popup({ window: remote.getCurrentWindow() })
+    },
+    refreshVc(){
+      var vcID=this.videoCol.id
+      // console.log(vcID)
+      this.refreshVcData({vcID})
+
     }
   }
 }

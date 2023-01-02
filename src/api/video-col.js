@@ -15,6 +15,15 @@ export function getVc() {
   })
 }
 
+export function refreshVcData(vcID) {
+  return request({
+    url: '/vc/refreshVcData',
+    method: 'get',
+    isParams: true,
+    data:{vcID}
+  })
+}
+
 export function getFirstVC() {
   return request({
     url: '/vc/getFirstVC',

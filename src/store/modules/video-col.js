@@ -1,4 +1,4 @@
-import { addVc,getVc,getVideoCover,getFirstVC } from '@/api/video-col'
+import { addVc,getVc,getVideoCover,getFirstVC,refreshVcData } from '@/api/video-col'
 
 const getDefaultState = () => {
   return {}
@@ -43,6 +43,20 @@ const actions = {
   getVc({ commit }) {
     return new Promise((resolve, reject) => {
       getVc()
+        .then((response) => {
+          const data = response
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  },
+
+  refreshVcData({ commit },{vcID}) {
+    return new Promise((resolve, reject) => {
+      console.log(vcID)
+      refreshVcData(vcID)
         .then((response) => {
           const data = response
           resolve(data)
