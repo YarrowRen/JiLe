@@ -1,7 +1,7 @@
 const { Menu, Tray, app, BrowserWindow } = require('electron')
 const path = require('path')
 
-const appIcon = new Tray(path.join(__dirname, '../static/lover.png'))
+const appIcon = new Tray(path.join(__dirname, '../static/jile.png'))
 const menu = Menu.buildFromTemplate([
   { label: '设置', click: function () {} },
   { label: '帮助', click: function () {} },
@@ -14,7 +14,7 @@ const menu = Menu.buildFromTemplate([
   }
 ])
 let timeout = setTimeout(() => {
-  appIcon.setImage(path.join(__dirname, '../static/lover.png'))
+  appIcon.setImage(path.join(__dirname, '../static/jile.png'))
   clearTimeout(timeout)
 }, 1000)
 appIcon.setToolTip('vue3-admin-electron')
@@ -47,10 +47,10 @@ win.on('close', (e) => {
   const timer = setInterval(function () {
     count++
     if (count % 2 === 0) {
-      appIcon.setPressedImage(path.join(__dirname, '../static/lover.png'))
+      appIcon.setPressedImage(path.join(__dirname, '../static/jile.png'))
       // appIcon.setImage(path.join(__dirname, '../static/lover.ico'))
     } else {
-      appIcon.setImage(path.join(__dirname, '../static/lover.png'))
+      appIcon.setImage(path.join(__dirname, '../static/jile.png'))
     }
   }, 500)
 

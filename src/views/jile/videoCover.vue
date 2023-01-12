@@ -2,9 +2,10 @@
   <el-scrollbar style="height: 100%">
     <div>
       <div>
-      <el-button @click="showCheckedList">查看checkedList</el-button>
-      <el-button @click="getCover">获取封面</el-button>
-      <el-button @click="refreshVc">刷新数据库</el-button>
+        <el-button @click="showVideoCol">查看VideoCol</el-button>
+        <el-button @click="showVideoDetails">查看videoDetails</el-button>
+        <el-button @click="getCover">获取封面</el-button>
+        <el-button @click="refreshVc">刷新数据库</el-button>
       </div>
       <el-row :gutter="5">
         <el-col v-for="(item, id) in videoInfo" :key="id" :span="4">
@@ -24,26 +25,36 @@
                   <div>{{ videoInfo[id].video_name }}</div>
                 </div>
               </el-tooltip>
-              <el-rate disabled v-model="videoInfo[id].video_score"></el-rate>
+              <el-rate v-model="videoInfo[id].video_score" disabled></el-rate>
             </div>
 
             <!-- 两个块级元素的style目的在于确定方形图片格式 #F5F5F5-->
-            <div
-              class="pointer"
+            <!-- <div
+              class="pointer hoverImage"
               style="position: relative; width: 100%; height: 0; padding-top: 100%"
-              @contextmenu="rtClickOpenMenu(id)"
+              @contextmenu="rtClickOpenMenu(item.video_id)"
               @click="openFile(item.video_path)"
             >
-              <el-image
-                style="cursor: pointer; position: absolute; top: 0; left: 0; width: 100%; height: 100%"
-                :src="videoInfo[id].video_cover"
-                class="image"
-                :fit="fit"
-              ></el-image>
-            </div>
+              <figure class="imghvr-shutter-out-diag-1">
+                <img class="videoCover" :src="videoInfo[id].video_cover" />
+
+                <figcaption>这里是你划过后的出来文字 小可爱</figcaption>
+              </figure>
+            </div> -->
+            <figure
+              class="imghvr-shutter-out-diag-1 videoFigure"
+              @contextmenu="rtClickOpenMenu(item.video_id)"
+              @click="openFile(item.video_path)"
+            >
+              <img class="videoCover" :src="videoInfo[id].video_cover" />
+
+              <figcaption class="videoFigcaption">
+                <img src="../../icons/my-icon/videoNew.png" class="figcaption-img" />
+              </figcaption>
+            </figure>
 
             <div style="margin-top: 5px; margin-bottom: 5px; margin-left: 5px; margin-right: 5px">
-              <el-link @click="openDialogForm(id)">
+              <el-link @click="openDialogForm(item)">
                 <svg class="icon" aria-hidden="true">
                   <use xlink:href="#yw-icon-edit"></use>
                 </svg>
@@ -53,12 +64,12 @@
                   <use xlink:href="#yw-icon-folder-close"></use>
                 </svg>
               </el-link>
-              <el-link @click="deleteFile(item.video_path)">
+              <el-link @click="deleteFile(item.video_id)">
                 <svg class="icon" aria-hidden="true">
                   <use xlink:href="#yw-icon-ashbin"></use>
                 </svg>
               </el-link>
-              <el-link>
+              <el-link @click="openVideoInfoDialog(item.video_id)">
                 <svg class="icon" aria-hidden="true">
                   <use xlink:href="#yw-icon-attachment"></use>
                 </svg>
@@ -80,7 +91,9 @@
             <div>{{ reNameForm.oldName }}</div>
           </el-form-item>
           <el-form-item label="新名称" :label-width="formLabelWidth">
-            <el-input v-model="reNameForm.newName" autocomplete="off"></el-input>
+            <el-input v-model="reNameForm.newName" autocomplete="off">
+              <template #append>{{ reNameForm.suffix }}</template>
+            </el-input>
           </el-form-item>
         </el-form>
         <template #footer>
@@ -91,13 +104,201 @@
         </template>
       </el-dialog>
     </div>
+
+    <div id="videoInfoEditDialog">
+      <el-dialog v-model="videoEditVisible" title="编辑视频信息">
+        <el-scrollbar max-height="60vh">
+          <el-row>
+            <el-col :span="6">
+              <el-image :src="videoDetails.videoCover" style="aspect-ratio: 57/84; margin: 5px" fit="cover" />
+              <div style="width: 100%; text-align: center">
+                <el-link @click="selectCoverInDetails" target="_blank">更新封面图/海报</el-link>
+              </div>
+            </el-col>
+            <el-col :span="18">
+              <el-form :model="videoDetails">
+                <el-form-item label="视频名称" :label-width="formLabelWidth">
+                  <div>{{ videoDetails.videoName }}</div>
+                </el-form-item>
+                <el-form-item label="评分" :label-width="formLabelWidth">
+                  <el-rate
+                    :texts="['很差', '较差', '还行', '推荐', '力荐']"
+                    show-text
+                    v-model="videoDetails.videoScore"
+                  ></el-rate>
+                </el-form-item>
+                <el-form-item label="标签" :label-width="formLabelWidth">
+                  <el-row>
+                    <el-tag
+                      v-for="tag in videoDetails.tags"
+                      style="margin-right: 10px; margin-bottom: 10px"
+                      :key="tag.id"
+                      size="large"
+                      closable
+                      :disable-transitions="false"
+                      type="success"
+                      effect="plain"
+                      @close="handleTagClose(videoDetails.videoID, tag)"
+                    >
+                      {{ tag.tag_name }}
+                    </el-tag>
+                    <el-col :span="9">
+                      <el-input
+                        v-model="inputValue"
+                        size="small"
+                        placeholder="请输入标签"
+                        @keyup.enter="handleInputConfirm"
+                        @blur="handleInputConfirm"
+                      />
+                    </el-col>
+                  </el-row>
+                </el-form-item>
+                <el-form-item label="上映日期" :label-width="formLabelWidth">
+                  <el-date-picker
+                    v-model="videoDetails.releaseDate"
+                    type="date"
+                    placeholder="Pick a day"
+                    size="default"
+                  />
+                </el-form-item>
+                <el-form-item label="导演" :label-width="formLabelWidth">
+                  <el-row>
+                    <el-tag
+                      v-for="director in videoDetails.directorList.list"
+                      style="margin-right: 10px; margin-bottom: 10px"
+                      :key="director.id"
+                      size="large"
+                      closable
+                      :disable-transitions="false"
+                      effect="dark"
+                      type="warning"
+                      @close="handleDirectorClose(videoDetails.videoID, director)"
+                    >
+                      {{ director.name }}
+                    </el-tag>
+                    <el-col :span="9">
+                      <el-input
+                        v-model="inputDirectorValue"
+                        size="small"
+                        placeholder="请输入导演名称"
+                        @keyup.enter="handleDirectorConfirm"
+                        @blur="handleDirectorConfirm"
+                      />
+                    </el-col>
+                  </el-row>
+                </el-form-item>
+
+                <el-form-item label="编剧/作者" :label-width="formLabelWidth">
+                  <el-row>
+                    <el-tag
+                      v-for="author in videoDetails.authorList.list"
+                      style="margin-right: 10px; margin-bottom: 10px"
+                      :key="author.id"
+                      size="large"
+                      closable
+                      :disable-transitions="false"
+                      effect="dark"
+                      type="warning"
+                      @close="handleAuthorClose(videoDetails.videoID, author)"
+                    >
+                      {{ author.name }}
+                    </el-tag>
+                    <el-col :span="9">
+                      <el-input
+                        v-model="inputAuthorValue"
+                        size="small"
+                        placeholder="请输入编剧/作者名称"
+                        @keyup.enter="handleAuthorConfirm"
+                        @blur="handleAuthorConfirm"
+                      />
+                    </el-col>
+                  </el-row>
+                </el-form-item>
+
+                <el-form-item label="演员" :label-width="formLabelWidth">
+                  <el-row>
+                    <el-tag
+                      v-for="actor in videoDetails.actorList.list"
+                      style="margin-right: 10px; margin-bottom: 10px"
+                      :key="actor.id"
+                      size="large"
+                      closable
+                      :disable-transitions="false"
+                      effect="dark"
+                      type="warning"
+                      @close="handleActorClose(videoDetails.videoID, actor)"
+                    >
+                      {{ actor.name }}
+                    </el-tag>
+                    <el-col :span="9">
+                      <el-input
+                        v-model="inputActorValue"
+                        size="small"
+                        placeholder="请输入演员名称"
+                        @keyup.enter="handleActorConfirm"
+                        @blur="handleActorConfirm"
+                      />
+                    </el-col>
+                  </el-row>
+                </el-form-item>
+
+                <el-form-item label="其他人员" :label-width="formLabelWidth">
+                  <el-row>
+                    <el-tag
+                      v-for="other in videoDetails.otherList.list"
+                      style="margin-right: 10px; margin-bottom: 10px"
+                      :key="other.id"
+                      size="large"
+                      closable
+                      :disable-transitions="false"
+                      effect="dark"
+                      type="warning"
+                      @close="handleOtherClose(videoDetails.videoID, other)"
+                    >
+                      {{ other.name }}
+                    </el-tag>
+                    <el-col :span="9">
+                      <el-input
+                        v-model="inputOtherValue"
+                        size="small"
+                        placeholder="请输入其他人员名称"
+                        @keyup.enter="handleOtherConfirm"
+                        @blur="handleOtherConfirm"
+                      />
+                    </el-col>
+                  </el-row>
+                </el-form-item>
+
+                <el-form-item label="简介" :label-width="formLabelWidth">
+                  <el-input
+                    v-model="videoDetails.intro"
+                    :autosize="{ minRows: 3, maxRows: 9 }"
+                    maxlength="350"
+                    placeholder="Please input"
+                    show-word-limit
+                    type="textarea"
+                  />
+                </el-form-item>
+              </el-form>
+            </el-col>
+          </el-row>
+
+          <template #footer>
+            <div class="dialog-footer">
+              <el-button @click="videoEditVisible = false">取 消</el-button>
+            </div>
+          </template>
+        </el-scrollbar>
+      </el-dialog>
+    </div>
   </el-scrollbar>
 </template>
 
-<script>
-import global from '../Global.vue'
-import Item from '@/layout/components/Sidebar/Item'
-const { shell, clipboard, Tray, nativeImage, NativeImage } = require('electron')
+<script >
+import 'imagehover.css/scss/imagehover.scss'
+import { ElMessage } from 'element-plus'
+
+const { shell } = require('electron')
 const fs = require('fs-extra')
 const remote = require('@electron/remote')
 const { Menu, dialog } = remote
@@ -106,7 +307,13 @@ import { mapState, mapActions } from 'vuex'
 export default {
   data() {
     return {
+      inputValue: '',
+      inputDirectorValue: '',
+      inputAuthorValue: '',
+      inputActorValue: '',
+      inputOtherValue: '',
       dialogFormVisible: false,
+      videoEditVisible: false,
       fit: 'cover',
       defaultCover: 'src/icons/my-icon/video-o.svg',
       videoCol: {
@@ -115,20 +322,91 @@ export default {
         vc_desc: '',
         id: ''
       },
-      videoInfo:[{
-        video_id: 0,
-        video_name: '',
-        video_path: '',
-        video_cover: '',
-        video_tag: [],
-        video_score: 0
-      }],
+      videoInfo: [
+        {
+          video_id: 0,
+          video_name: '',
+          video_path: '',
+          video_cover: '',
+          video_tag: [],
+          video_score: 0
+        }
+      ],
       checkedList: [],
       reNameForm: {
-        fileId: 0,
-        filePath: '',
+        videoID: 0,
+        videoPath: '',
         oldName: '',
-        newName: ''
+        newName: '',
+        suffix: ''
+      },
+      videoDetails: {
+        vc_id: 0,
+        videoID: 0,
+        videoName: '',
+        videoCover: '',
+        videoScore: 0,
+        intro: '',
+        followed: 0,
+        releaseDate: '',
+        tags: [
+          {
+            id: 0,
+            tag_name: ''
+          }
+        ],
+        directorList: {
+          roleID: 1,
+          roleName: '导演',
+          list: [
+            {
+              id: 0,
+              name: '',
+              profile: '',
+              birthday: '',
+              followed: 0
+            }
+          ]
+        },
+        authorList: {
+          roleID: 2,
+          roleName: '编剧',
+          list: [
+            {
+              id: 0,
+              name: '',
+              profile: '',
+              birthday: '',
+              followed: 0
+            }
+          ]
+        },
+        actorList: {
+          roleID: 3,
+          roleName: '演员',
+          list: [
+            {
+              id: 0,
+              name: '',
+              profile: '',
+              birthday: '',
+              followed: 0
+            }
+          ]
+        },
+        otherList: {
+          roleID: 4,
+          roleName: '其他',
+          list: [
+            {
+              id: 0,
+              name: '',
+              profile: '',
+              birthday: '',
+              followed: 0
+            }
+          ]
+        }
       },
       coverSavePath: 'I:\\JiLeFile\\video\\cover',
       formLabelWidth: '80px',
@@ -141,8 +419,20 @@ export default {
   created() {
     this.getFileList()
   },
+  inject: ['refresh'],
   methods: {
-    ...mapActions('video-col', ['addVc', 'getVc', 'getVideoCover', 'getFirstVC','refreshVcData']),
+    ...mapActions('video-col', [
+      'addVc',
+      'getVc',
+      'getVideoCover',
+      'getFirstVC',
+      'refreshVcData',
+      'videoRename',
+      'videoDelete',
+      'editVideoCover',
+      'autoGetCover',
+      'getVideoDetails'
+    ]),
     getFileList() {
       this.getFirstVC().then((response) => {
         // console.log(response.data)
@@ -162,41 +452,40 @@ export default {
         //   }
         // }
 
-        var fileList=response.data.video_list
+        var fileList = response.data.video_list
         //获取详细影视文件信息列表
-        for(var i=0;i<fileList.length;i++){
+        for (var i = 0; i < fileList.length; i++) {
           // console.log(fileList)
-          var videoCover=""
-          if(fileList[i].videoCover==null || fileList[i].videoCover==""){
-            videoCover=this.defaultCover
-          }else{
-            videoCover=fileList[i].videoCover
+          var videoCover = ''
+          if (fileList[i].videoCover == null || fileList[i].videoCover == '') {
+            videoCover = this.defaultCover
+          } else {
+            videoCover = fileList[i].videoCover
           }
-          this.videoInfo[i]={
+          this.videoInfo[i] = {
             video_id: fileList[i].videoID,
             video_name: fileList[i].videoName,
-            video_path:fileList[i].videoPath,
+            video_path: this.videoCol.vc_path + '\\' + fileList[i].videoName,
             video_cover: videoCover,
             video_score: fileList[i].videoScore,
-            video_tag: fileList[i].videoTag 
+            video_tag: fileList[i].videoTag
           }
         }
-        
       })
     },
-    getCover(){
-          // console.log(this.videoCol)
-          // console.log(this.coverSavePath)
-        this.getVideoCover(this.videoCol).then((response)=>{
-          let resList=response.data
-          for(var i=0;i<this.videoInfo.length;i++){
-            for(var j=0;j<resList.length;j++){
-              if(resList[j].videoName==this.videoInfo[i].video_name){
-                this.videoInfo[i].video_cover=resList[j].coverPath
-              }
+    getCover() {
+      // console.log(this.videoCol)
+      // console.log(this.coverSavePath)
+      this.getVideoCover(this.videoCol).then((response) => {
+        let resList = response.data
+        for (var i = 0; i < this.videoInfo.length; i++) {
+          for (var j = 0; j < resList.length; j++) {
+            if (resList[j].videoName == this.videoInfo[i].video_name) {
+              this.videoInfo[i].video_cover = resList[j].coverPath
             }
           }
-        })
+        }
+      })
     },
     selectCover(item) {
       var id = item.id
@@ -209,9 +498,15 @@ export default {
           filters: this.filtersList.imageFilters
         })
         .then((result) => {
-          if (!result) return //为空情况下表示未选择文件，直接return结束函数
-          console.log(result.filePaths[0])
-          this.videoInfo[id].video_cover = result.filePaths[0]
+          if (!result || result.filePaths.length == 0) return //为空情况下表示未选择文件，直接return结束函数
+          var data = {
+            videoID: id,
+            coverPath: result.filePaths[0]
+          }
+          console.log(data)
+          this.editVideoCover(data).then((response) => {
+            this.refresh()
+          })
         })
         .catch((err) => {
           console.log(err)
@@ -220,11 +515,20 @@ export default {
     deleteCover(item) {
       var id = item.id
       console.log(id)
-      this.videoInfo[id].video_cover = this.defaultCover
+      // this.videoInfo[id].video_cover = this.defaultCover
+      //将视频封面图设为默认图
+      var data = {
+        videoID: id,
+        coverPath: this.defaultCover
+      }
+      this.editVideoCover(data).then((response) => {
+        this.refresh()
+      })
     },
     initMenuTemplate(id) {
       this.contextMenuTemplate = [
         { label: '选择封面图', click: this.selectCover, id: id },
+        { label: '自动生成封面图', click: this.autoCover, id: id },
         { label: '删除封面图', click: this.deleteCover, id: id },
         { type: 'separator' }
       ]
@@ -258,10 +562,16 @@ export default {
     openFolder(path) {
       shell.showItemInFolder(path)
     },
-    showCheckedList() {
-      console.log(this.checkedList)
+    showVideoCol() {
+      console.log(this.videoCol)
     },
-    deleteFile(path) {
+    autoCover(item) {
+      var videoID = item.id
+      this.autoGetCover({ videoID }).then((response) => {
+        this.refresh()
+      })
+    },
+    deleteFile(videoID) {
       //shell.trashItem(path)
       this.$confirm('此操作将永久删除该文件（包括本地文件）, 是否确定?', '提示', {
         confirmButtonText: '确定',
@@ -269,12 +579,10 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          shell.trashItem(path)
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
+          // shell.trashItem(path)
+          this.videoDelete({ videoID }).then((response) => {
+            this.refresh()
           })
-          location.reload()
         })
         .catch(() => {
           this.$message({
@@ -283,42 +591,255 @@ export default {
           })
         })
     },
-    openDialogForm(fileId) {
-      this.reNameForm.fileId = fileId
-      this.reNameForm.oldName = this.videoInfo[fileId].video_name
-      this.reNameForm.filePath = this.videoCol.vc_path
+    openDialogForm(video) {
+      this.reNameForm.videoID = video.video_id
+      this.reNameForm.oldName = video.video_name
+      this.reNameForm.videoPath = video.video_path
+      //获取文件后缀
+      this.reNameForm.suffix = video.video_name.substring(video.video_name.lastIndexOf('.'))
       this.dialogFormVisible = true
+    },
+    openVideoInfoDialog(videoID) {
+      //重置表单信息
+      this.videoDetails = this.$options.data().videoDetails
+      this.inputValue = ''
+      this.getVideoDetails({ videoID }).then((response) => {
+        //处理初始表单
+        this.videoDetails.vc_id = response.data.vc_id
+        this.videoDetails.videoID = response.data.videoID
+        this.videoDetails.videoName = response.data.videoName
+        this.videoDetails.videoCover = response.data.videoCover
+        this.videoDetails.intro = response.data.intro
+        this.videoDetails.followed = response.data.followed
+        this.videoDetails.releaseDate = response.data.releaseDate
+        this.videoDetails.tags = response.data.tags
+
+        var pList = response.data.personList
+        var directors = []
+        var authors = []
+        var actors = []
+        var others = []
+        // console.log(this.videoDetails.tags)
+        //处理角色表单数据
+        for (var i = 0; i < pList.length; i++) {
+          console.log(pList[i])
+          var person = pList[i]
+          if (person.roleID == 1) {
+            directors.push(person)
+          } else if (person.roleID == 2) {
+            authors.push(person)
+          } else if (person.roleID == 3) {
+            actors.push(person)
+          } else if (person.roleID == 4) {
+            others.push(person)
+          }
+        }
+        this.videoDetails.directorList.list = directors
+        this.videoDetails.actorList.list = actors
+        this.videoDetails.authorList.list = authors
+        this.videoDetails.otherList.list = others
+      })
+      this.videoEditVisible = true
     },
     editFileName() {
       this.dialogFormVisible = false //关闭dialog页面
-      //移动文件、目录, 会删除以前的, 等于改名
       var form = this.reNameForm
-      var result = false
-      try {
-        fs.moveSync(form.filePath + '\\' + form.oldName, form.filePath + '\\' + form.newName)
-        result = true
-        console.log('success!')
-      } catch (err) {
-        console.log(err)
+      var data = {
+        newName: form.newName + form.suffix,
+        videoID: form.videoID
       }
-      //接下来应该还要处理前端逻辑，修改所存储的文件名称与路径
-      console.log(result)
-      if (result) {
-        this.videoInfo[form.fileId].video_name = form.newName
-      }
+      this.videoRename(data).then((response) => {
+        var code = response.code
+        if (code != 20000) {
+          // console.log(response.message)
+          ElMessage.error(response.message)
+        } else {
+          this.refresh()
+        }
+      })
+      //重置表单信息
+      this.reNameForm = this.$options.data().reNameForm
     },
-    pasteCover() {},
     rtClickOpenMenu(id) {
       this.initMenuTemplate(id)
       //创建菜单项
       this.menu = Menu.buildFromTemplate(this.contextMenuTemplate)
       this.menu.popup({ window: remote.getCurrentWindow() })
     },
-    refreshVc(){
-      var vcID=this.videoCol.id
-      // console.log(vcID)
-      this.refreshVcData({vcID})
+    refreshVc() {
+      var vcID = this.videoCol.id
+      this.refreshVcData({ vcID }).then((response) => {
+        //重新加载页面--使用provide和inject 普通刷新 不会使页面出现短暂的空白，体验效果比较好
+        // (vue5种方式实现页面"刷新") https://www.jianshu.com/p/b9b7eae48f45
+        this.refresh()
+      })
+    },
+    showReNameForm() {
+      console.log(this.reNameForm)
+    },
+    showVideoDetails() {
+      console.log(this.videoDetails)
+    },
+    handleTagClose(videoID, tag) {
+      for (var i = 0; i < this.videoDetails.tags.length; i++) {
+        if (this.videoDetails.tags[i].id == tag.id && this.videoDetails.tags[i].tag_name == tag.tag_name) {
+          this.videoDetails.tags.splice(i, 1)
+          break
+        }
+      }
+    },
+    handleDirectorClose(videoID, director) {
+      for (var i = 0; i < this.videoDetails.directorList.list.length; i++) {
+        if (
+          this.videoDetails.directorList.list[i].id == director.id &&
+          this.videoDetails.directorList.list[i].name == director.name
+        ) {
+          this.videoDetails.directorList.list.splice(i, 1)
+          break
+        }
+      }
+    },
+    handleAuthorClose(videoID, author) {
+      for (var i = 0; i < this.videoDetails.authorList.list.length; i++) {
+        if (
+          this.videoDetails.authorList.list[i].id == author.id &&
+          this.videoDetails.authorList.list[i].name == author.name
+        ) {
+          this.videoDetails.authorList.list.splice(i, 1)
+          break
+        }
+      }
+    },
+    handleActorClose(videoID, actor) {
+      for (var i = 0; i < this.videoDetails.actorList.list.length; i++) {
+        if (
+          this.videoDetails.actorList.list[i].id == actor.id &&
+          this.videoDetails.actorList.list[i].name == actor.name
+        ) {
+          this.videoDetails.actorList.list.splice(i, 1)
+          break
+        }
+      }
+    },
+    handleOtherClose(videoID, other) {
+      for (var i = 0; i < this.videoDetails.otherList.list.length; i++) {
+        if (
+          this.videoDetails.otherList.list[i].id == other.id &&
+          this.videoDetails.otherList.list[i].name == other.name
+        ) {
+          this.videoDetails.otherList.list.splice(i, 1)
+          break
+        }
+      }
+    },
+    handleInputConfirm() {
+      if (this.inputValue) {
+        var tag = {
+          id: 0,
+          tag_name: this.inputValue
+        }
+        //确认不存在相同值的情况下再加入
+        var i = 0
+        for (i = 0; i < this.videoDetails.tags.length; i++) {
+          if (this.inputValue == this.videoDetails.tags[i].tag_name) {
+            break
+          }
+        }
+        if (i == this.videoDetails.tags.length) {
+          this.videoDetails.tags.push(tag)
+        }
+      }
+      this.inputValue = ''
+    },
+    handleDirectorConfirm() {
+      if (this.inputDirectorValue) {
+        var director = {
+          id: 0,
+          name: this.inputDirectorValue
+        }
+        var i = 0
+        for (i = 0; i < this.videoDetails.directorList.list.length; i++) {
+          if (this.inputDirectorValue == this.videoDetails.directorList.list[i].name) {
+            break
+          }
+        }
+        if (i == this.videoDetails.directorList.list.length) {
+          this.videoDetails.directorList.list.push(director)
+        }
+      }
+      this.inputDirectorValue = ''
+    },
 
+    handleAuthorConfirm() {
+      if (this.inputAuthorValue) {
+        var author = {
+          id: 0,
+          name: this.inputAuthorValue
+        }
+        var i = 0
+        for (i = 0; i < this.videoDetails.authorList.list.length; i++) {
+          if (this.inputAuthorValue == this.videoDetails.authorList.list[i].name) {
+            break
+          }
+        }
+        if (i == this.videoDetails.authorList.list.length) {
+          this.videoDetails.authorList.list.push(author)
+        }
+      }
+      this.inputAuthorValue = ''
+    },
+    handleActorConfirm() {
+      if (this.inputActorValue) {
+        var actor = {
+          id: 0,
+          name: this.inputActorValue
+        }
+        var i = 0
+        for (i = 0; i < this.videoDetails.actorList.list.length; i++) {
+          if (this.inputActorValue == this.videoDetails.actorList.list[i].name) {
+            break
+          }
+        }
+        if (i == this.videoDetails.actorList.list.length) {
+          this.videoDetails.actorList.list.push(actor)
+        }
+      }
+      this.inputActorValue = ''
+    },
+    handleOtherConfirm() {
+      if (this.inputOtherValue) {
+        var other = {
+          id: 0,
+          name: this.inputOtherValue
+        }
+        var i = 0
+        for (i = 0; i < this.videoDetails.otherList.list.length; i++) {
+          if (this.inputOtherValue == this.videoDetails.otherList.list[i].name) {
+            break
+          }
+        }
+        if (i == this.videoDetails.otherList.list.length) {
+          this.videoDetails.otherList.list.push(other)
+        }
+      }
+      this.inputOtherValue = ''
+    },
+    selectCoverInDetails() {
+      //利用Electron的Dialog打开文件选择器或文件夹选择器并进行特殊设置
+      dialog
+        .showOpenDialog({
+          title: '请选择视频封面或海报图',
+          properties: ['openFile'],
+          filters: this.filtersList.imageFilters
+        })
+        .then((result) => {
+          if (!result || result.filePaths.length == 0) return //为空情况下表示未选择文件，直接return结束函数
+
+          this.videoDetails.videoCover = result.filePaths[0]
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     }
   }
 }
@@ -330,6 +851,36 @@ export default {
 }
 .is-horizontal {
   display: none;
+}
+.videoCover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.videoFigure {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-top: 100%;
+}
+
+.videoFigcaption {
+  position: relative;
+  background-color: #0000008f !important;
+}
+
+.figcaption-img {
+  cursor: pointer;
+  opacity: 0.9;
+  width: 50%;
+  height: 50%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 #title {

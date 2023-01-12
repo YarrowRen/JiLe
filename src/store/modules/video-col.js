@@ -1,4 +1,15 @@
-import { addVc,getVc,getVideoCover,getFirstVC,refreshVcData } from '@/api/video-col'
+import {
+  addVc,
+  getVc,
+  getVideoCover,
+  getFirstVC,
+  refreshVcData,
+  videoRename,
+  videoDelete,
+  editVideoCover,
+  autoGetCover,
+  getVideoDetails
+} from '@/api/video-col'
 
 const getDefaultState = () => {
   return {}
@@ -9,10 +20,10 @@ const state = getDefaultState()
 const mutations = {}
 
 const actions = {
-  addVc({ commit },vc_info) {
-    const {vc_name,vc_path,vc_desc,id}=vc_info
+  addVc({ commit }, vc_info) {
+    const { vc_name, vc_path, vc_desc, id } = vc_info
     return new Promise((resolve, reject) => {
-      addVc({ "vc_name": vc_name, "vc_path": vc_path, "vc_desc": vc_desc })
+      addVc({ vc_name: vc_name, vc_path: vc_path, vc_desc: vc_desc })
         .then((response) => {
           const data = response
           resolve(data)
@@ -23,13 +34,13 @@ const actions = {
     })
   },
 
-  getVideoCover({ commit },vc_info) {
+  getVideoCover({ commit }, vc_info) {
     console.log(vc_info)
-    const {vc_name,vc_path,vc_desc,id}=vc_info
-    var savaPath='I:\\JiLeFile\\video\\cover'
+    const { vc_name, vc_path, vc_desc, id } = vc_info
+    var savaPath = 'I:\\JiLeFile\\video\\cover'
     // console.log(savaPath)
     return new Promise((resolve, reject) => {
-      getVideoCover({"id":id, "vc_name": vc_name, "vc_path": vc_path, "vc_desc": vc_desc })
+      getVideoCover({ id: id, vc_name: vc_name, vc_path: vc_path, vc_desc: vc_desc })
         .then((response) => {
           const data = response
           resolve(data)
@@ -53,10 +64,77 @@ const actions = {
     })
   },
 
-  refreshVcData({ commit },{vcID}) {
+  refreshVcData({ commit }, { vcID }) {
     return new Promise((resolve, reject) => {
       console.log(vcID)
       refreshVcData(vcID)
+        .then((response) => {
+          const data = response
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  },
+
+  videoDelete({ commit }, { videoID }) {
+    return new Promise((resolve, reject) => {
+      videoDelete(videoID)
+        .then((response) => {
+          const data = response
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  },
+
+  getVideoDetails({ commit }, { videoID }) {
+    return new Promise((resolve, reject) => {
+      getVideoDetails(videoID)
+        .then((response) => {
+          const data = response
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  },
+
+  videoRename({ commit }, { newName, videoID }) {
+    return new Promise((resolve, reject) => {
+      // console.log(videoID)
+      videoRename(newName, videoID)
+        .then((response) => {
+          const data = response
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  },
+
+  editVideoCover({ commit }, { videoID, coverPath }) {
+    return new Promise((resolve, reject) => {
+      console.log(videoID)
+      editVideoCover(videoID, coverPath)
+        .then((response) => {
+          const data = response
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  },
+
+  autoGetCover({ commit }, { videoID }) {
+    return new Promise((resolve, reject) => {
+      autoGetCover(videoID)
         .then((response) => {
           const data = response
           resolve(data)
@@ -78,8 +156,7 @@ const actions = {
           reject(error)
         })
     })
-  },
-
+  }
 }
 
 export default {
