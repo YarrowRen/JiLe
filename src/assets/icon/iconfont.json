@@ -6,6 +6,223 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "33264806",
+      "name": "beauty&personal care",
+      "font_class": "a-beautypersonalcare",
+      "unicode": "e717",
+      "unicode_decimal": 59159
+    },
+    {
+      "icon_id": "33264807",
+      "name": "babies&kids",
+      "font_class": "a-babieskids",
+      "unicode": "e718",
+      "unicode_decimal": 59160
+    },
+    {
+      "icon_id": "33264808",
+      "name": "computers&tech",
+      "font_class": "a-computerstech",
+      "unicode": "e719",
+      "unicode_decimal": 59161
+    },
+    {
+      "icon_id": "33264809",
+      "name": "everything else",
+      "font_class": "a-everythingelse",
+      "unicode": "e71a",
+      "unicode_decimal": 59162
+    },
+    {
+      "icon_id": "33264810",
+      "name": "food&drinks",
+      "font_class": "a-fooddrinks",
+      "unicode": "e71b",
+      "unicode_decimal": 59163
+    },
+    {
+      "icon_id": "33264811",
+      "name": "cars&accessories",
+      "font_class": "a-carsaccessories",
+      "unicode": "e71c",
+      "unicode_decimal": 59164
+    },
+    {
+      "icon_id": "33264812",
+      "name": "health&nutrition",
+      "font_class": "a-healthnutrition",
+      "unicode": "e71d",
+      "unicode_decimal": 59165
+    },
+    {
+      "icon_id": "33264813",
+      "name": "business services",
+      "font_class": "a-businessservices",
+      "unicode": "e71e",
+      "unicode_decimal": 59166
+    },
+    {
+      "icon_id": "33264814",
+      "name": "home services",
+      "font_class": "a-homeservices",
+      "unicode": "e71f",
+      "unicode_decimal": 59167
+    },
+    {
+      "icon_id": "33264815",
+      "name": "home&living",
+      "font_class": "a-homeliving",
+      "unicode": "e720",
+      "unicode_decimal": 59168
+    },
+    {
+      "icon_id": "33264816",
+      "name": "mobile phones&gadgets",
+      "font_class": "a-mobilephonesgadgets",
+      "unicode": "e721",
+      "unicode_decimal": 59169
+    },
+    {
+      "icon_id": "33264817",
+      "name": "memorabilia&collectibles",
+      "font_class": "a-memorabiliacollectibles",
+      "unicode": "e722",
+      "unicode_decimal": 59170
+    },
+    {
+      "icon_id": "33264818",
+      "name": "life sharing",
+      "font_class": "a-lifesharing",
+      "unicode": "e723",
+      "unicode_decimal": 59171
+    },
+    {
+      "icon_id": "33264819",
+      "name": "luxury",
+      "font_class": "luxury",
+      "unicode": "e724",
+      "unicode_decimal": 59172
+    },
+    {
+      "icon_id": "33264820",
+      "name": "pet supplie",
+      "font_class": "a-petsupplie",
+      "unicode": "e725",
+      "unicode_decimal": 59173
+    },
+    {
+      "icon_id": "33264821",
+      "name": "men's fashionctive",
+      "font_class": "a-mensfashionctive",
+      "unicode": "e726",
+      "unicode_decimal": 59174
+    },
+    {
+      "icon_id": "33264822",
+      "name": "music&audio",
+      "font_class": "a-musicaudio",
+      "unicode": "e727",
+      "unicode_decimal": 59175
+    },
+    {
+      "icon_id": "33264823",
+      "name": "photography",
+      "font_class": "photography",
+      "unicode": "e728",
+      "unicode_decimal": 59176
+    },
+    {
+      "icon_id": "33264824",
+      "name": "promotion&vouchers",
+      "font_class": "a-promotionvouchers",
+      "unicode": "e729",
+      "unicode_decimal": 59177
+    },
+    {
+      "icon_id": "33264825",
+      "name": "lifestyle services",
+      "font_class": "a-lifestyleservices",
+      "unicode": "e72a",
+      "unicode_decimal": 59178
+    },
+    {
+      "icon_id": "33264826",
+      "name": "property",
+      "font_class": "property",
+      "unicode": "e72b",
+      "unicode_decimal": 59179
+    },
+    {
+      "icon_id": "33264827",
+      "name": "motorcycles",
+      "font_class": "motorcycles",
+      "unicode": "e72c",
+      "unicode_decimal": 59180
+    },
+    {
+      "icon_id": "33264828",
+      "name": "shoes,bag&accessories",
+      "font_class": "a-shoesbagaccessories",
+      "unicode": "e72d",
+      "unicode_decimal": 59181
+    },
+    {
+      "icon_id": "33264829",
+      "name": "sports equipment",
+      "font_class": "a-sportsequipment",
+      "unicode": "e72e",
+      "unicode_decimal": 59182
+    },
+    {
+      "icon_id": "33264830",
+      "name": "tv&home appliances",
+      "font_class": "a-tvhomeappliances",
+      "unicode": "e72f",
+      "unicode_decimal": 59183
+    },
+    {
+      "icon_id": "33264831",
+      "name": "women's fashion",
+      "font_class": "a-womensfashion",
+      "unicode": "e730",
+      "unicode_decimal": 59184
+    },
+    {
+      "icon_id": "33264832",
+      "name": "toys&games",
+      "font_class": "a-toysgames",
+      "unicode": "e731",
+      "unicode_decimal": 59185
+    },
+    {
+      "icon_id": "33264833",
+      "name": "virtual products",
+      "font_class": "a-virtualproducts",
+      "unicode": "e732",
+      "unicode_decimal": 59186
+    },
+    {
+      "icon_id": "33264834",
+      "name": "stationery&craft",
+      "font_class": "a-stationerycraft",
+      "unicode": "e733",
+      "unicode_decimal": 59187
+    },
+    {
+      "icon_id": "33264835",
+      "name": "video gaming",
+      "font_class": "a-videogaming",
+      "unicode": "e734",
+      "unicode_decimal": 59188
+    },
+    {
+      "icon_id": "11372654",
+      "name": "电影",
+      "font_class": "dianying",
+      "unicode": "e8ae",
+      "unicode_decimal": 59566
+    },
+    {
       "icon_id": "15838441",
       "name": "chart-bar",
       "font_class": "chart-bar",

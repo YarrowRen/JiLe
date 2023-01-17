@@ -127,6 +127,12 @@ export const constantRoutes = [
         meta: { title: '视频封面测试' }
       },
       {
+        path: 'video-player',
+        component: () => import('@/views/jile/videoPlayer.vue'),
+        name: '视频播放测试',
+        meta: { title: '视频播放测试' }
+      },
+      {
         path: 'unzip-test',
         component: () => import('@/views/jile/unzipTest.vue'),
         name: '文件解压测试',

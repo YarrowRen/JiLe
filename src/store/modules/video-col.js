@@ -8,7 +8,10 @@ import {
   videoDelete,
   editVideoCover,
   autoGetCover,
-  getVideoDetails
+  getVideoDetails,
+  updateVideoDetails,
+  changeFollowedState,
+  getVideoMediaInfo
 } from '@/api/video-col'
 
 const getDefaultState = () => {
@@ -91,9 +94,48 @@ const actions = {
     })
   },
 
+  getVideoMediaInfo({ commit }, { videoID }) {
+    return new Promise((resolve, reject) => {
+      getVideoMediaInfo(videoID)
+        .then((response) => {
+          const data = response
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  },
+
+  changeFollowedState({ commit }, { videoID }) {
+    return new Promise((resolve, reject) => {
+      changeFollowedState(videoID)
+        .then((response) => {
+          const data = response
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  },
+
   getVideoDetails({ commit }, { videoID }) {
     return new Promise((resolve, reject) => {
       getVideoDetails(videoID)
+        .then((response) => {
+          const data = response
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  },
+
+ updateVideoDetails({ commit },  data ) {
+    return new Promise((resolve, reject) => {
+      updateVideoDetails(data)
         .then((response) => {
           const data = response
           resolve(data)

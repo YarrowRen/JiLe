@@ -1,16 +1,140 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3165022 */
-  src: url('iconfont.woff2?t=1643315959089') format('woff2'),
-       url('iconfont.woff?t=1643315959089') format('woff'),
-       url('iconfont.ttf?t=1643315959089') format('truetype');
+  src: url('iconfont.woff2?t=1673848428689') format('woff2'),
+       url('iconfont.woff?t=1673848428689') format('woff'),
+       url('iconfont.ttf?t=1673848428689') format('truetype');
 }
 
-.iconfont,[class^="yw-icon-"],[class*=" yw-icon-"] {
+.iconfont {
   font-family: "iconfont" !important;
   font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.yw-icon-a-beautypersonalcare:before {
+  content: "\e717";
+}
+
+.yw-icon-a-babieskids:before {
+  content: "\e718";
+}
+
+.yw-icon-a-computerstech:before {
+  content: "\e719";
+}
+
+.yw-icon-a-everythingelse:before {
+  content: "\e71a";
+}
+
+.yw-icon-a-fooddrinks:before {
+  content: "\e71b";
+}
+
+.yw-icon-a-carsaccessories:before {
+  content: "\e71c";
+}
+
+.yw-icon-a-healthnutrition:before {
+  content: "\e71d";
+}
+
+.yw-icon-a-businessservices:before {
+  content: "\e71e";
+}
+
+.yw-icon-a-homeservices:before {
+  content: "\e71f";
+}
+
+.yw-icon-a-homeliving:before {
+  content: "\e720";
+}
+
+.yw-icon-a-mobilephonesgadgets:before {
+  content: "\e721";
+}
+
+.yw-icon-a-memorabiliacollectibles:before {
+  content: "\e722";
+}
+
+.yw-icon-a-lifesharing:before {
+  content: "\e723";
+}
+
+.yw-icon-luxury:before {
+  content: "\e724";
+}
+
+.yw-icon-a-petsupplie:before {
+  content: "\e725";
+}
+
+.yw-icon-a-mensfashionctive:before {
+  content: "\e726";
+}
+
+.yw-icon-a-musicaudio:before {
+  content: "\e727";
+}
+
+.yw-icon-photography:before {
+  content: "\e728";
+}
+
+.yw-icon-a-promotionvouchers:before {
+  content: "\e729";
+}
+
+.yw-icon-a-lifestyleservices:before {
+  content: "\e72a";
+}
+
+.yw-icon-property:before {
+  content: "\e72b";
+}
+
+.yw-icon-motorcycles:before {
+  content: "\e72c";
+}
+
+.yw-icon-a-shoesbagaccessories:before {
+  content: "\e72d";
+}
+
+.yw-icon-a-sportsequipment:before {
+  content: "\e72e";
+}
+
+.yw-icon-a-tvhomeappliances:before {
+  content: "\e72f";
+}
+
+.yw-icon-a-womensfashion:before {
+  content: "\e730";
+}
+
+.yw-icon-a-toysgames:before {
+  content: "\e731";
+}
+
+.yw-icon-a-virtualproducts:before {
+  content: "\e732";
+}
+
+.yw-icon-a-stationerycraft:before {
+  content: "\e733";
+}
+
+.yw-icon-a-videogaming:before {
+  content: "\e734";
+}
+
+.yw-icon-dianying:before {
+  content: "\e8ae";
 }
 
 .yw-icon-chart-bar:before {

@@ -28,19 +28,7 @@
               <el-rate v-model="videoInfo[id].video_score" disabled></el-rate>
             </div>
 
-            <!-- 两个块级元素的style目的在于确定方形图片格式 #F5F5F5-->
-            <!-- <div
-              class="pointer hoverImage"
-              style="position: relative; width: 100%; height: 0; padding-top: 100%"
-              @contextmenu="rtClickOpenMenu(item.video_id)"
-              @click="openFile(item.video_path)"
-            >
-              <figure class="imghvr-shutter-out-diag-1">
-                <img class="videoCover" :src="videoInfo[id].video_cover" />
 
-                <figcaption>这里是你划过后的出来文字 小可爱</figcaption>
-              </figure>
-            </div> -->
             <figure
               class="imghvr-shutter-out-diag-1 videoFigure"
               @contextmenu="rtClickOpenMenu(item.video_id)"
@@ -106,38 +94,58 @@
     </div>
 
     <div id="videoInfoEditDialog">
-      <el-dialog v-model="videoEditVisible" title="编辑视频信息">
+      <el-dialog v-model="videoEditVisible" title="🎞️ 编辑视频信息">
         <el-scrollbar max-height="60vh">
           <el-row>
             <el-col :span="6">
               <el-image :src="videoDetails.videoCover" style="aspect-ratio: 57/84; margin: 5px" fit="cover" />
               <div style="width: 100%; text-align: center">
-                <el-link @click="selectCoverInDetails" target="_blank">更新封面图/海报</el-link>
+                <el-link target="_blank" @click="selectCoverInDetails">更新封面图/海报</el-link>
+              </div>
+              <div style="width: 100%; text-align: center">
+                <el-button
+                  v-if="videoDetails.followed == 0"
+                  type="danger"
+                  style="width: 80%; margin-top: 10px; text-align: center"
+                  @click="videoDetails.followed = 1"
+                >
+                  {{ this.showFollowed }}
+                </el-button>
+                <el-button
+                  v-if="videoDetails.followed == 1"
+                  type="info"
+                  style="width: 80%; margin-top: 10px; text-align: center"
+                  @mouseenter="showNotFollowed = '取消收藏'"
+                  @mouseleave="showNotFollowed = '已收藏'"
+                  @click="videoDetails.followed = 0"
+                >
+                  {{ this.showNotFollowed }}
+                </el-button>
               </div>
             </el-col>
             <el-col :span="18">
-              <el-form :model="videoDetails">
+              <el-form :model="videoDetails" :rules="rules">
                 <el-form-item label="视频名称" :label-width="formLabelWidth">
                   <div>{{ videoDetails.videoName }}</div>
                 </el-form-item>
                 <el-form-item label="评分" :label-width="formLabelWidth">
                   <el-rate
+                    v-model="videoDetails.videoScore"
                     :texts="['很差', '较差', '还行', '推荐', '力荐']"
                     show-text
-                    v-model="videoDetails.videoScore"
                   ></el-rate>
                 </el-form-item>
                 <el-form-item label="标签" :label-width="formLabelWidth">
                   <el-row>
                     <el-tag
                       v-for="tag in videoDetails.tags"
-                      style="margin-right: 10px; margin-bottom: 10px"
                       :key="tag.id"
+                      style="margin-right: 10px; margin-bottom: 10px"
                       size="large"
                       closable
                       :disable-transitions="false"
                       type="success"
-                      effect="plain"
+                      :hit="true"
                       @close="handleTagClose(videoDetails.videoID, tag)"
                     >
                       {{ tag.tag_name }}
@@ -157,21 +165,24 @@
                   <el-date-picker
                     v-model="videoDetails.releaseDate"
                     type="date"
-                    placeholder="Pick a day"
+                    placeholder="选择上映日期"
                     size="default"
                   />
+                </el-form-item>
+                <el-form-item label="相关网址" :label-width="formLabelWidth" prop="url">
+                  <el-input v-model="videoDetails.url" placeholder="请输入相关网址" size="default"></el-input>
                 </el-form-item>
                 <el-form-item label="导演" :label-width="formLabelWidth">
                   <el-row>
                     <el-tag
                       v-for="director in videoDetails.directorList.list"
-                      style="margin-right: 10px; margin-bottom: 10px"
                       :key="director.id"
+                      style="margin-right: 10px; margin-bottom: 10px"
                       size="large"
                       closable
                       :disable-transitions="false"
                       effect="dark"
-                      type="warning"
+                      type="danger"
                       @close="handleDirectorClose(videoDetails.videoID, director)"
                     >
                       {{ director.name }}
@@ -192,8 +203,8 @@
                   <el-row>
                     <el-tag
                       v-for="author in videoDetails.authorList.list"
-                      style="margin-right: 10px; margin-bottom: 10px"
                       :key="author.id"
+                      style="margin-right: 10px; margin-bottom: 10px"
                       size="large"
                       closable
                       :disable-transitions="false"
@@ -219,13 +230,13 @@
                   <el-row>
                     <el-tag
                       v-for="actor in videoDetails.actorList.list"
-                      style="margin-right: 10px; margin-bottom: 10px"
                       :key="actor.id"
+                      style="margin-right: 10px; margin-bottom: 10px"
                       size="large"
                       closable
                       :disable-transitions="false"
                       effect="dark"
-                      type="warning"
+                      type="success"
                       @close="handleActorClose(videoDetails.videoID, actor)"
                     >
                       {{ actor.name }}
@@ -246,13 +257,13 @@
                   <el-row>
                     <el-tag
                       v-for="other in videoDetails.otherList.list"
-                      style="margin-right: 10px; margin-bottom: 10px"
                       :key="other.id"
+                      style="margin-right: 10px; margin-bottom: 10px"
                       size="large"
                       closable
                       :disable-transitions="false"
                       effect="dark"
-                      type="warning"
+                      type="info"
                       @close="handleOtherClose(videoDetails.videoID, other)"
                     >
                       {{ other.name }}
@@ -282,13 +293,14 @@
               </el-form>
             </el-col>
           </el-row>
-
-          <template #footer>
-            <div class="dialog-footer">
-              <el-button @click="videoEditVisible = false">取 消</el-button>
-            </div>
-          </template>
         </el-scrollbar>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="showDetailsConfirm" type="primary">确 认</el-button>
+
+            <el-button @click="videoEditVisible = false">取 消</el-button>
+          </div>
+        </template>
       </el-dialog>
     </div>
   </el-scrollbar>
@@ -303,10 +315,15 @@ const fs = require('fs-extra')
 const remote = require('@electron/remote')
 const { Menu, dialog } = remote
 import { mapState, mapActions } from 'vuex'
+import SvgIcon from '@/icons/SvgIcon.vue'
 
 export default {
+  components: { SvgIcon },
+  inject: ['refresh'],
   data() {
     return {
+      showFollowed: '❤ 收藏',
+      showNotFollowed: '已收藏',
       inputValue: '',
       inputDirectorValue: '',
       inputAuthorValue: '',
@@ -315,6 +332,15 @@ export default {
       dialogFormVisible: false,
       videoEditVisible: false,
       fit: 'cover',
+      rules: {
+        url: [
+          {
+            pattern: /^((http|https):\/\/)?(([A-Za-z0-9]+-[A-Za-z0-9]+|[A-Za-z0-9]+)\.)+([A-Za-z]+)[/?:]?.*$/,
+            message: '请输入正确URL格式',
+            trigger: 'blur'
+          }
+        ]
+      },
       defaultCover: 'src/icons/my-icon/video-o.svg',
       videoCol: {
         vc_name: '',
@@ -349,6 +375,7 @@ export default {
         intro: '',
         followed: 0,
         releaseDate: '',
+        url: '',
         tags: [
           {
             id: 0,
@@ -419,7 +446,6 @@ export default {
   created() {
     this.getFileList()
   },
-  inject: ['refresh'],
   methods: {
     ...mapActions('video-col', [
       'addVc',
@@ -431,7 +457,8 @@ export default {
       'videoDelete',
       'editVideoCover',
       'autoGetCover',
-      'getVideoDetails'
+      'getVideoDetails',
+      'updateVideoDetails'
     ]),
     getFileList() {
       this.getFirstVC().then((response) => {
@@ -609,10 +636,12 @@ export default {
         this.videoDetails.videoID = response.data.videoID
         this.videoDetails.videoName = response.data.videoName
         this.videoDetails.videoCover = response.data.videoCover
+        this.videoDetails.videoScore = response.data.videoScore
         this.videoDetails.intro = response.data.intro
         this.videoDetails.followed = response.data.followed
         this.videoDetails.releaseDate = response.data.releaseDate
         this.videoDetails.tags = response.data.tags
+        this.videoDetails.url = response.data.url
 
         var pList = response.data.personList
         var directors = []
@@ -840,11 +869,71 @@ export default {
         .catch((err) => {
           console.log(err)
         })
+    },
+    showDetailsConfirm() {
+      // console.log(this.videoDetails)
+      this.$confirm('是否确定保存修改内容', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.updateDetails()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消保存'
+          })
+        })
+    },
+    updateDetails() {
+      //处理VideoDetails数据，主要是对角色数据进行合并
+      var personList = []
+      for (var i = 0; i < this.videoDetails.directorList.list.length; i++) {
+        var person = new Object()
+        person = this.videoDetails.directorList.list[i]
+        person.roleID = this.videoDetails.directorList.roleID
+        person.roleName = this.videoDetails.directorList.roleName
+        personList.push(person)
+      }
+      for (var i = 0; i < this.videoDetails.authorList.list.length; i++) {
+        var person = new Object()
+        person = this.videoDetails.authorList.list[i]
+        person.roleID = this.videoDetails.authorList.roleID
+        person.roleName = this.videoDetails.authorList.roleName
+        personList.push(person)
+      }
+      for (var i = 0; i < this.videoDetails.actorList.list.length; i++) {
+        var person = new Object()
+        person = this.videoDetails.actorList.list[i]
+        person.roleID = this.videoDetails.actorList.roleID
+        person.roleName = this.videoDetails.actorList.roleName
+        personList.push(person)
+      }
+      for (var i = 0; i < this.videoDetails.otherList.list.length; i++) {
+        var person = new Object()
+        person = this.videoDetails.otherList.list[i]
+        person.roleID = this.videoDetails.otherList.roleID
+        person.roleName = this.videoDetails.otherList.roleName
+        personList.push(person)
+      }
+      //这里用JSON.parse(JSON.stringify());方式进行深拷贝避免删除几个角色列表后表单报错
+      var details = JSON.parse(JSON.stringify(this.videoDetails));
+      delete details.directorList
+      delete details.actorList
+      delete details.authorList
+      delete details.otherList
+      details.personList=personList
+      this.updateVideoDetails(details).then((response)=>{
+        this.videoEditVisible = false
+        this.refresh()
+      })
     }
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 /* element滚动条组件 隐藏水平滚动条 */
 .sidebar-wrapper .el-scrollbar__wrap {
   overflow-x: hidden;

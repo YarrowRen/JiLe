@@ -6,6 +6,7 @@ const test2File="I:\\JiLeFile\\test1\\01.jpg";
 const test3File="I:\\JiLeFile\\test1.zip"
 const test4File="I:\\JiLeFile\\unzip_temp"
 const test5File="I:\\JiLeFile\\video"
+
 export default {
   test1File, // 图片浏览地址
   test2File, //图片压缩地址,打开图片地址

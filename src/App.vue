@@ -4,14 +4,14 @@
 
 <script>
 export default {
-  data: ()=>({
-    isRresh: true
-  }),
   provide() {
     return {
       refresh: this.refresh
     }
   },
+  data: ()=>({
+    isRresh: true
+  }),
   methods: {
     //使用provide和inject 普通刷新 不会使页面出现短暂的空白，体验效果比较好
     //vue5种方式实现页面"刷新": https://www.jianshu.com/p/b9b7eae48f45

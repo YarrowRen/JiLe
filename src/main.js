@@ -58,5 +58,13 @@ import './permission'
 import errorLog from '@/hooks/useErrorLog'
 errorLog()
 
+//引入视频播放组件
+import VueVideoPlayer from '@videojs-player/vue'
+import 'video.js/dist/video-js.css'
+import 'videojs-flash'
+
+
+
+
 import VueGridLayout from 'vue-grid-layout'
-app.use(store).use(router).use(VueGridLayout).mount('#app')
+app.use(store).use(router).use(VueGridLayout).use(VueVideoPlayer).mount('#app')

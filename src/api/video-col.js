@@ -96,3 +96,33 @@ export function getVideoDetails(videoID) {
     }
   })
 }
+
+export function updateVideoDetails(data) {
+  return request({
+    url: '/vc/updateVideoDetails',
+    method: 'post',
+    data
+  })
+}
+
+export function changeFollowedState(videoID) {
+  return request({
+    url: '/vc/changeFollowedState',
+    method: 'post',
+    isParams: true,
+    data: {
+      videoID
+    }
+  })
+}
+
+export function getVideoMediaInfo(videoID) {
+  return request({
+    url: '/vc/getVideoMediaInfo',
+    method: 'get',
+    isParams: true,
+    data: {
+      videoID
+    }
+  })
+}
