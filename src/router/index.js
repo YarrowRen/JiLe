@@ -85,6 +85,12 @@ export const constantRoutes = [
         meta: { title: 'IndexedDB测试' }
       },
       {
+        path: 'color-thief',
+        component: () => import('@/views/jile/colorThief.vue'),
+        name: 'colorThief',
+        meta: { title: 'colorThief测试' }
+      },
+      {
         path: 'test-naiveui',
         component: () => import('@/views/jile/naiveui.vue'),
         name: 'NaiveUI测试',

@@ -4,12 +4,21 @@
       <div>
         <el-button @click="showVideoCol">查看VideoCol</el-button>
         <el-button @click="showVideoDetails">查看videoDetails</el-button>
-        <el-button @click="getCover">获取封面</el-button>
         <el-button @click="refreshVc">刷新数据库</el-button>
+      </div>
+      <div>
+        <el-pagination
+          @current-change="handleCurrentChange"
+          background
+          layout="total, prev, pager, next, jumper"
+          :current-page="this.currentPage"
+          :page-size="this.pageSize"
+          :total="this.totalSize"
+        ></el-pagination>
       </div>
       <el-row :gutter="5">
         <el-col v-for="(item, id) in videoInfo" :key="id" :span="4">
-          <el-card :body-style="{ padding: '0px' }" shadow="always" style="margin-top: 10px">
+          <el-card :body-style="{ padding: '0px' }" shadow="always" class="videoCard">
             <div
               style="
                 text-align: center;
@@ -20,28 +29,27 @@
                 margin-right: 8px;
               "
             >
-              <el-tooltip class="item" effect="dark" :content="videoInfo[id].video_name" placement="top">
+              <el-tooltip class="item" effect="dark" :content="videoInfo[id].video_name" placement="bottom">
                 <div id="title">
-                  <div>{{ videoInfo[id].video_name }}</div>
+                  <div @click="$router.push('/jile/video-player?video_id=' + item.video_id)" style="cursor: pointer">
+                    <strong>{{ videoInfo[id].video_name }}</strong>
+                  </div>
                 </div>
               </el-tooltip>
-              <el-rate v-model="videoInfo[id].video_score" disabled></el-rate>
+              <!-- <el-rate v-model="videoInfo[id].video_score" disabled></el-rate> -->
             </div>
 
-
-            <figure
-              class="imghvr-shutter-out-diag-1 videoFigure"
-              @contextmenu="rtClickOpenMenu(item.video_id)"
-              @click="openFile(item.video_path)"
-            >
+            <figure class="imghvr-shutter-out-diag-1 videoFigure" @contextmenu="rtClickOpenMenu(item.video_id)">
               <img class="videoCover" :src="videoInfo[id].video_cover" />
 
               <figcaption class="videoFigcaption">
-                <img src="../../icons/my-icon/videoNew.png" class="figcaption-img" />
+                <img src="@/assets/pic/videoNew.png" class="figcaption-img" @click="openFile(item.video_path)" />
               </figcaption>
             </figure>
 
             <div style="margin-top: 5px; margin-bottom: 5px; margin-left: 5px; margin-right: 5px">
+              <div style="display: inline">{{ starRateIcon[item.video_score] }}</div>
+              <el-divider direction="vertical" />
               <el-link @click="openDialogForm(item)">
                 <svg class="icon" aria-hidden="true">
                   <use xlink:href="#yw-icon-edit"></use>
@@ -109,7 +117,7 @@
                   style="width: 80%; margin-top: 10px; text-align: center"
                   @click="videoDetails.followed = 1"
                 >
-                  {{ this.showFollowed }}
+                  {{ showFollowed }}
                 </el-button>
                 <el-button
                   v-if="videoDetails.followed == 1"
@@ -119,7 +127,7 @@
                   @mouseleave="showNotFollowed = '已收藏'"
                   @click="videoDetails.followed = 0"
                 >
-                  {{ this.showNotFollowed }}
+                  {{ showNotFollowed }}
                 </el-button>
               </div>
             </el-col>
@@ -296,7 +304,7 @@
         </el-scrollbar>
         <template #footer>
           <div class="dialog-footer">
-            <el-button @click="showDetailsConfirm" type="primary">确 认</el-button>
+            <el-button type="primary" @click="showDetailsConfirm">确 认</el-button>
 
             <el-button @click="videoEditVisible = false">取 消</el-button>
           </div>
@@ -322,6 +330,7 @@ export default {
   inject: ['refresh'],
   data() {
     return {
+      starRateIcon: ['👻', '🤡', '😥', '😑', '🥰', '😍'],
       showFollowed: '❤ 收藏',
       showNotFollowed: '已收藏',
       inputValue: '',
@@ -331,6 +340,10 @@ export default {
       inputOtherValue: '',
       dialogFormVisible: false,
       videoEditVisible: false,
+      vc_id: 1,
+      currentPage: 1,
+      pageSize: 12,
+      totalSize: 0,
       fit: 'cover',
       rules: {
         url: [
@@ -444,13 +457,10 @@ export default {
     }
   },
   created() {
-    this.getFileList()
+    this.getFileList(this.vc_id, this.currentPage, this.pageSize)
   },
   methods: {
     ...mapActions('video-col', [
-      'addVc',
-      'getVc',
-      'getVideoCover',
       'getFirstVC',
       'refreshVcData',
       'videoRename',
@@ -458,10 +468,19 @@ export default {
       'editVideoCover',
       'autoGetCover',
       'getVideoDetails',
-      'updateVideoDetails'
+      'updateVideoDetails',
+      'getVideoCol'
     ]),
-    getFileList() {
-      this.getFirstVC().then((response) => {
+    getFileList(vc_id, page, pageSize) {
+      let pageInfo = {
+        vc_id: vc_id,
+        page: page,
+        pageSize: pageSize
+      }
+      //重置表单信息
+
+      this.videoInfo = this.$options.data().videoInfo
+      this.getVideoCol(pageInfo).then((response) => {
         // console.log(response.data)
         this.videoCol = response.data
         // console.log(this.videoCol)
@@ -479,7 +498,7 @@ export default {
         //   }
         // }
 
-        var fileList = response.data.video_list
+        var fileList = response.data.vc_info.list
         //获取详细影视文件信息列表
         for (var i = 0; i < fileList.length; i++) {
           // console.log(fileList)
@@ -498,21 +517,14 @@ export default {
             video_tag: fileList[i].videoTag
           }
         }
+        //配置分页信息
+        this.pageSize = response.data.vc_info.pageSize
+        this.currentPage = response.data.vc_info.pageNum
+        this.totalSize = response.data.vc_info.total
       })
     },
-    getCover() {
-      // console.log(this.videoCol)
-      // console.log(this.coverSavePath)
-      this.getVideoCover(this.videoCol).then((response) => {
-        let resList = response.data
-        for (var i = 0; i < this.videoInfo.length; i++) {
-          for (var j = 0; j < resList.length; j++) {
-            if (resList[j].videoName == this.videoInfo[i].video_name) {
-              this.videoInfo[i].video_cover = resList[j].coverPath
-            }
-          }
-        }
-      })
+    handleCurrentChange(val) {
+      this.getFileList(this.vc_id, val, this.pageSize)
     },
     selectCover(item) {
       var id = item.id
@@ -559,29 +571,6 @@ export default {
         { label: '删除封面图', click: this.deleteCover, id: id },
         { type: 'separator' }
       ]
-    },
-    chooseFiles() {
-      const { dialog } = require('@electron/remote')
-      // Electron 10之后下面这种引入方法已经不可用了，使用上面的方法，这个是需要注意的
-      // const { BrowserWindow } = require('electron').remote;
-
-      //利用Electron的Dialog打开文件选择器或文件夹选择器并进行特殊设置
-      dialog
-        .showOpenDialog({
-          title: '请选择文件夹',
-          properties: ['openDirectory']
-        })
-        .then((result) => {
-          if (!result) return //为空情况下表示未选择文件夹，直接return结束函数
-          console.log(result.filePaths[0])
-          this.dicPath = result.filePaths[0]
-
-          //选择文件夹后读取文件夹下所有文件（只读取到第一级）
-          this.getFileList()
-        })
-        .catch((err) => {
-          console.log(err)
-        })
     },
     openFile(path) {
       shell.openPath(path)
@@ -919,13 +908,13 @@ export default {
         personList.push(person)
       }
       //这里用JSON.parse(JSON.stringify());方式进行深拷贝避免删除几个角色列表后表单报错
-      var details = JSON.parse(JSON.stringify(this.videoDetails));
+      var details = JSON.parse(JSON.stringify(this.videoDetails))
       delete details.directorList
       delete details.actorList
       delete details.authorList
       delete details.otherList
-      details.personList=personList
-      this.updateVideoDetails(details).then((response)=>{
+      details.personList = personList
+      this.updateVideoDetails(details).then((response) => {
         this.videoEditVisible = false
         this.refresh()
       })
@@ -933,7 +922,7 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 /* element滚动条组件 隐藏水平滚动条 */
 .sidebar-wrapper .el-scrollbar__wrap {
   overflow-x: hidden;
@@ -963,9 +952,7 @@ export default {
 
 .figcaption-img {
   cursor: pointer;
-  opacity: 0.9;
   width: 50%;
-  height: 50%;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -981,5 +968,14 @@ export default {
   text-overflow: ellipsis;
   word-break: break-all;
   //background-color: red($color: #cfcbcb);
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.videoCard {
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  margin: 5px;
+  margin-bottom: 15px;
 }
 </style>

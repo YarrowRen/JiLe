@@ -11,7 +11,8 @@ import {
   getVideoDetails,
   updateVideoDetails,
   changeFollowedState,
-  getVideoMediaInfo
+  getVideoMediaInfo,
+  getVideoCol
 } from '@/api/video-col'
 
 const getDefaultState = () => {
@@ -190,6 +191,19 @@ const actions = {
   getFirstVC({ commit }) {
     return new Promise((resolve, reject) => {
       getFirstVC()
+        .then((response) => {
+          const data = response
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  },
+  getVideoCol({ commit }, { vc_id, page,pageSize }) {
+    return new Promise((resolve, reject) => {
+      // console.log(videoID)
+      getVideoCol( vc_id, page,pageSize)
         .then((response) => {
           const data = response
           resolve(data)

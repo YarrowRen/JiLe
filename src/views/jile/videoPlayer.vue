@@ -1,6 +1,6 @@
 <template>
   <el-scrollbar style="height: 100%">
-    <div class="mainPage">
+    <div class="mainPage" id="capture">
       <div>
         <el-row>
           <el-col :span="19">
@@ -110,10 +110,10 @@
                 <el-col :span="8">
                   <div class="tableItem">
                     <p style="display: inline; margin-right: 5px"><strong>频道：</strong></p>
-                    <p style="display: inline" v-if="mediaInfo.audioChannel == 2">
+                    <p v-if="mediaInfo.audioChannel == 2" style="display: inline">
                       {{ mediaInfo.audioChannel }} （双声道）
                     </p>
-                    <p style="display: inline" v-if="mediaInfo.audioChannel == 1">
+                    <p v-if="mediaInfo.audioChannel == 1" style="display: inline">
                       {{ mediaInfo.audioChannel }} （单声道）
                     </p>
                   </div>
@@ -178,8 +178,34 @@
       </div>
       <div>
         <el-row>
-          <el-col :span="20">
+          <el-col :span="1"></el-col>
+          <el-col :span="3">
+            <div class="left-handle">
+              <div>
+                <img src="@/assets/minus-key.png" class="minus-key" @click="playbackRateLow" />
+              </div>
+              <div>
+                <img src="@/assets/joystick.png" class="joy-stick" @click="requestFullscreen" />
+              </div>
+              <div>
+                <img src="@/assets/left-up.png" class="left-up-button" @click="volumeUpper" />
+              </div>
+              <div>
+                <img src="@/assets/left-left.png" class="left-left-button" @click="backForward" />
+                <img src="@/assets/left-right.png" class="left-right-button" @click="fastForward" />
+              </div>
+              <div>
+                <img src="@/assets/left-bottom.png" class="left-bottom-button" @click="volumeLower" />
+              </div>
+              <div>
+                <img src="@/assets/capture.png" class="left-capture-button" @click="capturePage" />
+              </div>
+            </div>
+          </el-col>
+          <el-col :span="16">
             <video-player
+              id="video-player"
+              ref="videoPlayer"
               :src="videoDetails.videoPath"
               class="video-player vjs-big-play-centered"
               controls
@@ -188,8 +214,36 @@
               :volume="0.6"
               :playback-rates="[0.5, 1.0, 1.5, 2.0]"
             ></video-player>
-            <el-image></el-image>
           </el-col>
+
+          <el-col :span="3">
+            <div class="right-handle">
+              <div>
+                <img src="@/assets/plus-key.png" class="plus-key" @click="playbackRateUp" />
+              </div>
+
+              <div>
+                <img src="@/assets/left-up.png" class="right-up-button" @click="copyVideoInfo" />
+              </div>
+              <div>
+                <img src="@/assets/left-left.png" class="right-left-button" @click="resetVideoPlayer" />
+                <img src="@/assets/left-right.png" class="right-right-button" @click="openUrl" />
+              </div>
+              <div>
+                <img src="@/assets/left-bottom.png" class="right-bottom-button" @click="mutedVideoPlayer" />
+              </div>
+
+              <div>
+                <img src="@/assets/joystick.png" class="joy-stick" @click="playVideo" />
+              </div>
+
+              <div>
+                <img src="@/assets/home-key.png" class="right-home-button" />
+              </div>
+            </div>
+          </el-col>
+
+          <el-col :span="1"></el-col>
         </el-row>
       </div>
     </div>
@@ -199,8 +253,9 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import { NButton, NSpace, NH1 } from 'naive-ui'
-
-const { shell } = require('electron')
+import html2canvas from 'html2canvas'
+const { shell, clipboard } = require('electron')
+import { ElMessage } from 'element-plus'
 
 export default {
   components: {
@@ -302,10 +357,12 @@ export default {
     }
   },
   created() {
-    var videoID = 28
+    var videoID = this.$route.query.video_id; //获取视频编号
     this.initVideoDetails(videoID)
     this.initMediaInfo(videoID)
   },
+  mounted() {},
+
   methods: {
     ...mapActions('video-col', ['getVideoDetails', 'changeFollowedState', 'getVideoMediaInfo']),
 
@@ -411,6 +468,127 @@ export default {
     },
     openFile(path) {
       shell.openPath(path)
+    },
+    capturePage() {
+      html2canvas(document.querySelector('#capture'), {
+        allowTaint: true, //开启跨域
+        useCORS: true,
+        scrollY: 0, //设置scrollY，scrollX以确保截屏页面出现滚动条时图片不会只截一半
+        scrollX: 0
+      }).then((canvas) => {
+        var dataURL = canvas.toDataURL()
+        // console.log(dataURL)
+        this.downCapturePic(dataURL)
+        // document.body.appendChild(canvas)
+      })
+    },
+    /**
+     * @description 构建a标签，通过a标签下载文件
+     * @param dataURL 下载地址
+     */
+    downCapturePic(dataURL) {
+      var a = document.createElement('a')
+      a.setAttribute('href', dataURL)
+      var name = 'SharePoster_ByJile'
+      a.setAttribute('download', name)
+      a.setAttribute('target', '_blank')
+      let clickEvent = document.createEvent('MouseEvents')
+      clickEvent.initEvent('click', true, true)
+      a.dispatchEvent(clickEvent)
+    },
+    playVideo() {
+      let vPlayer = document.getElementById('video-player')
+      if (vPlayer.player.paused()) {
+        vPlayer.player.play()
+      } else {
+        vPlayer.player.pause()
+      }
+    },
+    volumeUpper() {
+      let vPlayer = document.getElementById('video-player')
+      vPlayer.player.volume(vPlayer.player.volume() + 0.1)
+      ElMessage({
+        showClose: true,
+        message: '音量+1.',
+        type: 'warning'
+      })
+    },
+
+    volumeLower() {
+      let vPlayer = document.getElementById('video-player')
+      vPlayer.player.volume(vPlayer.player.volume() - 0.1)
+
+      ElMessage({
+        showClose: true,
+        message: '音量-1.',
+        type: 'warning'
+      })
+    },
+
+    fastForward() {
+      let vPlayer = document.getElementById('video-player')
+      vPlayer.player.currentTime(vPlayer.player.currentTime() + 10)
+    },
+    backForward() {
+      let vPlayer = document.getElementById('video-player')
+      vPlayer.player.currentTime(vPlayer.player.currentTime() - 10)
+    },
+    requestFullscreen() {
+      let vPlayer = document.getElementById('video-player')
+      vPlayer.player.requestFullscreen()
+      // console.log(vPlayer.player.currentSources());
+    },
+    playbackRateUp() {
+      let vPlayer = document.getElementById('video-player')
+      if (vPlayer.player.playbackRate() < 6) {
+        vPlayer.player.playbackRate(vPlayer.player.playbackRate() + 0.5)
+      } else {
+        ElMessage({
+          showClose: true,
+          message: '倍速已调制最大.',
+          type: 'error'
+        })
+      }
+    },
+    playbackRateLow() {
+      let vPlayer = document.getElementById('video-player')
+      if (vPlayer.player.playbackRate() > 0.5) {
+        vPlayer.player.playbackRate(vPlayer.player.playbackRate() - 0.5)
+      } else {
+        ElMessage({
+          showClose: true,
+          message: '倍速已调制最小.',
+          type: 'error'
+        })
+      }
+    },
+
+    resetVideoPlayer() {
+      let vPlayer = document.getElementById('video-player')
+      //暂停视频
+      vPlayer.player.pause()
+      //时间重置
+      vPlayer.player.currentTime(0)
+    },
+
+    mutedVideoPlayer() {
+      let vPlayer = document.getElementById('video-player')
+      if (vPlayer.player.muted()) {
+        vPlayer.player.muted(false)
+      } else {
+        vPlayer.player.muted(true)
+      }
+    },
+    openUrl() {
+      window.open(this.videoDetails.url)
+    },
+    copyVideoInfo() {
+      clipboard.writeText(JSON.stringify(this.videoDetails))
+      ElMessage({
+        showClose: true,
+        message: '已复制视频基本信息到剪贴板.',
+        type: 'success'
+      })
     }
   }
 }
@@ -439,6 +617,118 @@ export default {
   width: 100%;
   padding-bottom: 56.25%;
   height: 0;
+}
+
+.left-handle {
+  background-color: #02b3d2;
+  width: 100%;
+  padding-bottom: 300%;
+  height: 0;
+  border-top-left-radius: 7vw;
+  border-bottom-left-radius: 7vw;
+}
+
+.right-handle {
+  background-color: #fe5044;
+  width: 100%;
+  padding-bottom: 300%;
+  height: 0;
+  border-top-right-radius: 7vw;
+  border-bottom-right-radius: 7vw;
+}
+
+.minus-key {
+  cursor: pointer;
+  margin-top: 4vh;
+  margin-right: 1vw;
+  width: 20%;
+  float: right;
+}
+
+.plus-key {
+  cursor: pointer;
+  margin-top: 4vh;
+  margin-left: 1vw;
+  width: 20%;
+  float: left;
+}
+
+.joy-stick {
+  cursor: pointer;
+  width: 75%;
+  float: right;
+  margin-top: 2vh;
+  margin-right: 1.5vw;
+}
+
+.left-up-button {
+  cursor: pointer;
+  width: 25%;
+  float: right;
+  margin-top: 3vh;
+  margin-right: 38.5%;
+}
+.left-left-button {
+  cursor: pointer;
+  width: 25%;
+  float: left;
+  margin-left: 12%;
+}
+
+.left-right-button {
+  cursor: pointer;
+  width: 25%;
+  float: right;
+  margin-right: 13%;
+}
+.left-bottom-button {
+  cursor: pointer;
+  width: 25%;
+  float: right;
+  margin-right: 38.5%;
+}
+
+.left-capture-button {
+  cursor: pointer;
+  width: 22%;
+  float: right;
+  margin-top: 3vh;
+  margin-right: 2vw;
+}
+
+.right-up-button {
+  cursor: pointer;
+  width: 25%;
+  float: right;
+  margin-top: 9vh;
+  margin-right: 38.5%;
+}
+.right-left-button {
+  cursor: pointer;
+  width: 25%;
+  float: left;
+  margin-left: 12%;
+}
+
+.right-right-button {
+  cursor: pointer;
+  width: 25%;
+  float: right;
+  margin-right: 13%;
+}
+.right-bottom-button {
+  cursor: pointer;
+  width: 25%;
+  float: right;
+  margin-right: 38.5%;
+}
+
+.right-home-button {
+  cursor: pointer;
+  width: 22%;
+  float: left;
+  margin-top: 3vh;
+  margin-left: 2vw;
 }
 
 .videoTitle {

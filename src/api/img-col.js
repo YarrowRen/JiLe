@@ -14,3 +14,16 @@ export function getIc() {
     method: 'get'
   })
 }
+
+export function getImgCol(ic_id, page,pageSize) {
+  return request({
+    url: '/ic/getImgCol',
+    method: 'get',
+    isParams: true,
+    data: {
+      ic_id: ic_id,
+      page: page,
+      pageSize: pageSize
+    }
+  })
+}

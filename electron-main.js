@@ -5,6 +5,7 @@ const createWindow = () => {
     width: 1280,
     minWidth: 1100, //设置最小宽度
     height: 800,
+    minHeight: 800, //设置最小高度
     icon: "./electron/static/jile.ico",
     webPreferences: {
       webSecurity: false, //========关闭安全策略===========

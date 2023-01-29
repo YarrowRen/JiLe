@@ -31,6 +31,20 @@ export function getFirstVC() {
   })
 }
 
+export function getVideoCol(vc_id, page,pageSize) {
+  return request({
+    url: '/vc/getVideoCol',
+    method: 'get',
+    isParams: true,
+    data: {
+      vc_id: vc_id,
+      page: page,
+      pageSize: pageSize
+    }
+  })
+}
+
+
 export function getVideoCover(data) {
   return request({
     url: '/vc/getVideoCover',
