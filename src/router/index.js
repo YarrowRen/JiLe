@@ -43,19 +43,6 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/waterfall',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'waterfall',
-        component: () => import('@/views/waterfall/index.vue'),
-        //using el svg icon, the elSvgIcon first when at the same time using elSvgIcon and icon
-        meta: { title: 'waterfall', elSvgIcon: 'Fold' }
-      }
-    ]
-  },
-  {
     path: '/addCol',
     component: Layout,
     children: [
@@ -78,6 +65,18 @@ export const constantRoutes = [
     meta: { title: 'jile', icon: 'user' },
     alwaysShow: true,
     children: [
+      {
+        path: 'waterfall',
+        component: () => import('@/views/waterfall/index.vue'),
+        name: 'waterfall',
+        meta: { title: 'waterfall测试' }
+      },
+      {
+        path: 'video-cover',
+        component: () => import('@/views/jile/videoCover.vue'),
+        name: '视频封面测试',
+        meta: { title: '视频封面测试' }
+      },
       {
         path: 'test-indexeddb',
         component: () => import('@/views/jile/testIndexedDB.vue'),
@@ -127,16 +126,16 @@ export const constantRoutes = [
         meta: { title: '压缩图片测试' }
       },
       {
-        path: 'video-cover',
-        component: () => import('@/views/jile/videoCover.vue'),
-        name: '视频封面测试',
-        meta: { title: '视频封面测试' }
-      },
-      {
         path: 'video-player',
         component: () => import('@/views/jile/videoPlayer.vue'),
         name: '视频播放测试',
         meta: { title: '视频播放测试' }
+      },
+      {
+        path: 'image-player',
+        component: () => import('@/views/jile/imagePlayer.vue'),
+        name: '图片浏览器',
+        meta: { title: '图片浏览器' }
       },
       {
         path: 'unzip-test',

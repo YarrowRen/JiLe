@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "8289051",
+      "name": "QQ",
+      "font_class": "QQ",
+      "unicode": "e876",
+      "unicode_decimal": 59510
+    },
+    {
+      "icon_id": "9186712",
+      "name": "微博",
+      "font_class": "weibo",
+      "unicode": "e735",
+      "unicode_decimal": 59189
+    },
+    {
       "icon_id": "33264806",
       "name": "beauty&personal care",
       "font_class": "a-beautypersonalcare",

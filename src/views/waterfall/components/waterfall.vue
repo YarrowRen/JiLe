@@ -1,5 +1,5 @@
 <template>
-  <div v-if="targetVal == contentArr.length">
+  <div>
     <div>
       <el-button type="primary" @click="enlargeImage">enlargeImage</el-button>
       <el-button type="primary" @click="decreaseImage">decreaseImage</el-button>
@@ -7,20 +7,20 @@
       <el-button type="primary" @click="getColors">getColors</el-button>
     </div>
 
-    <div style="position: relative">
+    <div style="position: relative" v-if="targetVal == contentArr.length">
       <div class="container">
         <div v-for="(column, index) in columns" :key="index" class="column">
           <div v-for="(item, i) in column.columnArr" :key="i" class="item" :style="{ width: itemWidth + 'px' }">
-            <div @click="openDrawer(item)" class="imageFigure">
+            <div class="imageFigure" @click="openDrawer(item)">
               <img
+                :id="'background' + item.imageID"
                 :src="item.thumbnail"
                 :style="{ height: item.height + 'px', width: itemWidth + 'px' }"
                 class="image"
-                :id="'background' + item.imageID"
               />
             </div>
             <div style="text-align: center">
-              <el-link>
+              <el-link @click="$router.push('/jile/image-player?image_id=' + item.imageID)">
                 <p style="font-size: 13px">
                   <strong>{{ item.imageName }}</strong>
                 </p>
@@ -34,7 +34,7 @@
       </div>
     </div>
 
-    <el-drawer class="el-drawer" v-model="imageDrawer" :with-header="false">
+    <el-drawer v-model="imageDrawer" class="el-drawer" :with-header="false">
       <div style="height: 200px; text-align: center; line-height: 200px">
         <el-image
           :src="imageInfo.thumbnail"
@@ -45,6 +45,8 @@
       </div>
       <div class="show">
         <el-tooltip
+          v-for="color in colors"
+          :key="color"
           class="box-item"
           effect="light"
           :content="
@@ -54,12 +56,10 @@
               .slice(1)
           "
           placement="top"
-          v-for="color in colors"
-          :key="color"
         >
           <div
-            @contextmenu="rtClickOpenMenu(color)"
             :style="{ background: `rgb(${color.toString()})`, display: 'inline-block' }"
+            @contextmenu="rtClickOpenMenu(color)"
           ></div>
         </el-tooltip>
       </div>
@@ -85,7 +85,9 @@
       </div>
       <el-form :model="imageInfo">
         <el-form-item>
-          <el-input v-model="imageInfo.imageName" placeholder="图像名" size="default"></el-input>
+          <n-h3 prefix="bar" type="success">
+            <strong>{{ imageInfo.imageName }}</strong>
+          </n-h3>
         </el-form-item>
         <el-form-item>
           <el-input v-model="imageInfo.url" placeholder="相关链接" size="default"></el-input>
@@ -141,17 +143,17 @@
           <p>{{ imageInfo.suffix }}</p>
         </el-form-item>
         <el-form-item label="创建时间" :label-width="formLabelWidth">
-          <p>{{ imageInfo.createDate }}</p>
+          <p>{{ imageInfo.createDateFormat }}</p>
         </el-form-item>
       </el-form>
       <div style="float: right; margin: 20px">
-        <el-button type="primary">
+        <el-button type="success" color="#18a058" @click="showDrawerConfirm">
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#yw-icon-select-bold"></use>
           </svg>
           保存
         </el-button>
-        <el-button type="info">
+        <el-button type="info" @click="closeDrawer">
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#yw-icon-close-bold"></use>
           </svg>
@@ -168,11 +170,25 @@ const { shell, clipboard } = require('electron')
 import { ElMessage } from 'element-plus'
 const remote = require('@electron/remote')
 const { Menu, dialog } = remote
+import { NButton, NSpace, NH3 } from 'naive-ui'
+
+import { mapState, mapActions } from 'vuex'
+
 export default {
+  inject: ['refresh'],
+  components: {
+    NButton,
+    NSpace,
+    NH3
+  },
   props: {
     //从父组件获取图集信息
     contentArr: {
       type: Object,
+      required: true
+    },
+    currentPage: {
+      type: Number,
       required: true
     }
   },
@@ -196,6 +212,7 @@ export default {
         remark: '',
         followed: 0,
         createDate: '',
+        createDateFormat: '',
         url: '',
         tags: [
           {
@@ -226,20 +243,26 @@ export default {
         }
       },
       immediate: true
+    },
+    //监听页签变化，当页签变化时重新载入页面
+    currentPage: {
+      handler(newValue, oldValue) {
+        this.targetVal = 0
+        this.getImgHeight()
+      }
     }
   },
   created() {
     this.getImgHeight()
-    console.log(this.contentArr)
   },
   mounted() {
     //监听键盘与鼠标（CTRL+鼠标滚轮）实现瀑布流图片缩放
     this.keyDownAndScroll()
   },
   methods: {
+    ...mapActions('img-col', ['getImageTag', 'updateImageInfo']),
     //初始化页面
     initPage() {
-      console.log(this.contentArr)
       //调用初始化方法
       this.init()
       //在页面大小出现变化时重新加载瀑布流
@@ -302,7 +325,6 @@ export default {
     async getImgHeight() {
       //在异步方法下的this与JS全局中的this意义不同，
       //所以在方法开始时重新定义全局this变量用来获得全局数据
-      console.log('进入异步方法' + this.contentArr.length)
       let sel = this
       //遍历contentArr（从父组件获取并传递过来）
       for (let i = 0; i < this.contentArr.length; i++) {
@@ -343,7 +365,6 @@ export default {
         await promise
         //等待异步方法执行完成后，对图片列表数据进行刷新
         promise.then(function (data) {
-          console.log(data)
           sel.contentArr[i].height = data.height
           sel.contentArr[i].trueHeight = data.trueHeight
           sel.contentArr[i].width = data.width
@@ -369,7 +390,6 @@ export default {
         let height = Math.floor(scale * trueHeight) //对原长度进行缩放（height是真实展示在页面上的长度）
         //更新刷新后的新高度
         this.contentArr[i].height = height
-        // console.log(this.contentArr[i])
       }
     },
 
@@ -382,7 +402,6 @@ export default {
       let cWidth = document.documentElement.clientWidth || document.body.clientWidth
       // 假设图片宽度为240px
       let cLen = Math.floor(cWidth / (this.itemWidth + 20) - 1)
-      console.log(cLen)
 
       // 初始化每一列的第一行元素
       for (let i = 0; i < cLen; i++) {
@@ -417,15 +436,31 @@ export default {
 
     //图像放大（宽度加10）
     enlargeImage() {
-      this.itemWidth += 10
-      this.refreshImageHeight()
-      this.init()
+      if (this.itemWidth < 380) {
+        this.itemWidth += 10
+        this.refreshImageHeight()
+        this.init()
+      } else {
+        ElMessage({
+          showClose: true,
+          message: '不能再大啦😭',
+          type: 'error'
+        })
+      }
     },
     //图片缩小（宽度减10）
     decreaseImage() {
-      this.itemWidth -= 10
-      this.refreshImageHeight()
-      this.init()
+      if (this.itemWidth > 120) {
+        this.itemWidth -= 10
+        this.refreshImageHeight()
+        this.init()
+      } else {
+        ElMessage({
+          showClose: true,
+          message: '已经很小喽👿',
+          type: 'error'
+        })
+      }
     },
 
     // 监听键盘和鼠标滚轮组合
@@ -452,11 +487,9 @@ export default {
             if (ctrlDown) {
               if (e1.wheelDeltaY > 0) {
                 // 放大
-                console.log('放大')
                 this.enlargeImage()
               } else {
                 // 缩小
-                console.log('缩小')
                 this.decreaseImage()
               }
             }
@@ -467,7 +500,9 @@ export default {
 
     openDrawer(item) {
       this.ImgColor(item.imageID)
-      this.imageInfo = item
+      //获取对象 避免浅拷贝
+      let _tmp = JSON.stringify(item) //将对象转换为json字符串形式
+      this.imageInfo = JSON.parse(_tmp) //将转换而来的字符串转换为原生js对象
       //对表单数据进行单独初始化
       this.imageInfo.tags = []
       //获取文件后缀并转换为大写
@@ -479,7 +514,7 @@ export default {
         //月份补0
         if (date.getMinutes() < 10) {
           //分钟前补0
-          this.imageInfo.createDate =
+          this.imageInfo.createDateFormat =
             date.getFullYear() +
             '/0' +
             (date.getMonth() + 1) +
@@ -490,7 +525,7 @@ export default {
             ':0' +
             date.getMinutes()
         } else {
-          this.imageInfo.createDate =
+          this.imageInfo.createDateFormat =
             date.getFullYear() +
             '/0' +
             (date.getMonth() + 1) +
@@ -503,7 +538,7 @@ export default {
         }
       } else {
         //不需要在月份前补0
-        this.imageInfo.createDate =
+        this.imageInfo.createDateFormat =
           date.getFullYear() +
           '/' +
           (date.getMonth() + 1) +
@@ -514,7 +549,16 @@ export default {
           ':' +
           date.getMinutes()
       }
-      this.imageDrawer = true
+      //获取Tag列表
+      var imageID = this.imageInfo.imageID
+      this.getImageTag({ imageID }).then((response) => {
+        this.imageInfo.tags = response.data
+        this.imageDrawer = true
+      })
+    },
+
+    closeDrawer() {
+      this.imageDrawer = false
     },
 
     //分析图片主色调
@@ -566,6 +610,29 @@ export default {
         }
       }
       this.tagInputValue = ''
+    },
+    showDrawerConfirm() {
+      this.$confirm('是否确定保存修改内容', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.updateInfo()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消保存'
+          })
+        })
+    },
+    updateInfo() {
+      //保存表单数据
+      var info = JSON.parse(JSON.stringify(this.imageInfo))
+      this.updateImageInfo(info).then((response) => {
+        this.refresh()
+      })
     }
   }
 }

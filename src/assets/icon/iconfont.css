@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3165022 */
-  src: url('iconfont.woff2?t=1673848428689') format('woff2'),
-       url('iconfont.woff?t=1673848428689') format('woff'),
-       url('iconfont.ttf?t=1673848428689') format('truetype');
+  src: url('iconfont.woff2?t=1675476061942') format('woff2'),
+       url('iconfont.woff?t=1675476061942') format('woff'),
+       url('iconfont.ttf?t=1675476061942') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,14 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.yw-icon-QQ:before {
+  content: "\e876";
+}
+
+.yw-icon-weibo:before {
+  content: "\e735";
 }
 
 .yw-icon-a-beautypersonalcare:before {

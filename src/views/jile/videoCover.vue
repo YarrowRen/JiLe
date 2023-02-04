@@ -8,12 +8,12 @@
       </div>
       <div>
         <el-pagination
-          @current-change="handleCurrentChange"
           background
           layout="total, prev, pager, next, jumper"
-          :current-page="this.currentPage"
-          :page-size="this.pageSize"
-          :total="this.totalSize"
+          :current-page="currentPage"
+          :page-size="pageSize"
+          :total="totalSize"
+          @current-change="handleCurrentChange"
         ></el-pagination>
       </div>
       <el-row :gutter="5">
@@ -31,7 +31,7 @@
             >
               <el-tooltip class="item" effect="dark" :content="videoInfo[id].video_name" placement="bottom">
                 <div id="title">
-                  <div @click="$router.push('/jile/video-player?video_id=' + item.video_id)" style="cursor: pointer">
+                  <div style="cursor: pointer" @click="$router.push('/jile/video-player?video_id=' + item.video_id)">
                     <strong>{{ videoInfo[id].video_name }}</strong>
                   </div>
                 </div>

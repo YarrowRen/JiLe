@@ -1,12 +1,19 @@
 <template>
   <el-scrollbar>
-    <el-card>
-      <el-button type="primary" @click="showWaterfall">瀑布流图片展示</el-button>
-      <el-button type="primary" @click="showCardfall">卡片式图片展示</el-button>
-    </el-card>
     <div>
-      <waterfall v-if="targetPage == 0 && getResult" :content-arr="contentArr" />
-      <cardfall v-if="targetPage == 1 && getResult" :content-arr="contentArr" />
+      
+      <el-button type="primary" @click="refreshIc">刷新数据库</el-button>
+      <el-pagination
+        background
+        layout="total, prev, pager, next, jumper"
+        :current-page="currentPage"
+        :page-size="pageSize"
+        :total="totalSize"
+        @current-change="handleCurrentChange"
+      ></el-pagination>
+    </div>
+    <div>
+      <waterfall v-if="getResult" :content-arr="contentArr" :current-page="currentPage" />
       <el-divider></el-divider>
     </div>
   </el-scrollbar>
@@ -14,7 +21,6 @@
 
 <script>
 import waterfall from './components/waterfall.vue'
-import cardfall from './components/cardfall.vue'
 import global from '../Global.vue'
 
 import { mapState, mapActions } from 'vuex'
@@ -22,16 +28,17 @@ const fs = require('fs-extra')
 
 export default {
   components: {
-    waterfall,
-    cardfall
+    waterfall
   },
+
+  inject: ['refresh'],
   data() {
     return {
       ic_id: 0,
+      testNum: 0,
       rootPath: global.test1File, //从全局变量获取测试数据
-      targetPage: 0, //页面标志值，用来确定展示页面
       contentArr: [], //图片信息表
-      getResult:false,
+      getResult: false,
       imgCol: {
         ic_id: 0,
         ic_name: '',
@@ -52,15 +59,23 @@ export default {
           }
         ]
       },
-      pathList: [] //路径列表
+      pathList: [], //路径列表
+
+      currentPage: 1,
+      pageSize: 60,
+      totalSize: 0
     }
   },
   created() {
+    //后边上线再调用
+    // var icID = this.$route.query.ic_id; //获取合集编号
+    // this.ic_id = icID
+    
     this.ic_id = 1
-    this.getFileList(this.ic_id)
+    this.getFileList(this.ic_id, this.currentPage, this.pageSize)
   },
   methods: {
-    ...mapActions('img-col', ['getImgCol']),
+    ...mapActions('img-col', ['getImgCol','refreshIcData']),
     // //通过文件列表获取所有文件路径
     // getPathList() {
     //   this.contentArr = []
@@ -78,16 +93,13 @@ export default {
     //   }
     // },
 
-
-    
     //获取文件列表（读取指定文件夹下的文件）
-    getFileList(ic_id) {
-      
+    getFileList(ic_id, page, pageSize) {
       this.contentArr = []
       var data = {
         ic_id: ic_id,
-        page: 1,
-        pageSize: 60
+        page: page,
+        pageSize: pageSize
       }
       this.getImgCol(data).then((response) => {
         this.imgCol = response.data
@@ -113,17 +125,26 @@ export default {
 
           this.contentArr.push(fileItem)
         }
-        this.getResult=true
+
+        //配置分页信息
+        this.pageSize = response.data.ic_info.pageSize
+        this.currentPage = response.data.ic_info.pageNum
+        this.totalSize = response.data.ic_info.total
+
+        this.getResult = true
       })
-
-
     },
-    showWaterfall() {
-      this.targetPage = 0
+    handleCurrentChange(val) {
+      this.getFileList(this.ic_id, val, this.pageSize)
     },
-    showCardfall() {
-      this.targetPage = 1
-    },
+    refreshIc(){
+      var icID=this.ic_id
+      this.refreshIcData({ icID }).then((response) => {
+        //重新加载页面--使用provide和inject 普通刷新 不会使页面出现短暂的空白，体验效果比较好
+        // (vue5种方式实现页面"刷新") https://www.jianshu.com/p/b9b7eae48f45
+        this.refresh()
+      })
+    }
   }
 }
 </script>

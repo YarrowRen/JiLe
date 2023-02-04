@@ -33,4 +33,10 @@ export default {
   fill: currentColor;
   overflow: hidden;
 }
+
+body{
+  margin:0;
+  padding:0;
+  border:0
+}
 </style>

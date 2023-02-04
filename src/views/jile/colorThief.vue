@@ -35,6 +35,9 @@ export default {
       //210042 449818741 1442312981
     }
   },
+  mounted() {
+    this.ImgColor()
+  },
   methods: {
     ImgColor() {
       this.url = 'I:\\JiLeFile\\test1\\73599890_p0.png'
@@ -61,9 +64,6 @@ export default {
           console.log(err)
         })
     }
-  },
-  mounted() {
-    this.ImgColor()
   }
 }
 </script>

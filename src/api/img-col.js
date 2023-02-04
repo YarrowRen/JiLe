@@ -27,3 +27,38 @@ export function getImgCol(ic_id, page,pageSize) {
     }
   })
 }
+
+export function refreshIcData(icID) {
+  return request({
+    url: '/ic/refreshIcData',
+    method: 'get',
+    isParams: true,
+    data: { icID }
+  })
+}
+
+export function getImageTag(imageID) {
+  return request({
+    url: '/ic/getImageTag',
+    method: 'get',
+    isParams: true,
+    data: { imageID }
+  })
+}
+
+export function updateImageInfo(data) {
+  return request({
+    url: '/ic/updateImageInfo',
+    method: 'post',
+    data
+  })
+}
+
+export function getImageDetails(imageID) {
+  return request({
+    url: '/ic/getImageDetails',
+    method: 'get',
+    isParams: true,
+    data: { imageID }
+  })
+}

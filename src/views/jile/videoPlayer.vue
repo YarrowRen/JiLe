@@ -1,6 +1,6 @@
 <template>
   <el-scrollbar style="height: 100%">
-    <div class="mainPage" id="capture">
+    <div id="capture" class="mainPage">
       <div>
         <el-row>
           <el-col :span="19">
