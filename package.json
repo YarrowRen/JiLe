@@ -103,6 +103,7 @@
         "viewerjs": "^1.11.2",
         "vue": "3.2.26",
         "vue-core-video-player": "^0.2.0",
+        "vue-easytable": "^2.22.0",
         "vue-grid-layout": "3.0.0-beta1",
         "vue-nipple": "^0.1.1",
         "vue-router": "4.0.12",

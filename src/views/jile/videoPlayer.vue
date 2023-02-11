@@ -182,23 +182,23 @@
           <el-col :span="3">
             <div class="left-handle">
               <div>
-                <img src="@/assets/minus-key.png" class="minus-key" @click="playbackRateLow" />
+                <img src="@/assets/switch_icon/minus-key.png" class="minus-key" @click="playbackRateLow" />
               </div>
               <div>
-                <img src="@/assets/joystick.png" class="joy-stick" @click="requestFullscreen" />
+                <img src="@/assets/switch_icon/joystick.png" class="joy-stick" @click="requestFullscreen" />
               </div>
               <div>
-                <img src="@/assets/left-up.png" class="left-up-button" @click="volumeUpper" />
+                <img src="@/assets/switch_icon/left-up.png" class="left-up-button" @click="volumeUpper" />
               </div>
               <div>
-                <img src="@/assets/left-left.png" class="left-left-button" @click="backForward" />
-                <img src="@/assets/left-right.png" class="left-right-button" @click="fastForward" />
+                <img src="@/assets/switch_icon/left-left.png" class="left-left-button" @click="backForward" />
+                <img src="@/assets/switch_icon/left-right.png" class="left-right-button" @click="fastForward" />
               </div>
               <div>
-                <img src="@/assets/left-bottom.png" class="left-bottom-button" @click="volumeLower" />
+                <img src="@/assets/switch_icon/left-bottom.png" class="left-bottom-button" @click="volumeLower" />
               </div>
               <div>
-                <img src="@/assets/capture.png" class="left-capture-button" @click="capturePage" />
+                <img src="@/assets/switch_icon/capture.png" class="left-capture-button" @click="capturePage" />
               </div>
             </div>
           </el-col>
@@ -219,26 +219,26 @@
           <el-col :span="3">
             <div class="right-handle">
               <div>
-                <img src="@/assets/plus-key.png" class="plus-key" @click="playbackRateUp" />
+                <img src="@/assets/switch_icon/plus-key.png" class="plus-key" @click="playbackRateUp" />
               </div>
 
               <div>
-                <img src="@/assets/left-up.png" class="right-up-button" @click="copyVideoInfo" />
+                <img src="@/assets/switch_icon/X_Key.png" class="right-up-button" @click="copyVideoInfo" />
               </div>
               <div>
-                <img src="@/assets/left-left.png" class="right-left-button" @click="resetVideoPlayer" />
-                <img src="@/assets/left-right.png" class="right-right-button" @click="openUrl" />
+                <img src="@/assets/switch_icon/Y_Key.png" class="right-left-button" @click="resetVideoPlayer" />
+                <img src="@/assets/switch_icon/A_Key.png" class="right-right-button" @click="openUrl" />
               </div>
               <div>
-                <img src="@/assets/left-bottom.png" class="right-bottom-button" @click="mutedVideoPlayer" />
-              </div>
-
-              <div>
-                <img src="@/assets/joystick.png" class="joy-stick" @click="playVideo" />
+                <img src="@/assets/switch_icon/B_Key.png" class="right-bottom-button" @click="mutedVideoPlayer" />
               </div>
 
               <div>
-                <img src="@/assets/home-key.png" class="right-home-button" />
+                <img src="@/assets/switch_icon/joystick.png" class="joy-stick" @click="playVideo" />
+              </div>
+
+              <div>
+                <img src="@/assets/switch_icon/home-key.png" class="right-home-button" />
               </div>
             </div>
           </el-col>
@@ -580,7 +580,7 @@ export default {
       }
     },
     openUrl() {
-      window.open(this.videoDetails.url)
+      shell.openExternal(this.videoDetails.url)
     },
     copyVideoInfo() {
       clipboard.writeText(JSON.stringify(this.videoDetails))

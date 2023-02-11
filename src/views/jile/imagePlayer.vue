@@ -2,8 +2,8 @@
   <el-scrollbar style="height: 100%">
     <!--实现background-image背景图片全屏铺满自适应 https://blog.csdn.net/mouday/article/details/121911910-->
     <div
-      class="main-div"
       id="main-div"
+      class="main-div"
       :style="{
         backgroundImage:
           'linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0)),url(' + imageDetails.imagePath + ')',
@@ -24,15 +24,15 @@
           <el-card style="margin: 20px">
             <div style="width: 100%; height: 500px; text-align: center; line-height: 500px">
               <img
-                :src="imageDetails.imagePath"
                 id="main-image"
+                :src="imageDetails.imagePath"
                 class="main-image"
                 :preview-src-list="[imageDetails.imagePath]"
                 @click="onPreview"
               />
             </div>
             <div>
-              <el-image-viewer v-if="showViewer" @close="closeViewer" :url-list="[imageDetails.imagePath]" />
+              <el-image-viewer v-if="showViewer" :url-list="[imageDetails.imagePath]" @close="closeViewer" />
               <div class="show">
                 <el-tooltip
                   v-for="color in colors"
@@ -121,7 +121,7 @@
                 <div class="tableItem">
                   <p style="display: inline; margin-right: 5px"><strong>链接：</strong></p>
 
-                  <el-link @click="openURL" type="warning" v-if="imageDetails.url != '' && imageDetails.url != null">
+                  <el-link v-if="imageDetails.url != '' && imageDetails.url != null" type="warning" @click="openURL" >
                     {{ imageDetails.url }}
                   </el-link>
                   <p v-else style="display: inline">暂无链接</p>
@@ -129,16 +129,16 @@
                 <div class="tableItem">
                   <p style="display: inline; margin-right: 5px"><strong>备注：</strong></p>
 
-                  <p style="display: inline" v-if="imageDetails.remark != '' && imageDetails.remark != null">
+                  <p v-if="imageDetails.remark != '' && imageDetails.remark != null" style="display: inline">
                     {{ imageDetails.remark }}
                   </p>
-                  <p style="display: inline" v-else>暂无备注</p>
+                  <p v-else style="display: inline">暂无备注</p>
                 </div>
 
                 <div class="tableItem">
                   <p style="display: inline; margin-right: 5px"><strong>标签：</strong></p>
-                  <div v-if="this.imageDetails.tags.length != 0" style="display: inline">
-                    <div style="display: inline; margin-right: 5px" v-for="tag in imageDetails.tags" :key="tag.id">
+                  <div v-if="imageDetails.tags.length != 0" style="display: inline">
+                    <div v-for="tag in imageDetails.tags" :key="tag.id" style="display: inline; margin-right: 5px">
                       <el-tag size="large" type="info">
                         {{ tag.tag_name }}
                       </el-tag>
@@ -181,13 +181,25 @@
                   <strong style="color: white; margin-left: 5px">默认打开</strong>
                 </el-button>
 
-                <el-button v-if="imageDetails.followed == 0" size="large" style="border-radius: 25px" color="#fa3841">
+                <el-button
+                  v-if="imageDetails.followed == 0"
+                  size="large"
+                  style="border-radius: 25px"
+                  color="#fa3841"
+                  @click="changeFollowed"
+                >
                   <svg class="icon" aria-hidden="true">
                     <use color="white" xlink:href="#yw-icon-favorite-filling"></use>
                   </svg>
                   <strong style="color: white; margin-left: 5px">收藏</strong>
                 </el-button>
-                <el-button v-if="imageDetails.followed == 1" size="large" style="border-radius: 25px" color="#e7e7e7">
+                <el-button
+                  v-if="imageDetails.followed == 1"
+                  size="large"
+                  style="border-radius: 25px"
+                  color="#e7e7e7"
+                  @click="changeFollowed"
+                >
                   <svg class="icon" aria-hidden="true">
                     <use color="#99999b" xlink:href="#yw-icon-favorite-filling"></use>
                   </svg>
@@ -243,8 +255,7 @@ export default {
     }
   },
   created() {
-    
-    var imageID = this.$route.query.image_id; //获取编号
+    var imageID = this.$route.query.image_id //获取编号
     this.imageID = imageID
     // this.imageID=141
     this.getDetails(this.imageID)
@@ -255,7 +266,7 @@ export default {
     this.ImgColor()
   },
   methods: {
-    ...mapActions('img-col', ['getImageDetails']),
+    ...mapActions('img-col', ['getImageDetails', 'changeFollowedState']),
 
     getDetails() {
       var imageID = this.imageID
@@ -384,10 +395,13 @@ export default {
     },
 
     sameColorSearch(item) {
-      window.open('http://labs.tineye.com/multicolr/#colors=' + item.data + ';weights=100;')
+      // window.open('http://labs.tineye.com/multicolr/#colors=' + item.data + ';weights=100;')
+      var url='http://labs.tineye.com/multicolr/#colors=' + item.data + ';weights=100;'
+      shell.openExternal(url)
     },
     openURL() {
-      window.open(this.imageDetails.url)
+      // window.open(this.imageDetails.url)
+      shell.openExternal(this.imageDetails.url);
     },
 
     sameColorListSearch() {
@@ -402,7 +416,7 @@ export default {
           .toString(16)
           .slice(1)
       }
-      window.open('http://labs.tineye.com/multicolr/#colors=' + hexList.toString())
+      shell.openExternal('http://labs.tineye.com/multicolr/#colors=' + hexList.toString())
     },
     rtClickOpenMenu(color) {
       this.initMenuTemplate(color)
@@ -487,6 +501,12 @@ export default {
       let clickEvent = document.createEvent('MouseEvents')
       clickEvent.initEvent('click', true, true)
       a.dispatchEvent(clickEvent)
+    },
+    changeFollowed() {
+      var imageID = { imageID: this.imageDetails.imageID }
+      this.changeFollowedState(imageID).then((response) => {
+        this.refresh()
+      })
     }
   }
 }

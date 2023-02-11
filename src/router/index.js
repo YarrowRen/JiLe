@@ -66,6 +66,12 @@ export const constantRoutes = [
     alwaysShow: true,
     children: [
       {
+        path: 'ebook-page',
+        component: () => import('@/views/jile/eBookPage.vue'),
+        name: 'ebook-page',
+        meta: { title: 'eBook测试' }
+      },
+      {
         path: 'waterfall',
         component: () => import('@/views/waterfall/index.vue'),
         name: 'waterfall',

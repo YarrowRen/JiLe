@@ -7,7 +7,7 @@
       <el-button type="primary" @click="getColors">getColors</el-button>
     </div>
 
-    <div style="position: relative" v-if="targetVal == contentArr.length">
+    <div v-if="targetVal == contentArr.length" style="position: relative">
       <div class="container">
         <div v-for="(column, index) in columns" :key="index" class="column">
           <div v-for="(item, i) in column.columnArr" :key="i" class="item" :style="{ width: itemWidth + 'px' }">
@@ -175,12 +175,12 @@ import { NButton, NSpace, NH3 } from 'naive-ui'
 import { mapState, mapActions } from 'vuex'
 
 export default {
-  inject: ['refresh'],
   components: {
     NButton,
     NSpace,
     NH3
   },
+  inject: ['refresh'],
   props: {
     //从父组件获取图集信息
     contentArr: {

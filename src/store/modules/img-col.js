@@ -1,4 +1,4 @@
-import { addIc, getIc, getImgCol, refreshIcData, getImageTag, updateImageInfo,getImageDetails } from '@/api/img-col'
+import { addIc, getIc, getImgCol, refreshIcData, getImageTag, updateImageInfo,getImageDetails,changeFollowedState } from '@/api/img-col'
 
 const getDefaultState = () => {
   return {}
@@ -102,7 +102,19 @@ const actions = {
           reject(error)
         })
     })
-  }
+  },
+  changeFollowedState({ commit }, { imageID }) {
+    return new Promise((resolve, reject) => {
+      changeFollowedState(imageID)
+        .then((response) => {
+          const data = response
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  },
 }
 
 export default {

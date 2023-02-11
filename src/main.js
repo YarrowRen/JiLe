@@ -64,6 +64,7 @@ import 'video.js/dist/video-js.css'
 import 'videojs-flash'
 
 
-
 import VueGridLayout from 'vue-grid-layout'
-app.use(store).use(router).use(VueGridLayout).use(VueVideoPlayer).mount('#app')
+
+
+app.use(store).use(router).use(VueVideoPlayer).use(VueGridLayout).mount('#app');

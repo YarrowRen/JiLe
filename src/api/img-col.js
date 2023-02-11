@@ -62,3 +62,14 @@ export function getImageDetails(imageID) {
     data: { imageID }
   })
 }
+
+export function changeFollowedState(imageID) {
+  return request({
+    url: '/ic/changeFollowedState',
+    method: 'post',
+    isParams: true,
+    data: {
+      imageID
+    }
+  })
+}

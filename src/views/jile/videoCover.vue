@@ -17,8 +17,16 @@
         ></el-pagination>
       </div>
       <el-row :gutter="5">
-        <el-col v-for="(item, id) in videoInfo" :key="id" :span="4">
+        <el-col v-for="(item, id) in videoInfo" :key="id" :span="6">
           <el-card :body-style="{ padding: '0px' }" shadow="always" class="videoCard">
+            <figure class="imghvr-shutter-out-diag-1 videoFigure" @contextmenu="rtClickOpenMenu(item.video_id)">
+              <img class="videoCover" :src="videoInfo[id].video_cover" />
+
+              <figcaption class="videoFigcaption">
+                <img src="@/assets/pic/videoNew.png" class="figcaption-img" @click="openFile(item.video_path)" />
+              </figcaption>
+            </figure>
+
             <div
               style="
                 text-align: center;
@@ -29,7 +37,7 @@
                 margin-right: 8px;
               "
             >
-              <el-tooltip class="item" effect="dark" :content="videoInfo[id].video_name" placement="bottom">
+              <el-tooltip class="item" effect="dark" :content="videoInfo[id].video_name" placement="top">
                 <div id="title">
                   <div style="cursor: pointer" @click="$router.push('/jile/video-player?video_id=' + item.video_id)">
                     <strong>{{ videoInfo[id].video_name }}</strong>
@@ -38,14 +46,6 @@
               </el-tooltip>
               <!-- <el-rate v-model="videoInfo[id].video_score" disabled></el-rate> -->
             </div>
-
-            <figure class="imghvr-shutter-out-diag-1 videoFigure" @contextmenu="rtClickOpenMenu(item.video_id)">
-              <img class="videoCover" :src="videoInfo[id].video_cover" />
-
-              <figcaption class="videoFigcaption">
-                <img src="@/assets/pic/videoNew.png" class="figcaption-img" @click="openFile(item.video_path)" />
-              </figcaption>
-            </figure>
 
             <div style="margin-top: 5px; margin-bottom: 5px; margin-left: 5px; margin-right: 5px">
               <div style="display: inline">{{ starRateIcon[item.video_score] }}</div>
@@ -101,216 +101,214 @@
       </el-dialog>
     </div>
 
-    <div id="videoInfoEditDialog">
-      <el-dialog v-model="videoEditVisible" title="🎞️ 编辑视频信息">
-        <el-scrollbar max-height="60vh">
-          <el-row>
-            <el-col :span="6">
-              <el-image :src="videoDetails.videoCover" style="aspect-ratio: 57/84; margin: 5px" fit="cover" />
-              <div style="width: 100%; text-align: center">
-                <el-link target="_blank" @click="selectCoverInDetails">更新封面图/海报</el-link>
-              </div>
-              <div style="width: 100%; text-align: center">
-                <el-button
-                  v-if="videoDetails.followed == 0"
-                  type="danger"
-                  style="width: 80%; margin-top: 10px; text-align: center"
-                  @click="videoDetails.followed = 1"
-                >
-                  {{ showFollowed }}
-                </el-button>
-                <el-button
-                  v-if="videoDetails.followed == 1"
-                  type="info"
-                  style="width: 80%; margin-top: 10px; text-align: center"
-                  @mouseenter="showNotFollowed = '取消收藏'"
-                  @mouseleave="showNotFollowed = '已收藏'"
-                  @click="videoDetails.followed = 0"
-                >
-                  {{ showNotFollowed }}
-                </el-button>
-              </div>
-            </el-col>
-            <el-col :span="18">
-              <el-form :model="videoDetails" :rules="rules">
-                <el-form-item label="视频名称" :label-width="formLabelWidth">
-                  <div>{{ videoDetails.videoName }}</div>
-                </el-form-item>
-                <el-form-item label="评分" :label-width="formLabelWidth">
-                  <el-rate
-                    v-model="videoDetails.videoScore"
-                    :texts="['很差', '较差', '还行', '推荐', '力荐']"
-                    show-text
-                  ></el-rate>
-                </el-form-item>
-                <el-form-item label="标签" :label-width="formLabelWidth">
-                  <el-row>
-                    <el-tag
-                      v-for="tag in videoDetails.tags"
-                      :key="tag.id"
-                      style="margin-right: 10px; margin-bottom: 10px"
-                      size="large"
-                      closable
-                      :disable-transitions="false"
-                      type="success"
-                      :hit="true"
-                      @close="handleTagClose(videoDetails.videoID, tag)"
-                    >
-                      {{ tag.tag_name }}
-                    </el-tag>
-                    <el-col :span="9">
-                      <el-input
-                        v-model="inputValue"
-                        size="small"
-                        placeholder="请输入标签"
-                        @keyup.enter="handleInputConfirm"
-                        @blur="handleInputConfirm"
-                      />
-                    </el-col>
-                  </el-row>
-                </el-form-item>
-                <el-form-item label="上映日期" :label-width="formLabelWidth">
-                  <el-date-picker
-                    v-model="videoDetails.releaseDate"
-                    type="date"
-                    placeholder="选择上映日期"
-                    size="default"
-                  />
-                </el-form-item>
-                <el-form-item label="相关网址" :label-width="formLabelWidth" prop="url">
-                  <el-input v-model="videoDetails.url" placeholder="请输入相关网址" size="default"></el-input>
-                </el-form-item>
-                <el-form-item label="导演" :label-width="formLabelWidth">
-                  <el-row>
-                    <el-tag
-                      v-for="director in videoDetails.directorList.list"
-                      :key="director.id"
-                      style="margin-right: 10px; margin-bottom: 10px"
-                      size="large"
-                      closable
-                      :disable-transitions="false"
-                      effect="dark"
-                      type="danger"
-                      @close="handleDirectorClose(videoDetails.videoID, director)"
-                    >
-                      {{ director.name }}
-                    </el-tag>
-                    <el-col :span="9">
-                      <el-input
-                        v-model="inputDirectorValue"
-                        size="small"
-                        placeholder="请输入导演名称"
-                        @keyup.enter="handleDirectorConfirm"
-                        @blur="handleDirectorConfirm"
-                      />
-                    </el-col>
-                  </el-row>
-                </el-form-item>
+    <el-dialog v-model="videoEditVisible" title="🎞️ 编辑视频信息" width="60%">
+      <el-scrollbar max-height="60vh">
+        <el-row>
+          <el-col :span="6">
+            <el-image :src="videoDetails.videoCover" style="aspect-ratio: 57/84; margin: 5px" fit="cover" />
+            <div style="width: 100%; text-align: center">
+              <el-link target="_blank" @click="selectCoverInDetails">更新封面图/海报</el-link>
+            </div>
+            <div style="width: 100%; text-align: center">
+              <el-button
+                v-if="videoDetails.followed == 0"
+                type="danger"
+                style="width: 80%; margin-top: 10px; text-align: center"
+                @click="videoDetails.followed = 1"
+              >
+                {{ showFollowed }}
+              </el-button>
+              <el-button
+                v-if="videoDetails.followed == 1"
+                type="info"
+                style="width: 80%; margin-top: 10px; text-align: center"
+                @mouseenter="showNotFollowed = '取消收藏'"
+                @mouseleave="showNotFollowed = '已收藏'"
+                @click="videoDetails.followed = 0"
+              >
+                {{ showNotFollowed }}
+              </el-button>
+            </div>
+          </el-col>
+          <el-col :span="18">
+            <el-form :model="videoDetails" :rules="rules">
+              <el-form-item label="视频名称" :label-width="formLabelWidth">
+                <div>{{ videoDetails.videoName }}</div>
+              </el-form-item>
+              <el-form-item label="评分" :label-width="formLabelWidth">
+                <el-rate
+                  v-model="videoDetails.videoScore"
+                  :texts="['很差', '较差', '还行', '推荐', '力荐']"
+                  show-text
+                ></el-rate>
+              </el-form-item>
+              <el-form-item label="标签" :label-width="formLabelWidth">
+                <el-row>
+                  <el-tag
+                    v-for="tag in videoDetails.tags"
+                    :key="tag.id"
+                    style="margin-right: 10px; margin-bottom: 10px"
+                    size="large"
+                    closable
+                    :disable-transitions="false"
+                    type="success"
+                    :hit="true"
+                    @close="handleTagClose(videoDetails.videoID, tag)"
+                  >
+                    {{ tag.tag_name }}
+                  </el-tag>
+                  <el-col :span="9">
+                    <el-input
+                      v-model="inputValue"
+                      size="small"
+                      placeholder="请输入标签"
+                      @keyup.enter="handleInputConfirm"
+                      @blur="handleInputConfirm"
+                    />
+                  </el-col>
+                </el-row>
+              </el-form-item>
+              <el-form-item label="上映日期" :label-width="formLabelWidth">
+                <el-date-picker
+                  v-model="videoDetails.releaseDate"
+                  type="date"
+                  placeholder="选择上映日期"
+                  size="default"
+                />
+              </el-form-item>
+              <el-form-item label="相关网址" :label-width="formLabelWidth" prop="url">
+                <el-input v-model="videoDetails.url" placeholder="请输入相关网址" size="default"></el-input>
+              </el-form-item>
+              <el-form-item label="导演" :label-width="formLabelWidth">
+                <el-row>
+                  <el-tag
+                    v-for="director in videoDetails.directorList.list"
+                    :key="director.id"
+                    style="margin-right: 10px; margin-bottom: 10px"
+                    size="large"
+                    closable
+                    :disable-transitions="false"
+                    effect="dark"
+                    type="danger"
+                    @close="handleDirectorClose(videoDetails.videoID, director)"
+                  >
+                    {{ director.name }}
+                  </el-tag>
+                  <el-col :span="9">
+                    <el-input
+                      v-model="inputDirectorValue"
+                      size="small"
+                      placeholder="请输入导演名称"
+                      @keyup.enter="handleDirectorConfirm"
+                      @blur="handleDirectorConfirm"
+                    />
+                  </el-col>
+                </el-row>
+              </el-form-item>
 
-                <el-form-item label="编剧/作者" :label-width="formLabelWidth">
-                  <el-row>
-                    <el-tag
-                      v-for="author in videoDetails.authorList.list"
-                      :key="author.id"
-                      style="margin-right: 10px; margin-bottom: 10px"
-                      size="large"
-                      closable
-                      :disable-transitions="false"
-                      effect="dark"
-                      type="warning"
-                      @close="handleAuthorClose(videoDetails.videoID, author)"
-                    >
-                      {{ author.name }}
-                    </el-tag>
-                    <el-col :span="9">
-                      <el-input
-                        v-model="inputAuthorValue"
-                        size="small"
-                        placeholder="请输入编剧/作者名称"
-                        @keyup.enter="handleAuthorConfirm"
-                        @blur="handleAuthorConfirm"
-                      />
-                    </el-col>
-                  </el-row>
-                </el-form-item>
+              <el-form-item label="编剧/作者" :label-width="formLabelWidth">
+                <el-row>
+                  <el-tag
+                    v-for="author in videoDetails.authorList.list"
+                    :key="author.id"
+                    style="margin-right: 10px; margin-bottom: 10px"
+                    size="large"
+                    closable
+                    :disable-transitions="false"
+                    effect="dark"
+                    type="warning"
+                    @close="handleAuthorClose(videoDetails.videoID, author)"
+                  >
+                    {{ author.name }}
+                  </el-tag>
+                  <el-col :span="9">
+                    <el-input
+                      v-model="inputAuthorValue"
+                      size="small"
+                      placeholder="请输入编剧/作者名称"
+                      @keyup.enter="handleAuthorConfirm"
+                      @blur="handleAuthorConfirm"
+                    />
+                  </el-col>
+                </el-row>
+              </el-form-item>
 
-                <el-form-item label="演员" :label-width="formLabelWidth">
-                  <el-row>
-                    <el-tag
-                      v-for="actor in videoDetails.actorList.list"
-                      :key="actor.id"
-                      style="margin-right: 10px; margin-bottom: 10px"
-                      size="large"
-                      closable
-                      :disable-transitions="false"
-                      effect="dark"
-                      type="success"
-                      @close="handleActorClose(videoDetails.videoID, actor)"
-                    >
-                      {{ actor.name }}
-                    </el-tag>
-                    <el-col :span="9">
-                      <el-input
-                        v-model="inputActorValue"
-                        size="small"
-                        placeholder="请输入演员名称"
-                        @keyup.enter="handleActorConfirm"
-                        @blur="handleActorConfirm"
-                      />
-                    </el-col>
-                  </el-row>
-                </el-form-item>
+              <el-form-item label="演员" :label-width="formLabelWidth">
+                <el-row>
+                  <el-tag
+                    v-for="actor in videoDetails.actorList.list"
+                    :key="actor.id"
+                    style="margin-right: 10px; margin-bottom: 10px"
+                    size="large"
+                    closable
+                    :disable-transitions="false"
+                    effect="dark"
+                    type="success"
+                    @close="handleActorClose(videoDetails.videoID, actor)"
+                  >
+                    {{ actor.name }}
+                  </el-tag>
+                  <el-col :span="9">
+                    <el-input
+                      v-model="inputActorValue"
+                      size="small"
+                      placeholder="请输入演员名称"
+                      @keyup.enter="handleActorConfirm"
+                      @blur="handleActorConfirm"
+                    />
+                  </el-col>
+                </el-row>
+              </el-form-item>
 
-                <el-form-item label="其他人员" :label-width="formLabelWidth">
-                  <el-row>
-                    <el-tag
-                      v-for="other in videoDetails.otherList.list"
-                      :key="other.id"
-                      style="margin-right: 10px; margin-bottom: 10px"
-                      size="large"
-                      closable
-                      :disable-transitions="false"
-                      effect="dark"
-                      type="info"
-                      @close="handleOtherClose(videoDetails.videoID, other)"
-                    >
-                      {{ other.name }}
-                    </el-tag>
-                    <el-col :span="9">
-                      <el-input
-                        v-model="inputOtherValue"
-                        size="small"
-                        placeholder="请输入其他人员名称"
-                        @keyup.enter="handleOtherConfirm"
-                        @blur="handleOtherConfirm"
-                      />
-                    </el-col>
-                  </el-row>
-                </el-form-item>
+              <el-form-item label="其他人员" :label-width="formLabelWidth">
+                <el-row>
+                  <el-tag
+                    v-for="other in videoDetails.otherList.list"
+                    :key="other.id"
+                    style="margin-right: 10px; margin-bottom: 10px"
+                    size="large"
+                    closable
+                    :disable-transitions="false"
+                    effect="dark"
+                    type="info"
+                    @close="handleOtherClose(videoDetails.videoID, other)"
+                  >
+                    {{ other.name }}
+                  </el-tag>
+                  <el-col :span="9">
+                    <el-input
+                      v-model="inputOtherValue"
+                      size="small"
+                      placeholder="请输入其他人员名称"
+                      @keyup.enter="handleOtherConfirm"
+                      @blur="handleOtherConfirm"
+                    />
+                  </el-col>
+                </el-row>
+              </el-form-item>
 
-                <el-form-item label="简介" :label-width="formLabelWidth">
-                  <el-input
-                    v-model="videoDetails.intro"
-                    :autosize="{ minRows: 3, maxRows: 9 }"
-                    maxlength="350"
-                    placeholder="Please input"
-                    show-word-limit
-                    type="textarea"
-                  />
-                </el-form-item>
-              </el-form>
-            </el-col>
-          </el-row>
-        </el-scrollbar>
-        <template #footer>
-          <div class="dialog-footer">
-            <el-button type="primary" @click="showDetailsConfirm">确 认</el-button>
+              <el-form-item label="简介" :label-width="formLabelWidth">
+                <el-input
+                  v-model="videoDetails.intro"
+                  :autosize="{ minRows: 3, maxRows: 9 }"
+                  maxlength="350"
+                  placeholder="Please input"
+                  show-word-limit
+                  type="textarea"
+                />
+              </el-form-item>
+            </el-form>
+          </el-col>
+        </el-row>
+      </el-scrollbar>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="showDetailsConfirm">确 认</el-button>
 
-            <el-button @click="videoEditVisible = false">取 消</el-button>
-          </div>
-        </template>
-      </el-dialog>
-    </div>
+          <el-button @click="videoEditVisible = false">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </el-scrollbar>
 </template>
 
@@ -942,7 +940,7 @@ export default {
   position: relative;
   width: 100%;
   height: 0;
-  padding-top: 100%;
+  padding-top: 56.25%;
 }
 
 .videoFigcaption {
@@ -952,7 +950,7 @@ export default {
 
 .figcaption-img {
   cursor: pointer;
-  width: 50%;
+  width: 30%;
   position: absolute;
   left: 50%;
   top: 50%;
