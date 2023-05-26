@@ -1,5 +1,6 @@
 <template>
   <el-scrollbar style="height: 100%">
+    <el-button @click="openSpecifiedApp">指定应用打开</el-button>
     <!--实现background-image背景图片全屏铺满自适应 https://blog.csdn.net/mouday/article/details/121911910-->
     <div
       id="main-div"
@@ -215,6 +216,7 @@
 </template>
 
 <script>
+const { spawn } = require('child_process')
 import html2canvas from 'html2canvas'
 import { mapState, mapActions } from 'vuex'
 const remote = require('@electron/remote')
@@ -254,7 +256,7 @@ export default {
     }
   },
   created() {
-    var imageID = this.$route.query.image_id //获取编号
+    var imageID = 238
     this.imageID = imageID
     // this.imageID=141
     this.getDetails(this.imageID)
@@ -267,6 +269,10 @@ export default {
   methods: {
     ...mapActions('img-col', ['getImageDetails', 'changeFollowedState', 'getMainColor']),
 
+    //用指定应用打开指定文件
+    openSpecifiedApp(){
+      spawn('C:\\Program Files\\Honeyview\\Honeyview.exe',['D:\\photo\\data\\boostore\\(同人誌) [綿120パーセント (めんようじゃん)] AZUS@TTACK4 (けいおん!)[final個人漢化][無修正].zip'])
+    },
     getDetails() {
       var imageID = this.imageID
       this.getImageDetails({ imageID }).then((response) => {
@@ -509,7 +515,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .show {
   width: 100%;
   text-align: center;

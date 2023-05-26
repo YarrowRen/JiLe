@@ -11,14 +11,14 @@
 <script>
 import global from '../Global.vue'
 const fs = require('fs-extra')
-const extract = require('extract-zip')
-const AdmZip = require('adm-zip')
+// const extract = require('extract-zip')
+// const AdmZip = require('adm-zip')
 
 export default {
   data() {
     return {
-      source: global.test3File,
-      target: global.test4File,
+      source: "I:\\JiLeFile\\test1.zip",
+      target: "I:\\JiLeFile\\unzip_temp",
       fileList: [],
       imageSrc: ''
     }
@@ -26,18 +26,18 @@ export default {
   methods: {
     readingArchives(zipFile, targetPath) {
       // reading archives
-      var zip = new AdmZip(zipFile)
-      var zipEntries = zip.getEntries() // an array of ZipEntry records
-      zipEntries.forEach(function (zipEntry) {
-        var entryName = zipEntry.entryName
-        //利用正则表达式筛选压缩文件中的图片文件
-        if (entryName.search(/\.jpg/) !== -1) {
-          //console.log(entryName)
-          //将图片文件解压到指定位置
-          zip.extractEntryTo(entryName, targetPath, false, true)
-          console.log(entryName + '：解压成功！')
-        }
-      })
+      // var zip = new AdmZip(zipFile)
+      // var zipEntries = zip.getEntries() // an array of ZipEntry records
+      // zipEntries.forEach(function (zipEntry) {
+      //   var entryName = zipEntry.entryName
+      //   //利用正则表达式筛选压缩文件中的图片文件
+      //   if (entryName.search(/\.jpg/) !== -1) {
+      //     //console.log(entryName)
+      //     //将图片文件解压到指定位置
+      //     zip.extractEntryTo(entryName, targetPath, false, true)
+      //     console.log(entryName + '：解压成功！')
+      //   }
+      // })
     },
     setCover() {
       this.fileList = fs.readdirSync(this.target)
@@ -52,19 +52,19 @@ export default {
     },
     decompressAndSetCover(zipFile, targetPath) {
       // reading archives
-      var zip = new AdmZip(zipFile)
-      var zipEntries = zip.getEntries() // an array of ZipEntry records
-      for (var i = 0; i <= zipEntries.length; i++) {
-        var entryName = zipEntries[i].entryName
-        if (entryName.search(/\.jpg/) !== -1) {
-          //console.log(entryName)
-          //将图片文件解压到指定位置
-          zip.extractEntryTo(entryName, targetPath, false, true)
-          console.log(entryName + '：解压成功！')
-          break //找到首个压缩文件夹图片后就退出
-        }
-      }
-      this.setCover()
+      // var zip = new AdmZip(zipFile)
+      // var zipEntries = zip.getEntries() // an array of ZipEntry records
+      // for (var i = 0; i <= zipEntries.length; i++) {
+      //   var entryName = zipEntries[i].entryName
+      //   if (entryName.search(/\.jpg/) !== -1) {
+      //     //console.log(entryName)
+      //     //将图片文件解压到指定位置
+      //     zip.extractEntryTo(entryName, targetPath, false, true)
+      //     console.log(entryName + '：解压成功！')
+      //     break //找到首个压缩文件夹图片后就退出
+      //   }
+      // }
+      // this.setCover()
     }
   }
 }

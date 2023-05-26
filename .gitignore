@@ -7,3 +7,5 @@ dist
 dist-ssr
 *.local
 yarn.lock
+
+out/

@@ -14,8 +14,8 @@
 </template>
  
 <script>
-import ColorThief from 'color-thief'
-
+// import ColorThief from 'color-thief'
+// import ColorThief from 'color-thief'
 const { shell } = require('electron')
 const fs = require('fs-extra')
 const remote = require('@electron/remote')
@@ -40,29 +40,29 @@ export default {
   },
   methods: {
     ImgColor() {
-      this.url = 'I:\\JiLeFile\\test1\\73599890_p0.png'
-      let domImg = document.querySelector('#background')
-      let colorthief = new ColorThief()
-      domImg.addEventListener('load', () => {
-        console.log('加载好了并取色', colorthief.getPalette(domImg, 2)) //第二个参数可选(1~10)
-        this.colors = colorthief.getPalette(domImg)
-      })
+      // this.url = 'I:\\JiLeFile\\test1\\73599890_p0.png'
+      // let domImg = document.querySelector('#background')
+      // let colorthief = new ColorThief()
+      // domImg.addEventListener('load', () => {
+      //   console.log('加载好了并取色', colorthief.getPalette(domImg, 2)) //第二个参数可选(1~10)
+      //   this.colors = colorthief.getPalette(domImg)
+      // })
     },
     selectCover() {
-      //利用Electron的Dialog打开文件选择器或文件夹选择器并进行特殊设置
-      dialog
-        .showOpenDialog({
-          title: '请选择图片',
-          properties: ['openFile'],
-          filters: this.filtersList.imageFilters
-        })
-        .then((result) => {
-          if (!result || result.filePaths.length == 0) return //为空情况下表示未选择文件，直接return结束函数
-          this.url = result.filePaths[0]
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      // //利用Electron的Dialog打开文件选择器或文件夹选择器并进行特殊设置
+      // dialog
+      //   .showOpenDialog({
+      //     title: '请选择图片',
+      //     properties: ['openFile'],
+      //     filters: this.filtersList.imageFilters
+      //   })
+      //   .then((result) => {
+      //     if (!result || result.filePaths.length == 0) return //为空情况下表示未选择文件，直接return结束函数
+      //     this.url = result.filePaths[0]
+      //   })
+      //   .catch((err) => {
+      //     console.log(err)
+      //   })
     }
   }
 }

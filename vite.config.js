@@ -95,6 +95,8 @@ export default ({ command }) => {
       //build assets Separate
       assetsDir: 'static/assets',
       rollupOptions: {
+        external:{
+        },
         output: {
           chunkFileNames: 'static/js/[name]-[hash].js',
           entryFileNames: 'static/js/[name]-[hash].js',

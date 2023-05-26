@@ -1,4 +1,4 @@
-const { BrowserWindow, app } = require('electron')
+const { BrowserWindow, app, Menu } = require('electron')
 const isDev = require('electron-is-dev')
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
@@ -6,7 +6,7 @@ const createWindow = () => {
     minWidth: 1100, //设置最小宽度
     height: 800,
     minHeight: 800, //设置最小高度
-    icon: "./electron/static/jile.ico",
+    icon: './electron/static/jile.ico',
     webPreferences: {
       webSecurity: false, //========关闭安全策略===========
       nodeIntegration: true, //渲染进程中使用nodejs
@@ -14,9 +14,8 @@ const createWindow = () => {
       enableRemoteModule: true //渲染线程中使用remote模块
     }
   })
-
-
-
+  // 禁用菜单，一般情况下，不需要禁用
+  // Menu.setApplicationMenu(null)s
   //dev development
   const waitOn = require('wait-on')
   if (isDev) {

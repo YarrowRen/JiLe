@@ -20,6 +20,7 @@ export function refreshVcData(vcID) {
     url: '/vc/refreshVcData',
     method: 'get',
     isParams: true,
+    timeout: 120000, //设置一分钟响应时间
     data: { vcID }
   })
 }
@@ -138,5 +139,33 @@ export function getVideoMediaInfo(videoID) {
     data: {
       videoID
     }
+  })
+}
+
+export function getRandomVideo(num) {
+  return request({
+    url: '/vc/getRandomVideo',
+    method: 'get',
+    isParams: true,
+    data: { num }
+  })
+}
+
+export function deleteVC(vc_id) {
+  return request({
+    url: '/vc/deleteVC',
+    method: 'post',
+    isParams: true,
+    data: {
+      vc_id
+    }
+  })
+}
+
+export function updateVC(data) {
+  return request({
+    url: '/vc/updateVC',
+    method: 'post',
+    data
   })
 }

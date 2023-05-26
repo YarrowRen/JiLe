@@ -6,6 +6,83 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "217344",
+      "name": "video",
+      "font_class": "video1",
+      "unicode": "e630",
+      "unicode_decimal": 58928
+    },
+    {
+      "icon_id": "11249652",
+      "name": "book",
+      "font_class": "book1",
+      "unicode": "e831",
+      "unicode_decimal": 59441
+    },
+    {
+      "icon_id": "13990910",
+      "name": "img",
+      "font_class": "img",
+      "unicode": "e61b",
+      "unicode_decimal": 58907
+    },
+    {
+      "icon_id": "14678867",
+      "name": "book",
+      "font_class": "book2",
+      "unicode": "e632",
+      "unicode_decimal": 58930
+    },
+    {
+      "icon_id": "15188661",
+      "name": "video",
+      "font_class": "video2",
+      "unicode": "e737",
+      "unicode_decimal": 59191
+    },
+    {
+      "icon_id": "1469309",
+      "name": "star",
+      "font_class": "star",
+      "unicode": "e877",
+      "unicode_decimal": 59511
+    },
+    {
+      "icon_id": "15391365",
+      "name": "皇冠",
+      "font_class": "huangguan",
+      "unicode": "e61f",
+      "unicode_decimal": 58911
+    },
+    {
+      "icon_id": "1261733",
+      "name": "gear",
+      "font_class": "gear",
+      "unicode": "e736",
+      "unicode_decimal": 59190
+    },
+    {
+      "icon_id": "723314",
+      "name": "图片列表",
+      "font_class": "ai-img-list",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    },
+    {
+      "icon_id": "1199079",
+      "name": "book",
+      "font_class": "book",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "7009036",
+      "name": "video",
+      "font_class": "video",
+      "unicode": "e73b",
+      "unicode_decimal": 59195
+    },
+    {
       "icon_id": "8289051",
       "name": "QQ",
       "font_class": "QQ",

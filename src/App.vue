@@ -1,5 +1,5 @@
 <template>
-  <router-view v-if="isRresh"></router-view>
+  <router-view v-if="isRresh" ></router-view>
 </template>
 
 <script>

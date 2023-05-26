@@ -12,7 +12,10 @@ import {
   updateVideoDetails,
   changeFollowedState,
   getVideoMediaInfo,
-  getVideoCol
+  getVideoCol,
+  getRandomVideo,
+  deleteVC,
+  updateVC
 } from '@/api/video-col'
 
 const getDefaultState = () => {
@@ -24,10 +27,47 @@ const state = getDefaultState()
 const mutations = {}
 
 const actions = {
-  addVc({ commit }, vc_info) {
-    const { vc_name, vc_path, vc_desc, id } = vc_info
+  
+  updateVC({ commit }, data) {
     return new Promise((resolve, reject) => {
-      addVc({ vc_name: vc_name, vc_path: vc_path, vc_desc: vc_desc })
+      updateVC(data)
+        .then((response) => {
+          const data = response
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  },
+  deleteVC({ commit }, { vc_id }) {
+    return new Promise((resolve, reject) => {
+      deleteVC(vc_id)
+        .then((response) => {
+          const data = response
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  },
+  getRandomVideo({ commit }, { num }) {
+    return new Promise((resolve, reject) => {
+      getRandomVideo(num)
+        .then((response) => {
+          const data = response
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  },
+  addVc({ commit }, vc_info) {
+    const { vc_name, vc_path, vc_desc, id, vc_cover } = vc_info
+    return new Promise((resolve, reject) => {
+      addVc({ vc_name: vc_name, vc_path: vc_path, vc_desc: vc_desc, vc_cover: vc_cover })
         .then((response) => {
           const data = response
           resolve(data)
@@ -134,7 +174,7 @@ const actions = {
     })
   },
 
- updateVideoDetails({ commit },  data ) {
+  updateVideoDetails({ commit }, data) {
     return new Promise((resolve, reject) => {
       updateVideoDetails(data)
         .then((response) => {
@@ -200,10 +240,10 @@ const actions = {
         })
     })
   },
-  getVideoCol({ commit }, { vc_id, page,pageSize }) {
+  getVideoCol({ commit }, { vc_id, page, pageSize }) {
     return new Promise((resolve, reject) => {
       // console.log(videoID)
-      getVideoCol( vc_id, page,pageSize)
+      getVideoCol(vc_id, page, pageSize)
         .then((response) => {
           const data = response
           resolve(data)

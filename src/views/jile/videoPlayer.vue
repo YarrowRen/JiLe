@@ -74,7 +74,7 @@
 
               <div class="tableItem">
                 <p style="display: inline; margin-right: 5px"><strong>相关链接：</strong></p>
-                <el-link style="display: inline" :href="videoDetails.url" target="_blank">
+                <el-link style="display: inline" @click="openUrl(this.videoDetails.url)" target="_blank">
                   {{ videoDetails.url }}
                 </el-link>
               </div>
@@ -169,14 +169,29 @@
             </el-card>
           </el-col>
           <el-col :span="5">
-            <el-image :src="videoDetails.videoCover" class="mainpic" fit="cover" />
+            <el-image
+              v-if="videoDetails.videoCover != null && videoDetails.videoCover != ''"
+              :src="videoDetails.videoCover"
+              class="mainpic"
+              fit="cover"
+            />
+            <img
+              v-else
+              class="mainpic"
+              style="object-fit: cover; width: 93%"
+              src="/src/assets/pic/video-default-vertical.png"
+            />
             <el-card class="videoRateCard">
               <el-rate v-model="videoDetails.videoScore" disabled />
             </el-card>
           </el-col>
         </el-row>
       </div>
-      <div>
+      <div
+        v-if="
+          this.videoDetails.suffix == 'MP4' || this.videoDetails.suffix == 'MOV' || this.videoDetails.suffix == 'M4V'
+        "
+      >
         <el-row>
           <el-col :span="1"></el-col>
           <el-col :span="3">
@@ -227,7 +242,11 @@
               </div>
               <div>
                 <img src="@/assets/switch_icon/Y_Key.png" class="right-left-button" @click="resetVideoPlayer" />
-                <img src="@/assets/switch_icon/A_Key.png" class="right-right-button" @click="openUrl" />
+                <img
+                  src="@/assets/switch_icon/A_Key.png"
+                  class="right-right-button"
+                  @click="openUrl(this.videoDetails.url)"
+                />
               </div>
               <div>
                 <img src="@/assets/switch_icon/B_Key.png" class="right-bottom-button" @click="mutedVideoPlayer" />
@@ -276,6 +295,7 @@ export default {
         intro: '',
         followed: 0,
         releaseDate: '',
+        suffix: '',
         url: '',
         tags: [
           {
@@ -357,7 +377,7 @@ export default {
     }
   },
   created() {
-    var videoID = this.$route.query.video_id; //获取视频编号
+    var videoID = this.$route.query.video_id //获取视频编号
     this.initVideoDetails(videoID)
     this.initMediaInfo(videoID)
   },
@@ -376,6 +396,12 @@ export default {
         this.videoDetails.videoName = response.data.videoName
         this.videoDetails.videoPath = response.data.videoPath
         this.videoDetails.videoCover = response.data.videoCover
+
+        //获取文件后缀并转换为大写
+        this.videoDetails.suffix = this.videoDetails.videoName
+          .substring(this.videoDetails.videoName.lastIndexOf('.') + 1)
+          .toLocaleUpperCase()
+        //避免空封面图
         this.videoDetails.videoScore = response.data.videoScore
         if (response.data.intro == '' || response.data.intro == null) {
           this.videoDetails.intro = '暂无简介'
@@ -579,8 +605,8 @@ export default {
         vPlayer.player.muted(true)
       }
     },
-    openUrl() {
-      shell.openExternal(this.videoDetails.url)
+    openUrl(url) {
+      shell.openExternal(url)
     },
     copyVideoInfo() {
       clipboard.writeText(JSON.stringify(this.videoDetails))

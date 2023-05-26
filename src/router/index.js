@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Layout from '@/layout'
 
+
 export const constantRoutes = [
   {
     path: '/redirect',
@@ -43,19 +44,46 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/addCol',
+    path: '/jile/all-ec',
     component: Layout,
     children: [
       {
         path: 'index',
-        name: 'addCol',
-        component: () => import('@/views/addCol/index.vue'),
+        name: 'allEC',
+        component: () => import('@/views/jile/allEC.vue'),
         //using el svg icon, the elSvgIcon first when at the same time using elSvgIcon and icon
-        meta: { title: 'addCol', elSvgIcon: 'Fold' }
+        meta: { title: '全部书库', elSvgIcon: 'Management' }
       }
     ]
   },
-
+  
+  {
+    path: '/jile/all-ic',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'all_IC',
+        component: () => import('@/views/jile/all_IC.vue'),
+        //using el svg icon, the elSvgIcon first when at the same time using elSvgIcon and icon
+        meta: { title: '全部图集', elSvgIcon: 'PictureFilled' }
+      }
+    ]
+  },
+  
+  {
+    path: '/jile/all-vc',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'allVC',
+        component: () => import('@/views/jile/allVC.vue'),
+        //using el svg icon, the elSvgIcon first when at the same time using elSvgIcon and icon
+        meta: { title: '全部影集', elSvgIcon: 'VideoCameraFilled' }
+      }
+    ]
+  },
 
 
 
@@ -64,12 +92,31 @@ export const constantRoutes = [
     component: Layout,
     meta: { title: 'jile', icon: 'user' },
     alwaysShow: true,
+    hidden:true,
     children: [
+      {
+        path: 'easy-table',
+        component: () => import('@/views/jile/easytableTest.vue'),
+        name: 'easy-table',
+        meta: { title: 'easytable测试' }
+      },
+      {
+        path: 'test-forge',
+        component: () => import('@/views/jile/testForge.vue'),
+        name: 'test-forge',
+        meta: { title: '打包测试' }
+      },
       {
         path: 'ebook-page',
         component: () => import('@/views/jile/eBookPage.vue'),
         name: 'ebook-page',
         meta: { title: 'eBook测试' }
+      },
+      {
+        path: 'transfer-page',
+        component: () => import('@/views/jile/transferPage.vue'),
+        name: 'transfer-page',
+        meta: { title: '中转页面' }
       },
       {
         path: 'waterfall',
@@ -126,12 +173,6 @@ export const constantRoutes = [
         meta: { title: '默认打开文件测试' }
       },
       {
-        path: 'compress-photo',
-        component: () => import('@/views/jile/compressPhoto.vue'),
-        name: '压缩图片测试',
-        meta: { title: '压缩图片测试' }
-      },
-      {
         path: 'video-player',
         component: () => import('@/views/jile/videoPlayer.vue'),
         name: '视频播放测试',
@@ -163,6 +204,7 @@ export const constantRoutes = [
     component: Layout,
     meta: { title: 'electron', icon: 'user' },
     alwaysShow: true,
+    hidden: true,
     children: [
       {
         path: 'main-renderer-comm',
@@ -208,124 +250,11 @@ export const constantRoutes = [
       }
     ]
   },
-  // {
-  //   path: '/setting-switch',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/setting-switch'),
-  //       name: 'SettingSwitch',
-  //       meta: { title: 'Setting Switch', icon: 'example' }
-  //     }
-  //   ]
-  // },
-  {
-    path: '/error-log',
-    component: Layout,
-    name: 'ErrorLog',
-    redirect: '/error-log/list',
-    meta: { title: 'ErrorLog', icon: 'bug' },
-    children: [
-      {
-        path: 'list',
-        component: () => import('@/views/error-log'),
-        name: 'ErrorLog',
-        meta: { title: 'Error Log' }
-      },
-      {
-        path: 'error-log-test',
-        component: () => import('@/views/error-log/ErrorLogTest.vue'),
-        name: 'ErrorLogTest',
-        meta: { title: 'ErrorLog Test' }
-      }
-    ]
-  },
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index.vue'),
-        meta: { title: 'Form', icon: 'table' }
-      }
-    ]
-  },
 
-
-  {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index.vue'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1/index.vue'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2/index.vue'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1/index.vue'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2/index.vue'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3/index.vue'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
-      },
-      {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index.vue'),
-        name: 'Menu2',
-        meta: { title: 'menu2' }
-      }
-    ]
-  },
-  {
-    path: '/external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://github.com/jzfai/vue3-admin-electron.git',
-        meta: { title: 'External Link', icon: 'link' }
-      }
-    ]
-  },
   {
     path: '/writing-demo',
     component: Layout,
+    hidden: true,
     meta: { title: 'Writing Demo', icon: 'eye-open' },
     alwaysShow: true,
     children: [
@@ -383,27 +312,6 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index.vue'),
-        meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index.vue'),
-        meta: { title: 'Tree', icon: 'tree' }
-      }
-    ]
-  }
 ]
 
 /**
@@ -411,68 +319,6 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
-  {
-    path: '/permission',
-    component: Layout,
-    redirect: '/permission/page',
-    alwaysShow: true, // will always show the root menu
-    name: 'Permission',
-    meta: {
-      title: 'Permission',
-      icon: 'lock',
-      // roles: ['admin', 'editor'] // you can set roles in root nav
-    },
-    children: [
-      {
-        path: 'roleIndex',
-        component: () => import('@/views/permission'),
-        name: 'Permission',
-        meta: {
-          title: 'Role Index'
-          //roles: ['admin'] // or you can only set roles in sub nav
-        }
-      },
-      {
-        path: 'page',
-        component: () => import('@/views/permission/page.vue'),
-        name: 'PagePermission',
-        meta: {
-          title: 'Page Permission',
-          // roles: ['admin'] // or you can only set roles in sub nav
-        }
-      },
-      {
-        path: 'directive',
-        component: () => import('@/views/permission/directive.vue'),
-        name: 'DirectivePermission',
-        meta: {
-          title: 'Directive Permission'
-          // if do not set roles, means: this page does not require permission
-        }
-      },
-      {
-        path: 'code-index',
-        component: () => import('@/views/permission/CodePermission.vue'),
-        name: 'CodePermission',
-        meta: {
-          title: 'Code Index'
-        }
-      },
-      {
-        path: 'code-page',
-        component: () => import('@/views/permission/CodePage.vue'),
-        name: 'CodePage',
-        meta: {
-          title: 'Code Page',
-          code: 1
-        }
-      },
-
-      // 404 page must be placed at the end !!!
-      // using pathMatch install of "*" in vue-router 4.0
-      { path: '/:pathMatch(.*)', redirect: '/404', hidden: true }
-    ]
-  }
 ]
 
 const router = createRouter({

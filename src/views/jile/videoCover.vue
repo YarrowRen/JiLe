@@ -1,31 +1,86 @@
 <template>
-  <el-scrollbar style="height: 100%">
+  <el-scrollbar style="height: 100%; padding: 10px">
     <div>
       <div>
-        <el-button @click="showVideoCol">查看VideoCol</el-button>
-        <el-button @click="showVideoDetails">查看videoDetails</el-button>
-        <el-button @click="refreshVc">刷新数据库</el-button>
+        <div style="width: 100%; height: 35px">
+          <el-button color="#2acda0" round style="width: 100px" @click="addVideo">
+            <div style="color: white">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#yw-icon-add-bold"></use>
+              </svg>
+              上传视频
+            </div>
+          </el-button>
+          <el-button type="warning" @click="refreshVc" round style="width: 75px">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#yw-icon-refresh"></use>
+            </svg>
+            刷新
+          </el-button>
+          <!-- <el-input
+            style="width: calc(100% - 250px); margin-left: 10px; margin-right: 10px"
+            v-model="searchValue"
+            placeholder="Please input"
+          >
+            <template #prepend>
+              <el-select v-model="searchType" placeholder="Select" style="width: 150px">
+                <el-option label="视频名称" value="1" />
+                <el-option label="导演" value="2" />
+                <el-option label="编剧" value="3" />
+                <el-option label="演员" value="4" />
+                <el-option label="其他人员" value="4" />
+                <el-option label="标签" value="4" />
+              </el-select>
+            </template>
+            <template #append>
+              <el-button @click="searchEBookCol">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#yw-icon-search"></use>
+                </svg>
+              </el-button>
+            </template>
+          </el-input> -->
+          <!-- <el-button type="danger">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#yw-icon-gear"></use>
+            </svg>
+          </el-button> -->
+        </div>
       </div>
-      <div>
-        <el-pagination
-          background
-          layout="total, prev, pager, next, jumper"
-          :current-page="currentPage"
-          :page-size="pageSize"
-          :total="totalSize"
-          @current-change="handleCurrentChange"
-        ></el-pagination>
-      </div>
-      <el-row :gutter="5">
-        <el-col v-for="(item, id) in videoInfo" :key="id" :span="6">
-          <el-card :body-style="{ padding: '0px' }" shadow="always" class="videoCard">
-            <figure class="imghvr-shutter-out-diag-1 videoFigure" @contextmenu="rtClickOpenMenu(item.video_id)">
+      <el-row :gutter="5" v-if="this.videoInfo.length != 0" class="main-page">
+        <el-col v-for="(item, id) in videoInfo" :key="id" :xs="12" :sm="8" :md="8" :lg="6" :xl="6" class="col-card">
+          <div :body-style="{ padding: '0px' }" shadow="always" class="videoCard">
+            <!-- <figure class="imghvr-shutter-out-diag-1 videoFigure" @contextmenu="rtClickOpenMenu(item.video_id)">
               <img class="videoCover" :src="videoInfo[id].video_cover" />
 
               <figcaption class="videoFigcaption">
                 <img src="@/assets/pic/videoNew.png" class="figcaption-img" @click="openFile(item.video_path)" />
               </figcaption>
-            </figure>
+            </figure> -->
+
+            <div class="videoFigure" @contextmenu="rtClickOpenMenu(item.video_id)">
+              <el-image
+                class="videoCover"
+                fit="cover"
+                :src="item.video_cover"
+                @click="openFile(item.video_path)"
+                v-if="item.video_cover != null && item.video_cover != ''"
+              ></el-image>
+              <img
+                v-else
+                class="videoCover"
+                style="object-fit: cover"
+                @click="openFile(item.video_path)"
+                src="/src/assets/pic/video-default-horizontal.png"
+              />
+            </div>
+            <!-- <div class="videoFigure" @contextmenu="rtClickOpenMenu(item.video_id)">
+              <img class="videoCover" :src="videoInfo[id].video_cover" @click="openFile(item.video_path)"/>
+
+              <figcaption class="videoFigcaption">
+                <img src="@/assets/pic/videoNew.png" class="figcaption-img"  />
+              </figcaption>
+            </div> -->
 
             <div
               style="
@@ -48,36 +103,51 @@
             </div>
 
             <div style="margin-top: 5px; margin-bottom: 5px; margin-left: 5px; margin-right: 5px">
-              <div style="display: inline">{{ starRateIcon[item.video_score] }}</div>
+              <div style="display: inline">
+                <el-rate style="display: inline" v-model="item.video_score" disabled />
+              </div>
               <el-divider direction="vertical" />
-              <el-link @click="openDialogForm(item)">
-                <svg class="icon" aria-hidden="true">
-                  <use xlink:href="#yw-icon-edit"></use>
-                </svg>
-              </el-link>
-              <el-link @click="openFolder(item.video_path)">
-                <svg class="icon" aria-hidden="true">
-                  <use xlink:href="#yw-icon-folder-close"></use>
-                </svg>
-              </el-link>
-              <el-link @click="deleteFile(item.video_id)">
-                <svg class="icon" aria-hidden="true">
-                  <use xlink:href="#yw-icon-ashbin"></use>
-                </svg>
-              </el-link>
-              <el-link @click="openVideoInfoDialog(item.video_id)">
-                <svg class="icon" aria-hidden="true">
-                  <use xlink:href="#yw-icon-attachment"></use>
-                </svg>
-              </el-link>
-
-              <div style="float: right">
-                <el-checkbox v-model="checkedList[id]"></el-checkbox>
+              <div style="display: inline;float:right;margin-right:5px">
+                <el-link @click="openDialogForm(item)">
+                  <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#yw-icon-attachment"></use>
+                  </svg>
+                </el-link>
+                <el-link @click="openFolder(item.video_path)">
+                  <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#yw-icon-folder-close"></use>
+                  </svg>
+                </el-link>
+                <el-link @click="deleteFile(item.video_id)">
+                  <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#yw-icon-ashbin"></use>
+                  </svg>
+                </el-link>
+                <el-link @click="openVideoInfoDialog(item.video_id)">
+                  <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#yw-icon-edit"></use>
+                  </svg>
+                </el-link>
               </div>
             </div>
-          </el-card>
+          </div>
         </el-col>
       </el-row>
+      <div v-else style="height: 83vh; text-align: center" class="main-page">
+        <img src="@/assets/pic/jile.png" class="cover" style="height: 150px; margin-top: 30vh" />
+        <h2>暂无视频</h2>
+      </div>
+
+      <div style="text-align: center">
+        <el-pagination
+          background
+          layout="total, prev, pager, next, jumper"
+          :current-page="currentPage"
+          :page-size="pageSize"
+          :total="totalSize"
+          @current-change="handleCurrentChange"
+        ></el-pagination>
+      </div>
     </div>
 
     <div id="dialog">
@@ -309,6 +379,24 @@
         </div>
       </template>
     </el-dialog>
+
+    <div id="updateDialog">
+      <el-dialog
+        v-model="updateDialogVisible"
+        title="视频上传"
+        :show-close="false"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+      >
+        <span>读取元数据并添加视频中...</span>
+        <el-progress :percentage="updatePercentage" />
+        <template #footer v-if="updatePercentage == 100">
+          <span class="dialog-footer">
+            <el-button @click="refreshVc" type="success">确定</el-button>
+          </span>
+        </template>
+      </el-dialog>
+    </div>
   </el-scrollbar>
 </template>
 
@@ -317,17 +405,21 @@ import 'imagehover.css/scss/imagehover.scss'
 import { ElMessage } from 'element-plus'
 
 const { shell } = require('electron')
-const fs = require('fs-extra')
 const remote = require('@electron/remote')
 const { Menu, dialog } = remote
 import { mapState, mapActions } from 'vuex'
 import SvgIcon from '@/icons/SvgIcon.vue'
+const fs = require('fs-extra')
 
 export default {
   components: { SvgIcon },
   inject: ['refresh'],
   data() {
     return {
+      updatePercentage: 0,
+      searchType: null,
+      updateDialogVisible: false,
+      searchValue: '',
       starRateIcon: ['👻', '🤡', '😥', '😑', '🥰', '😍'],
       showFollowed: '❤ 收藏',
       showNotFollowed: '已收藏',
@@ -352,11 +444,11 @@ export default {
           }
         ]
       },
-      defaultCover: 'src/icons/my-icon/video-o.svg',
       videoCol: {
         vc_name: '',
         vc_path: '',
         vc_desc: '',
+        vc_cover: '',
         id: ''
       },
       videoInfo: [
@@ -455,7 +547,10 @@ export default {
     }
   },
   created() {
+    var vc_id = this.$route.query.vc_id //获取编号
+    this.vc_id = vc_id
     this.getFileList(this.vc_id, this.currentPage, this.pageSize)
+    // console.log(this.videoInfo.length)
   },
   methods: {
     ...mapActions('video-col', [
@@ -476,8 +571,7 @@ export default {
         pageSize: pageSize
       }
       //重置表单信息
-
-      this.videoInfo = this.$options.data().videoInfo
+      this.videoInfo.length = 0
       this.getVideoCol(pageInfo).then((response) => {
         // console.log(response.data)
         this.videoCol = response.data
@@ -501,11 +595,7 @@ export default {
         for (var i = 0; i < fileList.length; i++) {
           // console.log(fileList)
           var videoCover = ''
-          if (fileList[i].videoCover == null || fileList[i].videoCover == '') {
-            videoCover = this.defaultCover
-          } else {
-            videoCover = fileList[i].videoCover
-          }
+          videoCover = fileList[i].videoCover
           this.videoInfo[i] = {
             video_id: fileList[i].videoID,
             video_name: fileList[i].videoName,
@@ -553,10 +643,10 @@ export default {
       var id = item.id
       console.log(id)
       // this.videoInfo[id].video_cover = this.defaultCover
-      //将视频封面图设为默认图
+      //删除封面图
       var data = {
         videoID: id,
-        coverPath: this.defaultCover
+        coverPath: ''
       }
       this.editVideoCover(data).then((response) => {
         this.refresh()
@@ -612,6 +702,63 @@ export default {
       //获取文件后缀
       this.reNameForm.suffix = video.video_name.substring(video.video_name.lastIndexOf('.'))
       this.dialogFormVisible = true
+    },
+
+    addVideo() {
+      dialog
+        .showOpenDialog({
+          title: '请选择视频',
+          properties: ['openFile', 'multiSelections'],
+          filters: [
+            {
+              name: 'video',
+              extensions: [
+                'mp4',
+                'flv',
+                'f4v',
+                'webm',
+                'm4v',
+                'mov',
+                'rm',
+                'rmvb',
+                'wmv',
+                'avi',
+                'mpg',
+                'mpeg',
+                'ts',
+                'vob'
+              ]
+            }
+          ]
+        })
+        .then((result) => {
+          if (!result) return //为空情况下表示未选择文件夹，直接return结束函数
+          //不为空情况下进行复制上传
+          //获得拖拽的文件集合
+          var files = result.filePaths
+          if (files.length > 0) {
+            console.log('可以加入')
+            this.updateDialogVisible = true
+            var destParentPath = this.videoCol.vc_path
+            //由于fs.copyFile是异步方法，所以无法通过循环计数i来判断进度
+            //所以这里添加变量j作为复制计数
+            var j = 0
+            for (var i = 0; i < files.length; i++) {
+              var filePath = files[i]
+              console.log(filePath.substr(filePath.lastIndexOf('\\') + 1))
+              var src = filePath
+              var dest = destParentPath + '\\' + filePath.substr(filePath.lastIndexOf('\\') + 1)
+              fs.copyFile(src, dest, (err) => {
+                if (err) throw err
+                j += 1
+                this.updatePercentage = parseInt((j / files.length) * 100)
+              })
+            }
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     },
     openVideoInfoDialog(videoID) {
       //重置表单信息
@@ -934,7 +1081,13 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  border-radius: 15px;
+  transition: filter 0.5s; /* 改变 opacity 属性，持续1秒 */
+}
+.videoCover:hover {
+  /**图片变暗 强化点击效果 */
+  filter: brightness(50%);
+  cursor: pointer;
 }
 .videoFigure {
   position: relative;
@@ -971,9 +1124,11 @@ export default {
 }
 
 .videoCard {
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
   margin: 5px;
   margin-bottom: 15px;
+}
+.videoCard:hover{
+  border-radius: 15px;
+  background: rgba(0, 0, 0, 0.1);
 }
 </style>

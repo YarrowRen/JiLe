@@ -7,7 +7,7 @@
         class="hamburger-container"
         @toggleClick="toggleSideBar"
       />
-      <breadcrumb class="breadcrumb-container" />
+      <!-- <breadcrumb class="breadcrumb-container" /> -->
     </div>
     <!--nav title-->
     <div v-if="settings.showNavbarTitle" class="heardCenterTitle">{{ settings.showNavbarTitle }}</div>

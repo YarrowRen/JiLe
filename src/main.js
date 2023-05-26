@@ -1,9 +1,9 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 
-
 const app = createApp(App)
 import router from './router'
+
 import '@/styles/index.scss' // global css
 //import vuex
 import store from './store'
@@ -11,13 +11,6 @@ import store from './store'
 //引入自选图标库
 import './assets/icon/iconfont.css'
 import './assets/icon/iconfont.js'
-//引入图片压缩库
-import lrz from 'lrz'
-//引入视频播放库
-// import VueVideoPlayer from 'vue-video-player/src'
-// import 'vue-video-player/src/custom-theme.css'
-// import 'video.js/dist/video-js.css'
-// app.use(VueVideoPlayer)
 
 //import element-plus
 import ElementPlus from 'element-plus'
@@ -63,8 +56,9 @@ import VueVideoPlayer from '@videojs-player/vue'
 import 'video.js/dist/video-js.css'
 import 'videojs-flash'
 
-
 import VueGridLayout from 'vue-grid-layout'
+
+
 
 
 app.use(store).use(router).use(VueVideoPlayer).use(VueGridLayout).mount('#app');

@@ -16,7 +16,15 @@
         :active-text-color="scssJson.menuActiveText"
         mode="vertical"
       >
+        <el-menu-item>
+          <img src="@/assets/pic/jiLe.png" class="cover" style="height: 30%" />
+          <span style="margin-left: 10px"><strong>集乐 - JiLe</strong></span>
+        </el-menu-item>
         <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" />
+        <!--vue-element-admin提供的router不支持动态从后端加载路由返回到前端响应，所以这里直接修改侧边栏文件-->
+        <sidebar-item-book />
+        <sidebar-item-image />
+        <sidebar-item-video />
       </el-menu>
     </el-scrollbar>
   </div>
@@ -26,6 +34,9 @@
 import { computed } from 'vue'
 import Logo from './Logo.vue'
 import SidebarItem from './SidebarItem.vue'
+import SidebarItemBook from './SidebarItemBook.vue'
+import SidebarItemImage from './SidebarItemImage.vue'
+import SidebarItemVideo from './SidebarItemVideo.vue'
 //导入配置文件
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'

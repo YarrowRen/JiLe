@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3165022 */
-  src: url('iconfont.woff2?t=1675476061942') format('woff2'),
-       url('iconfont.woff?t=1675476061942') format('woff'),
-       url('iconfont.ttf?t=1675476061942') format('truetype');
+  src: url('iconfont.woff2?t=1677177697951') format('woff2'),
+       url('iconfont.woff?t=1677177697951') format('woff'),
+       url('iconfont.ttf?t=1677177697951') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,50 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.yw-icon-video1:before {
+  content: "\e630";
+}
+
+.yw-icon-book1:before {
+  content: "\e831";
+}
+
+.yw-icon-img:before {
+  content: "\e61b";
+}
+
+.yw-icon-book2:before {
+  content: "\e632";
+}
+
+.yw-icon-video2:before {
+  content: "\e737";
+}
+
+.yw-icon-star:before {
+  content: "\e877";
+}
+
+.yw-icon-huangguan:before {
+  content: "\e61f";
+}
+
+.yw-icon-gear:before {
+  content: "\e736";
+}
+
+.yw-icon-ai-img-list:before {
+  content: "\e60e";
+}
+
+.yw-icon-book:before {
+  content: "\e600";
+}
+
+.yw-icon-video:before {
+  content: "\e73b";
 }
 
 .yw-icon-QQ:before {

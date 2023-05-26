@@ -57,7 +57,9 @@ const cachedViews = computed(() => {
   overflow: hidden;
 }
 .show-tag-view {
-  height: calc(100vh - #{$navBarHeight} - #{$tagViewHeight}) !important;
+  //因为关闭了顶部汉堡格 所以此处重写高度计算方法
+  // height: calc(100vh - #{$navBarHeight} - #{$tagViewHeight}) !important;
+  height: calc(100vh - #{$tagViewHeight}) !important;
 }
 .fixed-header + .app-main {
   padding-top: 50px;

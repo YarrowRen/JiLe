@@ -21,7 +21,7 @@ const setting = {
    * @type {boolean} true | false
    * @description Whether show Hamburger
    */
-  showHamburger: true,
+  showHamburger: false,
   /**
    * @type {boolean} true | false
    * @description Whether show the settings right-panel
@@ -40,7 +40,7 @@ const setting = {
    * @type {boolean} true | false
    * @description Whether show the top Navbar
    */
-  showTopNavbar: true,
+  showTopNavbar: false,
   /* page  animation related*/
   /**
    * @type {boolean} true | false

@@ -1,13 +1,43 @@
 <template>
   <div>
-    <div>
-      <el-button type="primary" @click="enlargeImage">enlargeImage</el-button>
-      <el-button type="primary" @click="decreaseImage">decreaseImage</el-button>
-      <el-button type="primary" @click="getContentArr">getContentArr</el-button>
-      <el-button type="primary" @click="getColors">getColors</el-button>
+    <div style="text-align: center; margin-top: 5px; margin-bottom: 5px">
+      <el-button type="error" @click="$router.push('/jile/all-ic/index')" round style="margin-left: 5px; color: white">
+        <svg class="icon" aria-hidden="true" style="color: white">
+          <use xlink:href="#yw-icon-back"></use>
+        </svg>
+        返回
+      </el-button>
+      <el-button color="#1dd0a1" @click="decreaseImage" circle style="margin-right: 5px">
+        <svg class="icon" aria-hidden="true" style="color: white">
+          <use xlink:href="#yw-icon-minus-bold"></use>
+        </svg>
+      </el-button>
+      <el-progress
+        color="#1dd0a1"
+        :percentage="((itemWidth - 120) * 2) / 5"
+        :stroke-width="8"
+        style="width: 150px; display: inline-block"
+        :show-text="false"
+      />
+      <el-button color="#1dd0a1" @click="enlargeImage" circle style="margin-left: 5px">
+        <svg class="icon" aria-hidden="true" style="color: white">
+          <use xlink:href="#yw-icon-add"></use>
+        </svg>
+      </el-button>
+      <el-button type="warning" @click="refreshIc" round>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#yw-icon-refresh"></use>
+        </svg>
+        同步
+      </el-button>
+      <el-button type="info" @click="addImage" round>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#yw-icon-upload"></use>
+        </svg>
+        上传
+      </el-button>
     </div>
-
-    <div v-if="targetVal == contentArr.length" style="position: relative">
+    <div v-if="targetVal == contentArr.length && contentArr.length != 0" style="position: relative">
       <div class="container">
         <div v-for="(column, index) in columns" :key="index" class="column">
           <div v-for="(item, i) in column.columnArr" :key="i" class="item" :style="{ width: itemWidth + 'px' }">
@@ -17,11 +47,12 @@
                 :src="item.thumbnail"
                 :style="{ height: item.height + 'px', width: itemWidth + 'px' }"
                 class="image"
+                @contextmenu="rtClickOpenMainMenu(item)"
               />
             </div>
             <div style="text-align: center">
               <el-link @click="$router.push('/jile/image-player?image_id=' + item.imageID)">
-                <p style="font-size: 13px">
+                <p style="font-size: 13px; width: 100%;">
                   <strong>{{ item.imageName }}</strong>
                 </p>
               </el-link>
@@ -32,6 +63,10 @@
           </div>
         </div>
       </div>
+    </div>
+    <div v-else style="height: 80vh; text-align: center">
+      <img src="@/assets/pic/jile.png" class="cover" style="height: 150px; margin-top: 30vh" />
+      <h2>暂无图片</h2>
     </div>
 
     <el-drawer v-model="imageDrawer" class="el-drawer" :with-header="false">
@@ -165,7 +200,6 @@
 </template>
 
 <script>
-import ColorThief from 'color-thief'
 const { shell, clipboard } = require('electron')
 import { ElMessage } from 'element-plus'
 const remote = require('@electron/remote')
@@ -228,6 +262,7 @@ export default {
       },
 
       contextMenuTemplate: [],
+      contextMainMenuTemplate: [],
       colors: []
       // pageSize: 25,
       // startPage: 1,
@@ -260,7 +295,11 @@ export default {
     this.keyDownAndScroll()
   },
   methods: {
-    ...mapActions('img-col', ['getImageTag', 'updateImageInfo']),
+    ...mapActions('img-col', ['getImageTag', 'updateImageInfo', 'getMainColor', 'deleteImage']),
+    //上传图书
+    addImage() {
+      this.$parent.$parent.addImage()
+    },
     //初始化页面
     initPage() {
       //调用初始化方法
@@ -284,6 +323,45 @@ export default {
       ]
     },
 
+    initMainMenuTemplate(item) {
+      this.contextMainMenuTemplate = [
+        { label: '图片详情', click: this.openImagePlayer, data: item },
+        { label: '打开图片', click: this.openFile, data: item.imagePath },
+        { label: '复制路径', click: this.copyText, data: item.imagePath },
+        { label: '打开文件夹', click: this.openFolder, data: item.imagePath },
+        { type: 'separator' },
+        { label: '删除图片', click: this.deleteImg, data: item }
+      ]
+    },
+    deleteImg(item) {
+      this.$confirm('此操作将永久删除该文件（包括本地文件）, 是否确定?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          var imageID = item.data.imageID
+          this.deleteImage({ imageID }).then((response) => {
+            this.refresh()
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    openImagePlayer(item) {
+      var data = item.data
+      this.$router.push('/jile/image-player?image_id=' + data.imageID)
+    },
+    openFile(item) {
+      shell.openPath(item.data)
+    },
+    openFolder(item) {
+      shell.showItemInFolder(item.data)
+    },
     copyText(item) {
       clipboard.writeText(item.data)
       ElMessage({
@@ -299,6 +377,12 @@ export default {
       this.initMenuTemplate(color)
       //创建菜单项
       this.menu = Menu.buildFromTemplate(this.contextMenuTemplate)
+      this.menu.popup({ window: remote.getCurrentWindow() })
+    },
+    rtClickOpenMainMenu(item) {
+      this.initMainMenuTemplate(item)
+      //创建菜单项
+      this.menu = Menu.buildFromTemplate(this.contextMainMenuTemplate)
       this.menu.popup({ window: remote.getCurrentWindow() })
     },
     //获取当前列下最短长度位置（用来确定下一张图片插入位置）
@@ -320,7 +404,13 @@ export default {
         }
       }
     },
-
+    showContentArr() {
+      console.log(this.contentArr)
+    },
+    //调用父组件方法，同步数据库
+    refreshIc() {
+      this.$parent.$parent.refreshIc()
+    },
     //异步获取图像宽高等基本信息
     async getImgHeight() {
       //在异步方法下的this与JS全局中的this意义不同，
@@ -397,46 +487,49 @@ export default {
     init() {
       this.columns = []
       let contentLen = this.contentArr.length
-      // let contentLen = this.pageSize
-      // 根据可视区域的宽度判断需要几列
-      let cWidth = document.documentElement.clientWidth || document.body.clientWidth
-      // 假设图片宽度为240px
-      let cLen = Math.floor(cWidth / (this.itemWidth + 20) - 1)
+      //判断长度 处理空数据库情况
+      if (contentLen != 0) {
+        // let contentLen = this.pageSize
+        // 根据可视区域的宽度判断需要几列
+        let cWidth = document.documentElement.clientWidth || document.body.clientWidth
+        // 假设图片宽度为240px
+        let cLen = Math.floor(cWidth / (this.itemWidth + 20) - 1)
 
-      // 初始化每一列的第一行元素
-      for (let i = 0; i < cLen; i++) {
-        this.contentArr[i].top = 0 //预设距离顶部值为0
-        this.columns.push({ columnArr: [this.contentArr[i]] })
-      }
-
-      // 对剩余元素的判断，应该放到哪一列
-      for (var index = cLen; index < contentLen; index++) {
-        this.arrIndex = []
-        let arr = [] //找到高度最小的一列，可能有多个
-        let minHeight = 0 //高度最小的一列的高度
-        let pushIndex = 0 //高度最小的一列所在位置的索引
-
-        for (let i = 0; i < this.columns.length; i++) {
-          arr.push({
-            height: this.columns[i].columnArr[this.columns[i].columnArr.length - 1].height,
-            top: this.columns[i].columnArr[this.columns[i].columnArr.length - 1].top
-          })
+        // 初始化每一列的第一行元素  此处要注意判断如果整个图库数量很少 少于行数则会出现初始化问题，所以要判断 i < contentLen
+        for (let i = 0; i < cLen && i < contentLen; i++) {
+          this.contentArr[i].top = 0 //预设距离顶部值为0
+          this.columns.push({ columnArr: [this.contentArr[i]] })
         }
 
-        minHeight = this.getMinHeight(arr)
-        this.getMinIndex(minHeight)
-        if (this.arrIndex.length > 0) {
-          pushIndex = Math.min.apply(null, this.arrIndex) //出现高度一样的，去索引最小的
-        }
+        // 对剩余元素的判断，应该放到哪一列
+        for (var index = cLen; index < contentLen; index++) {
+          this.arrIndex = []
+          let arr = [] //找到高度最小的一列，可能有多个
+          let minHeight = 0 //高度最小的一列的高度
+          let pushIndex = 0 //高度最小的一列所在位置的索引
 
-        this.contentArr[index].top = minHeight + 20
-        this.columns[pushIndex].columnArr.push(this.contentArr[index])
+          for (let i = 0; i < this.columns.length; i++) {
+            arr.push({
+              height: this.columns[i].columnArr[this.columns[i].columnArr.length - 1].height,
+              top: this.columns[i].columnArr[this.columns[i].columnArr.length - 1].top
+            })
+          }
+
+          minHeight = this.getMinHeight(arr)
+          this.getMinIndex(minHeight)
+          if (this.arrIndex.length > 0) {
+            pushIndex = Math.min.apply(null, this.arrIndex) //出现高度一样的，去索引最小的
+          }
+
+          this.contentArr[index].top = minHeight + 20
+          this.columns[pushIndex].columnArr.push(this.contentArr[index])
+        }
       }
     },
 
     //图像放大（宽度加10）
     enlargeImage() {
-      if (this.itemWidth < 380) {
+      if (this.itemWidth < 370) {
         this.itemWidth += 10
         this.refreshImageHeight()
         this.init()
@@ -499,7 +592,7 @@ export default {
     },
 
     openDrawer(item) {
-      this.ImgColor(item.imageID)
+      this.ImgColor(item.thumbnail)
       //获取对象 避免浅拷贝
       let _tmp = JSON.stringify(item) //将对象转换为json字符串形式
       this.imageInfo = JSON.parse(_tmp) //将转换而来的字符串转换为原生js对象
@@ -562,14 +655,15 @@ export default {
     },
 
     //分析图片主色调
-    ImgColor(itemID) {
+    ImgColor(filePath) {
       // this.url = 'I:\\JiLeFile\\test1\\73599890_p0.png'
-      //根据ID获取指定组件
-      let domImg = document.querySelector('#background' + itemID)
-      // 调用组件
-      let colorthief = new ColorThief()
-      //分析主色调，并提取前五种主色
-      this.colors = colorthief.getPalette(domImg, 5)
+      var data = {
+        filePath: filePath,
+        colorCount: 5
+      }
+      this.getMainColor(data).then((response) => {
+        this.colors = response.data
+      })
     },
     getColors() {
       console.log(this.colors)
@@ -633,6 +727,9 @@ export default {
       this.updateImageInfo(info).then((response) => {
         this.refresh()
       })
+    },
+    onPercentChange(num) {
+      this.percentNum = Math.ceil(num / 10) * 10
     }
   }
 }
@@ -656,6 +753,7 @@ p {
   border-radius: 4px;
   color: #000;
   margin-top: 10px;
+  overflow: hidden;
   /* display: flex; */
   justify-content: center;
   align-items: center;
@@ -699,10 +797,20 @@ p {
   cursor: pointer;
 }
 
+.imageFigure > img {
+  transition: filter 0.4s; /* 改变 opacity 属性，持续1秒 */
+}
 .imageFigure > img:hover {
   /**图片变暗 强化点击效果 */
-  filter: brightness(70%);
+  filter: brightness(50%);
   cursor: pointer;
+}
+.imageFigure {
+  transition: transform 0.4s; /* 改变 opacity 属性，持续1秒 */
+}
+
+.imageFigure:hover {
+  transform: translateY(-10px);
 }
 
 .el-input__inner {

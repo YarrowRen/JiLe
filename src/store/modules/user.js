@@ -1,4 +1,4 @@
-import { loginReq, logoutReq, getInfoReq, testFrontend } from '@/api/user'
+import { loginReq, logoutReq, getInfoReq, testFrontend, copyFile } from '@/api/user'
 import { setToken, removeToken } from '@/utils/auth'
 
 const getDefaultState = () => {
@@ -25,6 +25,20 @@ const mutations = {
 }
 
 const actions = {
+  copyFile({ commit }, { source,dest }) {
+    return new Promise((resolve, reject) => {
+      // console.log(videoID)
+      copyFile(source, dest)
+        .then((response) => {
+          const data = response
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  },
+
   // user login
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   login({ commit }, data) {

@@ -33,6 +33,7 @@ export function refreshIcData(icID) {
     url: '/ic/refreshIcData',
     method: 'get',
     isParams: true,
+    timeout: 120000, //设置一分钟响应时间
     data: { icID }
   })
 }
@@ -71,5 +72,54 @@ export function changeFollowedState(imageID) {
     data: {
       imageID
     }
+  })
+}
+
+export function getMainColor(filePath, colorCount) {
+  return request({
+    url: '/ic/getMainColor',
+    method: 'get',
+    isParams: true,
+    data: {
+      filePath: filePath,
+      colorCount: colorCount
+    }
+  })
+}
+
+export function deleteImage(imageID) {
+  return request({
+    url: '/ic/deleteImage',
+    method: 'post',
+    isParams: true,
+    data: { imageID }
+  })
+}
+
+export function getRandomImage(num) {
+  return request({
+    url: '/ic/getRandomImage',
+    method: 'get',
+    isParams: true,
+    data: { num }
+  })
+}
+
+export function deleteIC(ic_id) {
+  return request({
+    url: '/ic/deleteIC',
+    method: 'post',
+    isParams: true,
+    data: {
+      ic_id
+    }
+  })
+}
+
+export function updateIC(data) {
+  return request({
+    url: '/ic/updateIC',
+    method: 'post',
+    data
   })
 }

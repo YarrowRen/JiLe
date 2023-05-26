@@ -1,22 +1,36 @@
 <template>
   <el-scrollbar style="height: 100%">
-    <div>
-      <el-form ref="form" :model="form" label-width="120px" style="width: 50%">
-        <el-form-item label="选择文件夹">
-          <el-button size="small" type="primary" @click="chooseFiles">选择文件夹</el-button>
-        </el-form-item>
-        <el-form-item label="目标文件夹">
-          <div>{{ dicPath }}</div>
-        </el-form-item>
-        <el-form-item label="文件夹列表">
-          <div>{{ fileList }}</div>
-        </el-form-item>
-      </el-form>
-    </div>
+    <el-row>
+      <el-col :span="12">
+        <el-form ref="form" :model="form" label-width="120px" style="width: 50%">
+          <el-form-item label="选择文件夹">
+            <el-button size="small" type="primary" @click="chooseFiles">选择文件夹</el-button>
+          </el-form-item>
+
+          <el-form-item label="目标文件夹">
+            <div>{{ dicPath }}</div>
+          </el-form-item>
+          <el-form-item label="文件夹列表">
+            <div>{{ fileList }}</div>
+            <div v-for="file in fileList" :key="file">
+              <el-link @click="clickFile(file)">{{ file }}</el-link>
+            </div>
+          </el-form-item>
+        </el-form>
+      </el-col>
+      <el-col :span="12">
+        <el-form ref="form" :model="form" label-width="120px" style="width: 50%">
+          <el-form-item label="图片显示">
+            <el-image :src="this.imagePath"></el-image>
+          </el-form-item>
+        </el-form>
+      </el-col>
+    </el-row>
   </el-scrollbar>
 </template>
 
 <script>
+const { shell, clipboard } = require('electron')
 const fs = require('fs-extra')
 const { dialog } = require('@electron/remote')
 // Electron 10之后下面这种引入方法已经不可用了，使用上面的方法，这个是需要注意的
@@ -25,6 +39,7 @@ const { dialog } = require('@electron/remote')
 export default {
   data() {
     return {
+      imagePath: '',
       dicPath: '',
       fileList: []
     }
@@ -53,6 +68,11 @@ export default {
       //注意这里使用Sync同步方法才能获取到返回的文件值
       //使用异步方法（readdir）由于不能确定结果返回时间，所以无法在外部得到文件列表，只能进行内部处理
       this.fileList = fs.readdirSync(this.dicPath)
+    },
+    clickFile(file) {
+      // console.log(file)
+
+      this.imagePath = this.dicPath + '\\' + file
     }
   }
 }
