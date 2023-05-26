@@ -28,8 +28,8 @@
                 id="main-image"
                 :src="imageDetails.imagePath"
                 class="main-image"
-                @click="onPreview"
                 fit="scale-down"
+                @click="onPreview"
               ></el-image>
             </div>
             <div>

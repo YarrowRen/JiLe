@@ -74,7 +74,7 @@
 
               <div class="tableItem">
                 <p style="display: inline; margin-right: 5px"><strong>相关链接：</strong></p>
-                <el-link style="display: inline" @click="openUrl(this.videoDetails.url)" target="_blank">
+                <el-link style="display: inline" target="_blank" @click="openUrl(videoDetails.url)">
                   {{ videoDetails.url }}
                 </el-link>
               </div>
@@ -189,7 +189,7 @@
       </div>
       <div
         v-if="
-          this.videoDetails.suffix == 'MP4' || this.videoDetails.suffix == 'MOV' || this.videoDetails.suffix == 'M4V'
+          videoDetails.suffix == 'MP4' || videoDetails.suffix == 'MOV' || videoDetails.suffix == 'M4V'
         "
       >
         <el-row>
@@ -245,7 +245,7 @@
                 <img
                   src="@/assets/switch_icon/A_Key.png"
                   class="right-right-button"
-                  @click="openUrl(this.videoDetails.url)"
+                  @click="openUrl(videoDetails.url)"
                 />
               </div>
               <div>

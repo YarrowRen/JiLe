@@ -13,11 +13,11 @@
       :route="'/jile/all-ic'"
       :index="'/jile/all-ic'">全部图集</el-menu-item> -->
     <el-menu-item
-      @click="openImagePage(item.id)"
       v-for="item in icList"
       :key="item.id"
       :route="'/jile/waterfall?ic_id=' + item.id"
       :index="'/jile/waterfall?ic_id=' + item.id"
+      @click="openImagePage(item.id)"
     >
       {{ item.ic_name }}
     </el-menu-item>

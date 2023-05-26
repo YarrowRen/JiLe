@@ -13,11 +13,11 @@
       :route="'/jile/all-vc'"
       :index="'/jile/all-vc'">全部影集</el-menu-item> -->
     <el-menu-item
-      @click="openVideoPage(item.id)"
       v-for="item in vcList"
       :key="item.id"
       :route="'/jile/video-cover?vc_id=' + item.id"
       :index="'/jile/video-cover?vc_id=' + item.id"
+      @click="openVideoPage(item.id)"
     >
       {{ item.vc_name }}
     </el-menu-item>

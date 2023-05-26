@@ -21,7 +21,7 @@
       <el-col :span="12">
         <el-form ref="form" :model="form" label-width="120px" style="width: 50%">
           <el-form-item label="图片显示">
-            <el-image :src="this.imagePath"></el-image>
+            <el-image :src="imagePath"></el-image>
           </el-form-item>
         </el-form>
       </el-col>

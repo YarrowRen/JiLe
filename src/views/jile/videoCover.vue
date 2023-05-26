@@ -11,7 +11,7 @@
               上传视频
             </div>
           </el-button>
-          <el-button type="warning" @click="refreshVc" round style="width: 75px">
+          <el-button type="warning" round style="width: 75px" @click="refreshVc">
             <svg class="icon" aria-hidden="true">
               <use xlink:href="#yw-icon-refresh"></use>
             </svg>
@@ -47,7 +47,7 @@
           </el-button> -->
         </div>
       </div>
-      <el-row :gutter="5" v-if="this.videoInfo.length != 0" class="main-page">
+      <el-row v-if="videoInfo.length != 0" :gutter="5" class="main-page">
         <el-col v-for="(item, id) in videoInfo" :key="id" :xs="12" :sm="8" :md="8" :lg="6" :xl="6" class="col-card">
           <div :body-style="{ padding: '0px' }" shadow="always" class="videoCard">
             <!-- <figure class="imghvr-shutter-out-diag-1 videoFigure" @contextmenu="rtClickOpenMenu(item.video_id)">
@@ -60,18 +60,18 @@
 
             <div class="videoFigure" @contextmenu="rtClickOpenMenu(item.video_id)">
               <el-image
+                v-if="item.video_cover != null && item.video_cover != ''"
                 class="videoCover"
                 fit="cover"
                 :src="item.video_cover"
                 @click="openFile(item.video_path)"
-                v-if="item.video_cover != null && item.video_cover != ''"
               ></el-image>
               <img
                 v-else
                 class="videoCover"
                 style="object-fit: cover"
-                @click="openFile(item.video_path)"
                 src="/src/assets/pic/video-default-horizontal.png"
+                @click="openFile(item.video_path)"
               />
             </div>
             <!-- <div class="videoFigure" @contextmenu="rtClickOpenMenu(item.video_id)">
@@ -104,7 +104,7 @@
 
             <div style="margin-top: 5px; margin-bottom: 5px; margin-left: 5px; margin-right: 5px">
               <div style="display: inline">
-                <el-rate style="display: inline" v-model="item.video_score" disabled />
+                <el-rate v-model="item.video_score" style="display: inline" disabled />
               </div>
               <el-divider direction="vertical" />
               <div style="display: inline;float:right;margin-right:5px">
@@ -390,9 +390,9 @@
       >
         <span>读取元数据并添加视频中...</span>
         <el-progress :percentage="updatePercentage" />
-        <template #footer v-if="updatePercentage == 100">
+        <template v-if="updatePercentage == 100" #footer>
           <span class="dialog-footer">
-            <el-button @click="refreshVc" type="success">确定</el-button>
+            <el-button type="success" @click="refreshVc">确定</el-button>
           </span>
         </template>
       </el-dialog>

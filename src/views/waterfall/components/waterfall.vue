@@ -1,13 +1,13 @@
 <template>
   <div>
     <div style="text-align: center; margin-top: 5px; margin-bottom: 5px">
-      <el-button type="error" @click="$router.push('/jile/all-ic/index')" round style="margin-left: 5px; color: white">
+      <el-button type="error" round style="margin-left: 5px; color: white" @click="$router.push('/jile/all-ic/index')">
         <svg class="icon" aria-hidden="true" style="color: white">
           <use xlink:href="#yw-icon-back"></use>
         </svg>
         返回
       </el-button>
-      <el-button color="#1dd0a1" @click="decreaseImage" circle style="margin-right: 5px">
+      <el-button color="#1dd0a1" circle style="margin-right: 5px" @click="decreaseImage">
         <svg class="icon" aria-hidden="true" style="color: white">
           <use xlink:href="#yw-icon-minus-bold"></use>
         </svg>
@@ -19,18 +19,18 @@
         style="width: 150px; display: inline-block"
         :show-text="false"
       />
-      <el-button color="#1dd0a1" @click="enlargeImage" circle style="margin-left: 5px">
+      <el-button color="#1dd0a1" circle style="margin-left: 5px" @click="enlargeImage">
         <svg class="icon" aria-hidden="true" style="color: white">
           <use xlink:href="#yw-icon-add"></use>
         </svg>
       </el-button>
-      <el-button type="warning" @click="refreshIc" round>
+      <el-button type="warning" round @click="refreshIc">
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#yw-icon-refresh"></use>
         </svg>
         同步
       </el-button>
-      <el-button type="info" @click="addImage" round>
+      <el-button type="info" round @click="addImage">
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#yw-icon-upload"></use>
         </svg>

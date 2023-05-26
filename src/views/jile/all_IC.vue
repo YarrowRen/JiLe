@@ -20,18 +20,18 @@
             @contextmenu="rtClickOpenMenu(item)"
           >
             <el-image
+              v-if="item.ic_cover != null && item.ic_cover != ''"
               fit="cover"
               class="ic_cover"
               :src="item.ic_cover"
-              v-if="item.ic_cover != null && item.ic_cover != ''"
             ></el-image>
-            <img style="object-fit: cover" class="ic_cover" src="/src/assets/pic/book.png" v-else />
+            <img v-else style="object-fit: cover" class="ic_cover" src="/src/assets/pic/book.png" />
             <div style="float: left; width: calc(100% - 150px)">
               <h2 id="ic_title">
                 <strong>{{ item.ic_name }}</strong>
               </h2>
-              <p class="ic_desc" v-if="item.ic_desc != null && item.ic_desc != ''">{{ item.ic_desc }}</p>
-              <p class="ic_desc" v-else>{{ defaultDesc }}</p>
+              <p v-if="item.ic_desc != null && item.ic_desc != ''" class="ic_desc">{{ item.ic_desc }}</p>
+              <p v-else class="ic_desc">{{ defaultDesc }}</p>
             </div>
           </div>
         </el-col>
@@ -94,10 +94,10 @@
             </el-input>
           </el-form-item>
           <el-form-item
+            v-if="ic_info.ic_cover != '' && ic_info.ic_cover != null"
             label="封面图"
             :label-width="formLabelWidth"
             prop="ic_cover"
-            v-if="ic_info.ic_cover != '' && ic_info.ic_cover != null"
           >
             <el-image
               fit="cover"
@@ -151,10 +151,10 @@
             </el-input>
           </el-form-item>
           <el-form-item
+            v-if="edit_ic_info.ic_cover != '' && edit_ic_info.ic_cover != null"
             label="封面图"
             :label-width="formLabelWidth"
             prop="ic_cover"
-            v-if="edit_ic_info.ic_cover != '' && edit_ic_info.ic_cover != null"
           >
             <el-image
               fit="cover"

@@ -14,8 +14,8 @@
             <img
               v-else
               style="object-fit: cover; width: 100%; height: 300px"
-              @click="openFile(item.video_path)"
               src="/src/assets/pic/video-default-horizontal.png"
+              @click="openFile(item.video_path)"
             />
           </div>
         </el-carousel-item>
@@ -31,18 +31,18 @@
             @contextmenu="rtClickOpenMenu(item)"
           >
             <el-image
+              v-if="item.vc_cover != null && item.vc_cover != ''"
               fit="cover"
               class="vc_cover"
               :src="item.vc_cover"
-              v-if="item.vc_cover != null && item.vc_cover != ''"
             ></el-image>
-            <img style="object-fit: cover" class="vc_cover" src="/src/assets/pic/book.png" v-else />
+            <img v-else style="object-fit: cover" class="vc_cover" src="/src/assets/pic/book.png" />
             <div style="float: left; width: calc(100% - 150px)">
               <h2 id="vc_title">
                 <strong>{{ item.vc_name }}</strong>
               </h2>
-              <p class="vc_desc" v-if="item.vc_desc != null && item.vc_desc != ''">{{ item.vc_desc }}</p>
-              <p class="vc_desc" v-else>{{ defaultDesc }}</p>
+              <p v-if="item.vc_desc != null && item.vc_desc != ''" class="vc_desc">{{ item.vc_desc }}</p>
+              <p v-else class="vc_desc">{{ defaultDesc }}</p>
             </div>
           </div>
         </el-col>
@@ -106,10 +106,10 @@
             </el-input>
           </el-form-item>
           <el-form-item
+            v-if="vc_info.vc_cover != '' && vc_info.vc_cover != null"
             label="封面图"
             :label-width="formLabelWidth"
             prop="vc_cover"
-            v-if="vc_info.vc_cover != '' && vc_info.vc_cover != null"
           >
             <el-image
               fit="cover"
@@ -163,10 +163,10 @@
             </el-input>
           </el-form-item>
           <el-form-item
+            v-if="edit_vc_info.vc_cover != '' && edit_vc_info.vc_cover != null"
             label="封面图"
             :label-width="formLabelWidth"
             prop="vc_cover"
-            v-if="edit_vc_info.vc_cover != '' && edit_vc_info.vc_cover != null"
           >
             <el-image
               fit="cover"

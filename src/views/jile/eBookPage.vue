@@ -11,15 +11,15 @@
               上传图书
             </div>
           </el-button>
-          <el-button type="warning" @click="refreshEc" round style="width: 75px">
+          <el-button type="warning" round style="width: 75px" @click="refreshEc">
             <svg class="icon" aria-hidden="true">
               <use xlink:href="#yw-icon-refresh"></use>
             </svg>
             刷新
           </el-button>
           <el-input
-            style="width: calc(100% - 250px); margin-left: 10px; margin-right: 10px"
             v-model="searchValue"
+            style="width: calc(100% - 250px); margin-left: 10px; margin-right: 10px"
             placeholder="Please input"
           >
             <template #prepend>
@@ -83,11 +83,11 @@
       <el-footer height="1" style="text-align: center">
         <div>
           <el-pagination
+            v-model:page-size="pageSize"
             style="display: inline"
             background
             layout=" total, prev, pager, next"
             :current-page="currentPage"
-            v-model:page-size="pageSize"
             :total="totalSize"
             @current-change="handlePageChange"
             @size-change="handleSizeChange"
@@ -101,13 +101,13 @@
         <img src="@/assets/pic/jile.png" class="cover" style="height: 150px" />
         <h3 style="margin-top: 30px; margin-bottom: 30px"><strong>暂未选择书籍</strong></h3>
         <div>
-          <el-button type="warning" @click="refreshEc" circle size="default">
+          <el-button type="warning" circle size="default" @click="refreshEc">
             <svg class="icon" aria-hidden="true">
               <use xlink:href="#yw-icon-refresh"></use>
             </svg>
           </el-button>
 
-          <el-button type="info" @click="openFolder(ec_info.ec_path)" circle size="default">
+          <el-button type="info" circle size="default" @click="openFolder(ec_info.ec_path)">
             <svg class="icon" aria-hidden="true">
               <use xlink:href="#yw-icon-folder-close"></use>
             </svg>
@@ -136,7 +136,7 @@
             {{ targetEBook.identifier }}
           </el-form-item>
           <el-form-item v-if="targetEBook.url != null && targetEBook.url != ''" label="链接">
-            <el-link @click="openURL(targetEBook.url)" class="url-link">打开链接</el-link>
+            <el-link class="url-link" @click="openURL(targetEBook.url)">打开链接</el-link>
           </el-form-item>
           <el-form-item label="格式">{{ targetEBook.extension }}</el-form-item>
           <el-form-item v-if="targetEBook.publisher != null && targetEBook.publisher != ''" label="出版">
@@ -341,9 +341,9 @@
       >
         <span>读取元数据并添加书籍中...</span>
         <el-progress :percentage="updatePercentage" />
-        <template #footer v-if="updatePercentage == 100">
+        <template v-if="updatePercentage == 100" #footer>
           <span class="dialog-footer">
-            <el-button @click="refreshEc" type="success">确定</el-button>
+            <el-button type="success" @click="refreshEc">确定</el-button>
           </span>
         </template>
       </el-dialog>

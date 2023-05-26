@@ -13,11 +13,11 @@
       :route="'/jile/all-ec'"
       :index="'/jile/all-ec'">全部书库</el-menu-item> -->
     <el-menu-item
-      @click="openEBookPage(item.id)"
       v-for="item in ecList"
       :key="item.id"
       :route="'/jile/ebook-page?ec_id=' + item.id"
       :index="'/jile/ebook-page?ec_id=' + item.id"
+      @click="openEBookPage(item.id)"
     >
       {{ item.ec_name }}
     </el-menu-item>

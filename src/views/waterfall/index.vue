@@ -25,9 +25,9 @@
       >
         <span>读取图片数据并添加至图库中...</span>
         <el-progress :percentage="updatePercentage" />
-        <template #footer v-if="updatePercentage == 100">
+        <template v-if="updatePercentage == 100" #footer>
           <span class="dialog-footer">
-            <el-button @click="refreshIc" type="success">确定</el-button>
+            <el-button type="success" @click="refreshIc">确定</el-button>
           </span>
         </template>
       </el-dialog>
