@@ -212,16 +212,7 @@ export default {
         for (var i = 0; i < imageList.length; i++) {
           var file = imageList[i]
           var fileItem = {
-            imagePath: this.imgCol.ic_path + '\\' + file.imageName,
-            imageName: file.imageName,
-            imageID: file.imageID,
-            thumbnail: file.thumbnail,
-            imageScore: file.imageScore,
-            remark: file.remark,
-            followed: file.followed,
-            createDate: file.createDate,
-            url: file.url,
-            tags: file.tags,
+            ...file,
             height: 0,
             width: 0,
             top: 0,

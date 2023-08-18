@@ -44,7 +44,7 @@
             <div class="imageFigure" @click="openDrawer(item)">
               <img
                 :id="'background' + item.imageID"
-                :src="item.thumbnail"
+                :src="item.thumbURL"
                 :style="{ height: item.height + 'px', width: itemWidth + 'px' }"
                 class="image"
                 @contextmenu="rtClickOpenMainMenu(item)"
@@ -72,7 +72,7 @@
     <el-drawer v-model="imageDrawer" class="el-drawer" :with-header="false">
       <div style="height: 200px; text-align: center; line-height: 200px">
         <el-image
-          :src="imageInfo.thumbnail"
+          :src="imageInfo.thumbURL"
           fit="contain"
           style="height: 200px; vertical-align: middle"
           class="drawerImage"

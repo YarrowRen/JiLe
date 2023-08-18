@@ -6,7 +6,7 @@
       class="main-div"
       :style="{
         backgroundImage:
-          'linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0)),url(' + imageDetails.imagePath + ')',
+          'linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0)),url(' + imageDetails.imageURL + ')',
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
         height: '90vh'
@@ -25,14 +25,14 @@
             <div style="width: 100%; height: 500px; text-align: center; line-height: 500px">
               <el-image
                 id="main-image"
-                :src="imageDetails.imagePath"
+                :src="imageDetails.imageURL"
                 class="main-image"
                 fit="scale-down"
                 @click="onPreview"
               ></el-image>
             </div>
             <div>
-              <el-image-viewer v-if="showViewer" :url-list="[imageDetails.imagePath]" @close="closeViewer" />
+              <el-image-viewer v-if="showViewer" :url-list="[imageDetails.imageURL]" @close="closeViewer" />
               <div class="show">
                 <el-tooltip
                   v-for="color in colors"
@@ -236,6 +236,7 @@ export default {
         createDateFormat: '',
         ic_id: 0,
         imageID: 0,
+        imageURL: '',
         imageName: '',
         imagePath: '',
         thumbnail: '',
